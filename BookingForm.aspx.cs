@@ -26,7 +26,7 @@ namespace Respace
                 // - Room object from shared model
                 // --------------------------------------------
 
-                lblRoomName.Text = "Room Name: Ocean View Meeting Room";
+                lblRoomName.Text = "Room Name: Ocean View Meeting Room 1";
                 lblRoomType.Text = "Type: Meeting Room";
                 lblPrice.Text = "Price: $150 per hour";
                 lblDescription.Text = "Description: Spacious room with sea view, suitable for meetings.";
