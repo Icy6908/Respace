@@ -67,10 +67,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <Content Include="BookingForm.aspx" />
+=======
+>>>>>>> 23df6003eaed474939ee295497935f4b40c5e381
     <Content Include="Search.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <Compile Include="BookingForm.aspx.cs">
+      <DependentUpon>BookingForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BookingForm.aspx.designer.cs">
+      <DependentUpon>BookingForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Room.cs" />
+=======
+>>>>>>> 23df6003eaed474939ee295497935f4b40c5e381
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search.aspx.cs">
       <DependentUpon>Search.aspx</DependentUpon>
