@@ -39,6 +39,9 @@
                 <!-- Admin -->
                 <asp:PlaceHolder ID="phAdmin" runat="server" Visible="false">
                     <asp:HyperLink ID="lnkApprovals" runat="server" NavigateUrl="~/AdminApproveSpaces.aspx" Text="Approvals" />
+
+                    <!-- ✅ Step 4: admin review approvals page -->
+                    <asp:HyperLink ID="lnkReviewAdmin" runat="server" NavigateUrl="~/AdminReview.aspx" Text="Review Approvals" />
                 </asp:PlaceHolder>
 
                 <!-- Auth links -->

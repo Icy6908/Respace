@@ -46,10 +46,10 @@ namespace Respace
             }
 
             DataTable dt = Db.Query(@"
-                SELECT SpaceId, Name, Location, Type, Description, PricePerHour, Capacity
-                FROM Spaces
-                WHERE SpaceId=@Id AND Status='Approved'
-            ", new SqlParameter("@Id", SpaceId));
+        SELECT SpaceId, Name, Location, Type, Description, PricePerHour, Capacity
+        FROM Spaces
+        WHERE SpaceId=@Id AND Status='Approved'
+    ", new SqlParameter("@Id", SpaceId));
 
             if (dt.Rows.Count == 0)
             {
@@ -68,7 +68,11 @@ namespace Respace
             decimal pricePerHour = Convert.ToDecimal(dt.Rows[0]["PricePerHour"]);
             lblPrice.Text = pricePerHour.ToString("0.00");
             ViewState["PricePerHour"] = pricePerHour;
+
+            // ✅ review link
+            lnkReview.HRef = "Review.aspx?roomId=" + SpaceId;
         }
+
 
         protected void btnBook_Click(object sender, EventArgs e)
         {

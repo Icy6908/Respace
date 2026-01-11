@@ -62,6 +62,29 @@
                     Text="Confirm Booking"
                     OnClick="btnBook_Click" />
 
+        <br /><br />
+
+        <!-- ✅ Leave Review Button -->
+        <a runat="server" id="lnkReview" class="review-btn">
+            Leave a Review
+        </a>
+
     </asp:Panel>
+
+    <style>
+        .review-btn{
+            display:inline-block;
+            margin-top:12px;
+            padding:10px 14px;
+            border-radius:10px;
+            background:#ffb6c1;
+            color:#000;
+            font-weight:bold;
+            text-decoration:none;
+        }
+        .review-btn:hover{
+            opacity:0.9;
+        }
+    </style>
 
 </asp:Content>

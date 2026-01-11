@@ -66,12 +66,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AdminApproveSpaces.aspx" />
+    <Content Include="AdminReview.aspx" />
     <Content Include="BookingSuccess.aspx" />
+    <Content Include="Database\01_CreateTables.sql" />
+    <Content Include="Database\02_SeedData.sql" />
     <Content Include="HostCreateSpace.aspx" />
     <Content Include="HostMySpaces.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="Register.aspx" />
+    <Content Include="Review.aspx" />
     <Content Include="Rewards.aspx" />
     <Content Include="Search.aspx" />
     <Content Include="SpaceDetails.aspx" />
@@ -84,6 +88,13 @@
     </Compile>
     <Compile Include="AdminApproveSpaces.aspx.designer.cs">
       <DependentUpon>AdminApproveSpaces.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminReview.aspx.cs">
+      <DependentUpon>AdminReview.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminReview.aspx.designer.cs">
+      <DependentUpon>AdminReview.aspx</DependentUpon>
     </Compile>
     <Compile Include="BookingSuccess.aspx.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
@@ -127,6 +138,13 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Review.aspx.cs">
+      <DependentUpon>Review.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Review.aspx.designer.cs">
+      <DependentUpon>Review.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Rewards.aspx.cs">
       <DependentUpon>Rewards.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -168,6 +186,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
