@@ -1,16 +1,14 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Search.aspx.cs" Inherits="Respace.Search" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true"
+    CodeBehind="Search.aspx.cs"
+    Inherits="Respace.Search"
+    MasterPageFile="~/Site.Master" %>
 
-<!DOCTYPE html>
-<html>
-<head runat="server">
-    <title>ReSpace</title>
-
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
         body {
             font-family: Arial;
             background: #2f2f3f;
             color: white;
-            padding: 30px;
         }
 
         .top-bar {
@@ -49,11 +47,23 @@
 
         .btn-primary { background: #ffb6c1; }
         .btn-secondary { background: #777; color: white; }
-    </style>
-</head>
 
-<body>
-<form runat="server">
+        .book-link {
+            display:inline-block;
+            margin-top:10px;
+            padding:8px 12px;
+            border-radius:8px;
+            background:#ffb6c1;
+            color:#000;
+            text-decoration:none;
+            font-weight:bold;
+        }
+    </style>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+
+    <h2>Search Spaces</h2>
 
     <!-- SEARCH BAR -->
     <div class="top-bar">
@@ -72,7 +82,7 @@
             OnClick="btnToggleFilter_Click" />
     </div>
 
-    <!-- FILTER PANEL (ONLY SHOWS WHEN FILTER CLICKED) -->
+    <!-- FILTER PANEL -->
     <asp:Panel ID="pnlFilter" runat="server" CssClass="filter-panel">
 
         <div class="filter-title">Location</div>
@@ -96,7 +106,7 @@
         <br />
 
         <asp:Button ID="btnApplyFilter" runat="server"
-            Text="Filter"
+            Text="Apply Filter"
             CssClass="btn btn-primary"
             OnClick="btnApplyFilter_Click" />
 
@@ -113,11 +123,13 @@
             <div class="space-card">
                 <strong><%# Eval("Name") %></strong><br />
                 Location: <%# Eval("Location") %><br />
-                Type: <%# Eval("Type") %>
+                Type: <%# Eval("Type") %><br />
+
+                <a class="book-link" href='<%# "SpaceDetails.aspx?id=" + Eval("SpaceId") %>'>
+                    View / Book
+                </a>
             </div>
         </ItemTemplate>
     </asp:Repeater>
 
-</form>
-</body>
-</html>
+</asp:Content>

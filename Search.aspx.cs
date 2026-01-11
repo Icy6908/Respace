@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
+using Respace.App_Code;
 
 namespace Respace
 {
     [Serializable]
     public class Space
     {
+        public int SpaceId { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
         public string Type { get; set; }
@@ -21,17 +23,28 @@ namespace Respace
         {
             get
             {
+                // Cache in ViewState so we don't hit DB every postback
                 if (ViewState["Spaces"] == null)
-                    ViewState["Spaces"] = GetSpaces();
+                    ViewState["Spaces"] = GetApprovedSpacesFromDb();
 
                 return (List<Space>)ViewState["Spaces"];
+            }
+            set
+            {
+                ViewState["Spaces"] = value;
             }
         }
 
         private bool IsFilterVisible
         {
-            get => ViewState["FilterVisible"] != null && (bool)ViewState["FilterVisible"];
-            set => ViewState["FilterVisible"] = value;
+            get
+            {
+                return ViewState["FilterVisible"] != null && (bool)ViewState["FilterVisible"];
+            }
+            set
+            {
+                ViewState["FilterVisible"] = value;
+            }
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -39,7 +52,11 @@ namespace Respace
             pnlFilter.Visible = IsFilterVisible;
 
             if (!IsPostBack)
+            {
+                // Load approved spaces once at first load
+                Spaces = GetApprovedSpacesFromDb();
                 BindSpaces(Spaces);
+            }
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
@@ -63,6 +80,9 @@ namespace Respace
             txtSearch.Text = "";
             cblLocation.ClearSelection();
             cblType.ClearSelection();
+
+            // reload fresh from DB
+            Spaces = GetApprovedSpacesFromDb();
             BindSpaces(Spaces);
         }
 
@@ -70,18 +90,18 @@ namespace Respace
         {
             var data = Spaces.AsQueryable();
 
-            // Search keyword
+            // keyword
             if (!string.IsNullOrWhiteSpace(txtSearch.Text))
             {
-                string keyword = txtSearch.Text.ToLower();
+                string keyword = txtSearch.Text.Trim().ToLower();
                 data = data.Where(s =>
-                    s.Name.ToLower().Contains(keyword) ||
-                    s.Location.ToLower().Contains(keyword) ||
-                    s.Type.ToLower().Contains(keyword));
+                    (s.Name ?? "").ToLower().Contains(keyword) ||
+                    (s.Location ?? "").ToLower().Contains(keyword) ||
+                    (s.Type ?? "").ToLower().Contains(keyword));
             }
 
-            // Location filter
-            var locations = cblLocation.Items.Cast<System.Web.UI.WebControls.ListItem>()
+            // location filter
+            var locations = cblLocation.Items.Cast<ListItem>()
                 .Where(i => i.Selected)
                 .Select(i => i.Text)
                 .ToList();
@@ -89,8 +109,8 @@ namespace Respace
             if (locations.Any())
                 data = data.Where(s => locations.Contains(s.Location));
 
-            // Type filter
-            var types = cblType.Items.Cast<System.Web.UI.WebControls.ListItem>()
+            // type filter
+            var types = cblType.Items.Cast<ListItem>()
                 .Where(i => i.Selected)
                 .Select(i => i.Text)
                 .ToList();
@@ -107,16 +127,27 @@ namespace Respace
             rptSpaces.DataBind();
         }
 
-        private List<Space> GetSpaces()
+        private List<Space> GetApprovedSpacesFromDb()
         {
-            return new List<Space>
+            DataTable dt = Db.Query(@"
+                SELECT SpaceId, Name, Location, Type
+                FROM Spaces
+                WHERE Status = 'Approved'
+                ORDER BY CreatedAt DESC
+            ");
+
+            var list = new List<Space>();
+            foreach (DataRow r in dt.Rows)
             {
-                new Space { Name="Central Meeting Room", Location="Central", Type="Meeting Room" },
-                new Space { Name="East Event Hall", Location="East", Type="Event Hall" },
-                new Space { Name="West Training Room", Location="West", Type="Training Room" },
-                new Space { Name="North Conference Room", Location="North", Type="Conference Room" },
-                new Space { Name="South Studio Space", Location="South", Type="Studio" }
-            };
+                list.Add(new Space
+                {
+                    SpaceId = Convert.ToInt32(r["SpaceId"]),
+                    Name = r["Name"].ToString(),
+                    Location = r["Location"].ToString(),
+                    Type = r["Type"].ToString()
+                });
+            }
+            return list;
         }
     }
 }
