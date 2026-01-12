@@ -1,0 +1,68 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="Respace.SiteMaster" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title>ReSpace</title>
+    <style>
+        body { font-family: Arial; margin: 0; }
+        .topbar { background:#111; color:#fff; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; }
+        .brand { font-weight:bold; }
+        .nav a { color:#fff; text-decoration:none; margin-right:12px; }
+        .nav a:hover { text-decoration:underline; }
+        .container { padding: 18px; }
+        .user { color:#ddd; font-size: 0.9em; }
+    </style>
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+</head>
+
+<body>
+    <form id="form1" runat="server">
+        <div class="topbar">
+            <div class="brand">ReSpace</div>
+
+            <div class="nav">
+                <!-- Public -->
+                <asp:HyperLink ID="lnkSearch" runat="server" NavigateUrl="~/Search.aspx" Text="Search" />
+
+                <!-- Logged-in -->
+                <asp:PlaceHolder ID="phLoggedIn" runat="server" Visible="false">
+                    <asp:HyperLink ID="lnkRewards" runat="server" NavigateUrl="~/Rewards.aspx" Text="Rewards" />
+                </asp:PlaceHolder>
+
+                <!-- Host -->
+                <asp:PlaceHolder ID="phHost" runat="server" Visible="false">
+                    <asp:HyperLink ID="lnkMySpaces" runat="server" NavigateUrl="~/HostMySpaces.aspx" Text="My Spaces" />
+                    <asp:HyperLink ID="lnkCreateSpace" runat="server" NavigateUrl="~/HostCreateSpace.aspx" Text="Create Space" />
+                </asp:PlaceHolder>
+
+                <!-- Admin -->
+                <asp:PlaceHolder ID="phAdmin" runat="server" Visible="false">
+                    <asp:HyperLink ID="lnkApprovals" runat="server" NavigateUrl="~/AdminApproveSpaces.aspx" Text="Approvals" />
+
+                    <!-- ✅ Step 4: admin review approvals page -->
+                    <asp:HyperLink ID="lnkReviewAdmin" runat="server" NavigateUrl="~/AdminReview.aspx" Text="Review Approvals" />
+                </asp:PlaceHolder>
+
+                <!-- Auth links -->
+                <asp:PlaceHolder ID="phLoggedOut" runat="server" Visible="true">
+                    <asp:HyperLink ID="lnkLogin" runat="server" NavigateUrl="~/Login.aspx" Text="Login" />
+                    <asp:HyperLink ID="lnkRegister" runat="server" NavigateUrl="~/Register.aspx" Text="Register" />
+                </asp:PlaceHolder>
+
+                <asp:PlaceHolder ID="phLogout" runat="server" Visible="false">
+                    <asp:HyperLink ID="lnkLogout" runat="server" NavigateUrl="~/Logout.aspx" Text="Logout" />
+                </asp:PlaceHolder>
+            </div>
+
+            <div class="user">
+                <asp:Label ID="lblUser" runat="server" />
+            </div>
+        </div>
+
+        <div class="container">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+        </div>
+    </form>
+</body>
+</html>

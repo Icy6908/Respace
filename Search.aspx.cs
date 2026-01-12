@@ -1,66 +1,57 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Globalization;
+using Respace.App_Code;
 
 namespace Respace
 {
     [Serializable]
     public class Space
     {
-        public int RoomId { get; set; }
+        public int SpaceId { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
         public string Type { get; set; }
-        public decimal Price { get; set; }
+        public decimal PricePerHour { get; set; }
+        public int Capacity { get; set; }
         public string Description { get; set; }
-        public DateTime AvailableDate { get; set; }
-
+        public DateTime CreatedAt { get; set; }
     }
 
-    public partial class Search : System.Web.UI.Page
+    public partial class Search : Page
     {
         private List<Space> Spaces
         {
             get
             {
                 if (ViewState["Spaces"] == null)
-                    ViewState["Spaces"] = SeedSpaces();
+                    ViewState["Spaces"] = GetApprovedSpacesFromDb();
                 return (List<Space>)ViewState["Spaces"];
             }
+            set { ViewState["Spaces"] = value; }
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                if (Application["Spaces"] == null)
-                {
-                    Application["Spaces"] = SeedSpaces();
-                }
-
-                Bind(Spaces);
+                Spaces = GetApprovedSpacesFromDb();
+                BindSpaces(Spaces);
             }
         }
-        
 
-        protected void btnSearch_Click(object sender, EventArgs e)
-        {
-            ApplyFilters();
-        }
+        protected void btnSearch_Click(object sender, EventArgs e) => ApplyFilters();
 
         protected void btnToggleFilter_Click(object sender, EventArgs e)
         {
             pnlFilter.Visible = !pnlFilter.Visible;
         }
 
-        protected void btnApplyFilter_Click(object sender, EventArgs e)
-        {
-            ApplyFilters();
-        }
+        protected void btnApplyFilter_Click(object sender, EventArgs e) => ApplyFilters();
 
         protected void btnClearFilter_Click(object sender, EventArgs e)
         {
@@ -73,141 +64,126 @@ namespace Respace
             cblLocation.ClearSelection();
             cblType.ClearSelection();
 
-            Bind(Spaces);
+            Spaces = GetApprovedSpacesFromDb();
+            BindSpaces(Spaces);
         }
 
         private void ApplyFilters()
         {
             var data = Spaces.AsQueryable();
 
+            // keyword search
             if (!string.IsNullOrWhiteSpace(txtSearch.Text))
             {
-                string keyword = txtSearch.Text.ToLower();
+                string keyword = txtSearch.Text.Trim().ToLower();
                 data = data.Where(s =>
-                    s.Name.ToLower().Contains(keyword) ||
-                    s.Location.ToLower().Contains(keyword) ||
-                    s.Type.ToLower().Contains(keyword) ||
-                    s.AvailableDate.ToString("MMMM").ToLower().Contains(keyword) ||
-                    s.AvailableDate.ToString("MMM").ToLower().Contains(keyword)
-                );
+                    (s.Name ?? "").ToLower().Contains(keyword) ||
+                    (s.Location ?? "").ToLower().Contains(keyword) ||
+                    (s.Type ?? "").ToLower().Contains(keyword) ||
+                    (s.Description ?? "").ToLower().Contains(keyword));
             }
 
-       
-            var locations = cblLocation.Items.Cast<System.Web.UI.WebControls.ListItem>()
+            // location filter
+            var locations = cblLocation.Items.Cast<ListItem>()
                 .Where(i => i.Selected).Select(i => i.Text).ToList();
-
             if (locations.Any())
                 data = data.Where(s => locations.Contains(s.Location));
 
-    
-            var types = cblType.Items.Cast<System.Web.UI.WebControls.ListItem>()
+            // type filter
+            var types = cblType.Items.Cast<ListItem>()
                 .Where(i => i.Selected).Select(i => i.Text).ToList();
-
             if (types.Any())
                 data = data.Where(s => types.Contains(s.Type));
 
-       
+            // price filter
             if (decimal.TryParse(txtMinPrice.Text, out decimal min))
-                data = data.Where(s => s.Price >= min);
+                data = data.Where(s => s.PricePerHour >= min);
 
             if (decimal.TryParse(txtMaxPrice.Text, out decimal max))
-                data = data.Where(s => s.Price <= max);
+                data = data.Where(s => s.PricePerHour <= max);
 
-            if (DateTime.TryParse(txtFromDate.Text, out DateTime from))
-                data = data.Where(s => s.AvailableDate >= from);
+            // availability filter (optional) - removes spaces with overlapping confirmed bookings
+            if (DateTime.TryParse(txtFromDate.Text, out DateTime fromDate) &&
+                DateTime.TryParse(txtToDate.Text, out DateTime toDate))
+            {
+                DateTime from = fromDate.Date;
+                DateTime to = toDate.Date.AddDays(1); // exclusive end
 
-            if (DateTime.TryParse(txtToDate.Text, out DateTime to))
-                data = data.Where(s => s.AvailableDate <= to);
+                var blockedIds = GetOverlappingBookedSpaceIds(from, to);
+                if (blockedIds.Count > 0)
+                    data = data.Where(s => !blockedIds.Contains(s.SpaceId));
+            }
 
+            // sorting (matches your dropdown labels in Search.aspx)
             switch (ddlSort.SelectedValue)
             {
                 case "price_asc":
-                    data = data.OrderBy(s => s.Price);
+                    data = data.OrderBy(s => s.PricePerHour);
                     break;
                 case "price_desc":
-                    data = data.OrderByDescending(s => s.Price);
+                    data = data.OrderByDescending(s => s.PricePerHour);
                     break;
-                case "date_asc":
-                    data = data.OrderBy(s => s.AvailableDate);
+                case "date_asc":   // "Newest: Oldest"
+                    data = data.OrderByDescending(s => s.CreatedAt);
                     break;
-                case "date_desc":
-                    data = data.OrderByDescending(s => s.AvailableDate);
+                case "date_desc":  // "Oldest: Newest"
+                    data = data.OrderBy(s => s.CreatedAt);
                     break;
             }
 
-            Bind(data.ToList());
+            BindSpaces(data.ToList());
         }
 
-        private void Bind(List<Space> data)
+        private void BindSpaces(List<Space> data)
         {
             rptSpaces.DataSource = data;
             rptSpaces.DataBind();
         }
 
-        private List<Space> SeedSpaces()
+        private List<Space> GetApprovedSpacesFromDb()
         {
-            return new List<Space>
-    {
-        new Space { RoomId=1, Name="Central Loft", Location="Central", Type="Meeting Room", Price=120, Description="Modern meeting space in CBD", AvailableDate=new DateTime(2026,3,15)},
-        new Space { RoomId=2, Name="East Creative Studio", Location="East", Type="Studio", Price=80, Description="Bright creative studio", AvailableDate=new DateTime(2026,4,10)},
-        new Space { RoomId=3, Name="West Event Hall", Location="West", Type="Event Hall", Price=300, Description="Large hall for events", AvailableDate=new DateTime(2026,3,25)},
-        new Space { RoomId=4, Name="North Training Hub", Location="North", Type="Training Room", Price=150, Description="Corporate training venue", AvailableDate=new DateTime(2026,5,5)},
-        new Space { RoomId=5, Name="South Conference Suite", Location="South", Type="Conference Room", Price=200, Description="Premium conference room", AvailableDate=new DateTime(2026,6,1)},
+            DataTable dt = Db.Query(@"
+                SELECT SpaceId, Name, Location, Type, Description, PricePerHour, Capacity, CreatedAt
+                FROM Spaces
+                WHERE Status = 'Approved'
+                ORDER BY CreatedAt DESC
+            ");
 
-        new Space { RoomId=6, Name="Central Boardroom", Location="Central", Type="Conference Room", Price=220, Description="Executive boardroom", AvailableDate=new DateTime(2026,2,20)},
-        new Space { RoomId=7, Name="East Workshop Space", Location="East", Type="Training Room", Price=130, Description="Hands-on workshop venue", AvailableDate=new DateTime(2026,7,12)},
-        new Space { RoomId=8, Name="West Open Studio", Location="West", Type="Studio", Price=90, Description="Open layout studio", AvailableDate=new DateTime(2026,8,18)},
-        new Space { RoomId=9, Name="North Meeting Pod", Location="North", Type="Meeting Room", Price=70, Description="Small team meeting room", AvailableDate=new DateTime(2026,1,30)},
-        new Space { RoomId=10, Name="South Event Pavilion", Location="South", Type="Event Hall", Price=280, Description="Spacious event pavilion", AvailableDate=new DateTime(2026,9,5)},
-
-        new Space { RoomId=11, Name="Central Innovation Lab", Location="Central", Type="Studio", Price=160, Description="Innovation and brainstorming space", AvailableDate=new DateTime(2026,10,10)},
-        new Space { RoomId=12, Name="East Conference Plus", Location="East", Type="Conference Room", Price=190, Description="Mid-sized conference room", AvailableDate=new DateTime(2026,11,15)},
-        new Space { RoomId=13, Name="West Training Centre", Location="West", Type="Training Room", Price=140, Description="Training centre with AV support", AvailableDate=new DateTime(2026,12,1)},
-        new Space { RoomId=14, Name="North Executive Suite", Location="North", Type="Conference Room", Price=250, Description="Executive-level meeting suite", AvailableDate=new DateTime(2026,3,8)},
-        new Space { RoomId=15, Name="South Creative Loft", Location="South", Type="Studio", Price=110, Description="Loft-style creative venue", AvailableDate=new DateTime(2026,4,22)},
-
-        new Space { RoomId=16, Name="Central Seminar Room", Location="Central", Type="Training Room", Price=170, Description="Seminar-ready training room", AvailableDate=new DateTime(2026,5,18)},
-        new Space { RoomId=17, Name="East Meeting Hub", Location="East", Type="Meeting Room", Price=95, Description="Casual meeting hub", AvailableDate=new DateTime(2026,6,25)},
-        new Space { RoomId=18, Name="West Conference Hall", Location="West", Type="Conference Room", Price=210, Description="Conference hall with stage", AvailableDate=new DateTime(2026,7,30)},
-        new Space { RoomId=19, Name="North Event Arena", Location="North", Type="Event Hall", Price=350, Description="Large-scale event arena", AvailableDate=new DateTime(2026,8,12)},
-        new Space { RoomId=20, Name="South Meeting Lounge", Location="South", Type="Meeting Room", Price=85, Description="Relaxed meeting lounge", AvailableDate=new DateTime(2026,9,20)}
-    };
+            var list = new List<Space>();
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new Space
+                {
+                    SpaceId = Convert.ToInt32(r["SpaceId"]),
+                    Name = r["Name"].ToString(),
+                    Location = r["Location"].ToString(),
+                    Type = r["Type"].ToString(),
+                    Description = r["Description"].ToString(),
+                    PricePerHour = Convert.ToDecimal(r["PricePerHour"]),
+                    Capacity = Convert.ToInt32(r["Capacity"]),
+                    CreatedAt = Convert.ToDateTime(r["CreatedAt"])
+                });
+            }
+            return list;
         }
 
-        protected int GetAverageRating(int roomId)
+        private HashSet<int> GetOverlappingBookedSpaceIds(DateTime from, DateTime to)
         {
-            var reviews = Application["Reviews"] as List<Review>;
-            if (reviews == null) return 0;
+            // overlap rule: NOT (End <= from OR Start >= to)
+            DataTable dt = Db.Query(@"
+                SELECT DISTINCT SpaceId
+                FROM Bookings
+                WHERE Status = 'Confirmed'
+                  AND NOT (EndDateTime <= @From OR StartDateTime >= @To)
+            ",
+            new SqlParameter("@From", from),
+            new SqlParameter("@To", to));
 
-            var approved = reviews.Where(r => r.RoomId == roomId && r.IsApproved).ToList();
-            if (!approved.Any()) return 0;
+            var ids = new HashSet<int>();
+            foreach (DataRow r in dt.Rows)
+                ids.Add(Convert.ToInt32(r["SpaceId"]));
 
-            return (int)Math.Round(approved.Average(r => r.Rating));
+            return ids;
         }
-
-        protected List<Review> GetApprovedReviews(int roomId)
-        {
-            var reviews = Application["Reviews"] as List<Review>;
-            if (reviews == null) return new List<Review>();
-
-            return reviews
-                .Where(r => r.RoomId == roomId && r.IsApproved)
-                .OrderByDescending(r => r.ReviewDate)
-                .ToList();
-        }
-        protected void ToggleReviews_Click(object sender, CommandEventArgs e)
-        {
-            Button btn = (Button)sender;
-            RepeaterItem item = (RepeaterItem)btn.NamingContainer;
-            Panel pnl = (Panel)item.FindControl("pnlReviews");
-
-            pnl.Visible = !pnl.Visible;
-            btn.Text = pnl.Visible ? "Hide Reviews" : "View Reviews";
-        }
-
-
-
     }
-
-
 }

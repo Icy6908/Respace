@@ -1,59 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Respace.App_Code;
 
 namespace Respace
 {
-    public partial class adminreview : Page
+    public partial class AdminReview : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // admin only
+            if (Session["UserId"] == null || (Session["Role"]?.ToString() != "Admin"))
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
             if (!IsPostBack)
                 Bind(null, null);
         }
 
         protected void Bind(object sender, EventArgs e)
         {
-            var reviews = Application["Reviews"] as List<Review> ?? new List<Review>();
+            string keyword = (txtSearch.Text ?? "").Trim().ToLower();
 
-            reviews = reviews.Where(r => r.IsApproved == false).ToList();
-
-            if (!string.IsNullOrEmpty(txtSearch.Text))
-                reviews = reviews
-                    .Where(r => r.VenueName.ToLower().Contains(txtSearch.Text.ToLower()))
-                    .ToList();
-
+            string orderBy = "r.CreatedAt DESC";
             if (ddlSort.SelectedValue == "rating_desc")
-                reviews = reviews.OrderByDescending(r => r.Rating).ToList();
-            else
-                reviews = reviews.OrderByDescending(r => r.ReviewDate).ToList();
+                orderBy = "r.Rating DESC, r.CreatedAt DESC";
 
-            gvReviews.DataSource = reviews;
+            string sql = $@"
+                SELECT r.ReviewId,
+                       s.Name AS SpaceName,
+                       u.FullName AS GuestName,
+                       r.Rating,
+                       r.Comment,
+                       r.CreatedAt
+                FROM Reviews r
+                INNER JOIN Spaces s ON s.SpaceId = r.SpaceId
+                INNER JOIN Users u ON u.UserId = r.UserId
+                WHERE r.IsApproved = 0
+                  AND (@K = '' OR LOWER(s.Name) LIKE '%' + @K + '%')
+                ORDER BY {orderBy};
+            ";
+
+            DataTable dt = Db.Query(sql, new SqlParameter("@K", keyword));
+            gvReviews.DataSource = dt;
             gvReviews.DataBind();
         }
 
         protected void gvReviews_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            int index = Convert.ToInt32(e.CommandArgument);
-            var reviews = Application["Reviews"] as List<Review>;
+            // ButtonField passes row index as CommandArgument
+            int rowIndex = Convert.ToInt32(e.CommandArgument);
 
-            var pending = reviews.Where(r => r.IsApproved == false).ToList();
+            // safety check
+            if (rowIndex < 0 || rowIndex >= gvReviews.Rows.Count)
+                return;
+
+            int reviewId = Convert.ToInt32(gvReviews.DataKeys[rowIndex].Value);
 
             if (e.CommandName == "Approve")
             {
-                pending[index].IsApproved = true;
-                lblMessage.Text = "Review approved and added to search.aspx";
+                Db.Execute("UPDATE Reviews SET IsApproved = 1 WHERE ReviewId = @Id",
+                    new SqlParameter("@Id", reviewId));
+                lblMessage.Text = "Review approved.";
             }
             else if (e.CommandName == "DeleteReview")
             {
-                reviews.Remove(pending[index]);
-                lblMessage.Text = "Review deleted";
+                Db.Execute("DELETE FROM Reviews WHERE ReviewId = @Id",
+                    new SqlParameter("@Id", reviewId));
+                lblMessage.Text = "Review deleted.";
             }
 
-            Application["Reviews"] = reviews;
             Bind(null, null);
         }
     }

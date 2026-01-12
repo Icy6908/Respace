@@ -1,71 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using Respace.App_Code;
 
 namespace Respace
 {
-    public class Review
+    public partial class Review : Page
     {
-        public int ReviewId { get; set; }
-        public int RoomId { get; set; }
-        public string VenueName { get; set; }
-        public int Rating { get; set; }
-        public string Comment { get; set; }
-        public DateTime ReviewDate { get; set; }
-        public bool IsApproved { get; set; }
-    }
-
-    public partial class review : Page
-    {
-        protected void Page_Load(object sender, EventArgs e)
+        private int SpaceId
         {
-            if (!IsPostBack)
-                LoadVenue();
+            get
+            {
+                int id;
+                int.TryParse(Request.QueryString["id"], out id);
+                return id;
+            }
         }
 
-        private void LoadVenue()
+        protected void Page_Load(object sender, EventArgs e)
         {
-            int roomId = int.Parse(Request.QueryString["roomId"]);
+            if (Session["UserId"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
 
-            var spaces = (List<Space>)Application["Spaces"];
-            var venue = spaces.First(s => s.RoomId == roomId);
+            // Only Guest can review (optional rule)
+            string role = Session["Role"] == null ? "" : Session["Role"].ToString();
+            if (role != "Guest")
+            {
+                lblMessage.Text = "Only Guest accounts can submit reviews.";
+                btnSubmit.Enabled = false;
+                return;
+            }
 
-            txtVenue.Text = venue.Name;
-            ViewState["RoomId"] = roomId;
+            if (!IsPostBack)
+                LoadSpaceName();
+        }
+
+        private void LoadSpaceName()
+        {
+            if (SpaceId <= 0)
+            {
+                lblMessage.Text = "Invalid space.";
+                btnSubmit.Enabled = false;
+                return;
+            }
+
+            DataTable dt = Db.Query(@"
+                SELECT Name
+                FROM Spaces
+                WHERE SpaceId = @Id AND Status = 'Approved'
+            ", new SqlParameter("@Id", SpaceId));
+
+            if (dt.Rows.Count == 0)
+            {
+                lblMessage.Text = "Space not found or not approved.";
+                btnSubmit.Enabled = false;
+                return;
+            }
+
+            lblSpaceName.Text = dt.Rows[0]["Name"].ToString();
         }
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            int rating = 0;
-
+            int rating;
             if (!string.IsNullOrEmpty(Request.Form["rating"]))
-                rating = int.Parse(Request.Form["rating"]);
+                int.TryParse(Request.Form["rating"], out rating);
+            else
+                rating = 0;
 
-            if (rating == 0)
+            if (rating < 1 || rating > 5)
             {
                 lblMessage.Text = "Please select a star rating.";
                 return;
             }
 
-            var reviews = Application["Reviews"] as List<Review> ?? new List<Review>();
+            int userId = Convert.ToInt32(Session["UserId"]);
+            string comment = (txtComment.Text ?? "").Trim();
 
-            reviews.Add(new Review
-            {
-                ReviewId = reviews.Count + 1,
-                RoomId = (int)ViewState["RoomId"],
-                VenueName = txtVenue.Text,
-                Rating = rating,
-                Comment = txtComment.Text,
-                ReviewDate = DateTime.Now,
-                IsApproved = false
-            });
+            Db.Execute(@"
+                INSERT INTO Reviews (SpaceId, UserId, Rating, Comment, IsApproved)
+                VALUES (@SpaceId, @UserId, @Rating, @Comment, 0)
+            ",
+            new SqlParameter("@SpaceId", SpaceId),
+            new SqlParameter("@UserId", userId),
+            new SqlParameter("@Rating", rating),
+            new SqlParameter("@Comment", comment));
 
-            Application["Reviews"] = reviews;
-            Response.Redirect("search.aspx");
+            Response.Redirect("SpaceDetails.aspx?id=" + SpaceId);
         }
     }
 }
-
