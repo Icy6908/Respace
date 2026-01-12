@@ -16,6 +16,7 @@ namespace Respace
             phLogout.Visible = loggedIn;
             phLoggedIn.Visible = loggedIn;
 
+            phGuest.Visible = loggedIn && role == "Guest";
             phHost.Visible = loggedIn && role == "Host";
             phAdmin.Visible = loggedIn && role == "Admin";
 

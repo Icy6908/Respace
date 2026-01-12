@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -20,6 +20,10 @@ namespace Respace
         public int Capacity { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        // ✅ NEW: review info
+        public int AvgRating { get; set; }       // rounded 0-5
+        public int ReviewCount { get; set; }     // approved review count
     }
 
     public partial class Search : Page
@@ -72,7 +76,6 @@ namespace Respace
         {
             var data = Spaces.AsQueryable();
 
-            // keyword search
             if (!string.IsNullOrWhiteSpace(txtSearch.Text))
             {
                 string keyword = txtSearch.Text.Trim().ToLower();
@@ -83,38 +86,33 @@ namespace Respace
                     (s.Description ?? "").ToLower().Contains(keyword));
             }
 
-            // location filter
             var locations = cblLocation.Items.Cast<ListItem>()
                 .Where(i => i.Selected).Select(i => i.Text).ToList();
             if (locations.Any())
                 data = data.Where(s => locations.Contains(s.Location));
 
-            // type filter
             var types = cblType.Items.Cast<ListItem>()
                 .Where(i => i.Selected).Select(i => i.Text).ToList();
             if (types.Any())
                 data = data.Where(s => types.Contains(s.Type));
 
-            // price filter
             if (decimal.TryParse(txtMinPrice.Text, out decimal min))
                 data = data.Where(s => s.PricePerHour >= min);
 
             if (decimal.TryParse(txtMaxPrice.Text, out decimal max))
                 data = data.Where(s => s.PricePerHour <= max);
 
-            // availability filter (optional) - removes spaces with overlapping confirmed bookings
             if (DateTime.TryParse(txtFromDate.Text, out DateTime fromDate) &&
                 DateTime.TryParse(txtToDate.Text, out DateTime toDate))
             {
                 DateTime from = fromDate.Date;
-                DateTime to = toDate.Date.AddDays(1); // exclusive end
+                DateTime to = toDate.Date.AddDays(1);
 
                 var blockedIds = GetOverlappingBookedSpaceIds(from, to);
                 if (blockedIds.Count > 0)
                     data = data.Where(s => !blockedIds.Contains(s.SpaceId));
             }
 
-            // sorting (matches your dropdown labels in Search.aspx)
             switch (ddlSort.SelectedValue)
             {
                 case "price_asc":
@@ -123,10 +121,10 @@ namespace Respace
                 case "price_desc":
                     data = data.OrderByDescending(s => s.PricePerHour);
                     break;
-                case "date_asc":   // "Newest: Oldest"
+                case "date_asc":
                     data = data.OrderByDescending(s => s.CreatedAt);
                     break;
-                case "date_desc":  // "Oldest: Newest"
+                case "date_desc":
                     data = data.OrderBy(s => s.CreatedAt);
                     break;
             }
@@ -142,16 +140,28 @@ namespace Respace
 
         private List<Space> GetApprovedSpacesFromDb()
         {
+            // ✅ This query also loads APPROVED reviews summary
             DataTable dt = Db.Query(@"
-                SELECT SpaceId, Name, Location, Type, Description, PricePerHour, Capacity, CreatedAt
-                FROM Spaces
-                WHERE Status = 'Approved'
-                ORDER BY CreatedAt DESC
+                SELECT
+                    s.SpaceId, s.Name, s.Location, s.Type, s.Description,
+                    s.PricePerHour, s.Capacity, s.CreatedAt,
+
+                    ISNULL(AVG(CASE WHEN r.IsApproved = 1 THEN CAST(r.Rating AS float) END), 0) AS AvgRating,
+                    SUM(CASE WHEN r.IsApproved = 1 THEN 1 ELSE 0 END) AS ReviewCount
+                FROM Spaces s
+                LEFT JOIN Reviews r ON r.SpaceId = s.SpaceId
+                WHERE s.Status = 'Approved'
+                GROUP BY s.SpaceId, s.Name, s.Location, s.Type, s.Description,
+                         s.PricePerHour, s.Capacity, s.CreatedAt
+                ORDER BY s.CreatedAt DESC
             ");
 
             var list = new List<Space>();
             foreach (DataRow r in dt.Rows)
             {
+                double avg = Convert.ToDouble(r["AvgRating"]);
+                int avgRounded = (int)Math.Round(avg, MidpointRounding.AwayFromZero);
+
                 list.Add(new Space
                 {
                     SpaceId = Convert.ToInt32(r["SpaceId"]),
@@ -161,15 +171,17 @@ namespace Respace
                     Description = r["Description"].ToString(),
                     PricePerHour = Convert.ToDecimal(r["PricePerHour"]),
                     Capacity = Convert.ToInt32(r["Capacity"]),
-                    CreatedAt = Convert.ToDateTime(r["CreatedAt"])
+                    CreatedAt = Convert.ToDateTime(r["CreatedAt"]),
+                    AvgRating = avgRounded,
+                    ReviewCount = Convert.ToInt32(r["ReviewCount"])
                 });
             }
+
             return list;
         }
 
         private HashSet<int> GetOverlappingBookedSpaceIds(DateTime from, DateTime to)
         {
-            // overlap rule: NOT (End <= from OR Start >= to)
             DataTable dt = Db.Query(@"
                 SELECT DISTINCT SpaceId
                 FROM Bookings
@@ -184,6 +196,14 @@ namespace Respace
                 ids.Add(Convert.ToInt32(r["SpaceId"]));
 
             return ids;
+        }
+
+        // ✅ used by Search.aspx to render stars
+        protected string GetStars(int rating)
+        {
+            if (rating < 0) rating = 0;
+            if (rating > 5) rating = 5;
+            return new string('★', rating);
         }
     }
 }

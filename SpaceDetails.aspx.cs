@@ -19,119 +19,169 @@ namespace Respace
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // ✅ make browser show calendar + time picker
-            txtStartDate.Attributes["type"] = "date";
-            txtEndDate.Attributes["type"] = "date";
-            txtStartTime.Attributes["type"] = "time";
-            txtEndTime.Attributes["type"] = "time";
-
-            if (!IsPostBack)
-            {
-                LoadSpace();
-
-                // (optional) set some default values to make testing easier
-                txtStartDate.Text = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
-                txtEndDate.Text = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
-                txtStartTime.Text = "10:00";
-                txtEndTime.Text = "12:00";
-            }
-        }
-
-        private void LoadSpace()
-        {
             if (SpaceId <= 0)
             {
                 lblMsg.Text = "Invalid space.";
                 return;
             }
 
+            if (!IsPostBack)
+            {
+                LoadSpace();
+                LoadBookedSlots();
+                SetupReviewLink();
+                LoadApprovedReviews();
+            }
+        }
+
+        private void LoadSpace()
+        {
             DataTable dt = Db.Query(@"
-        SELECT SpaceId, Name, Location, Type, Description, PricePerHour, Capacity
-        FROM Spaces
-        WHERE SpaceId=@Id AND Status='Approved'
-    ", new SqlParameter("@Id", SpaceId));
+                SELECT SpaceId, Name, Location, Type, Capacity, PricePerHour, Description
+                FROM Spaces
+                WHERE SpaceId=@Id AND Status='Approved'
+            ", new SqlParameter("@Id", SpaceId));
 
             if (dt.Rows.Count == 0)
             {
                 lblMsg.Text = "Space not found or not approved.";
+                pnlDetails.Visible = false;
                 return;
             }
 
+            var r = dt.Rows[0];
+
             pnlDetails.Visible = true;
-
-            lblName.Text = dt.Rows[0]["Name"].ToString();
-            lblLocation.Text = dt.Rows[0]["Location"].ToString();
-            lblType.Text = dt.Rows[0]["Type"].ToString();
-            lblDesc.Text = dt.Rows[0]["Description"].ToString();
-            lblCap.Text = dt.Rows[0]["Capacity"].ToString();
-
-            decimal pricePerHour = Convert.ToDecimal(dt.Rows[0]["PricePerHour"]);
-            lblPrice.Text = pricePerHour.ToString("0.00");
-            ViewState["PricePerHour"] = pricePerHour;
-
-            // ✅ review link
-            lnkReview.HRef = "Review.aspx?roomId=" + SpaceId;
+            lblName.Text = r["Name"].ToString();
+            lblLocation.Text = r["Location"].ToString();
+            lblType.Text = r["Type"].ToString();
+            lblCap.Text = r["Capacity"].ToString();
+            lblPrice.Text = Convert.ToDecimal(r["PricePerHour"]).ToString("0.00");
+            lblDesc.Text = r["Description"].ToString();
         }
 
+        private void SetupReviewLink()
+        {
+            // Review page expects ?id=SpaceId
+            lnkReview.HRef = "Review.aspx?id=" + SpaceId;
+        }
 
         protected void btnBook_Click(object sender, EventArgs e)
         {
+            // must be logged in
             if (Session["UserId"] == null)
             {
-                Response.Redirect("Login.aspx");
+                lblMsg.Text = "Please login to book.";
                 return;
             }
 
-            string role = Session["Role"] == null ? "" : Session["Role"].ToString();
-            if (role != "Guest")
+            int guestUserId = Convert.ToInt32(Session["UserId"]);
+
+            if (!DateTime.TryParse(txtStartDate.Text, out DateTime sd) ||
+                !DateTime.TryParse(txtEndDate.Text, out DateTime ed))
             {
-                lblMsg.Text = "Only Guest accounts can book.";
+                lblMsg.Text = "Please pick start/end dates.";
                 return;
             }
 
-            // ✅ combine date + time into DateTime
-            DateTime start, end;
+            // time is optional in some browsers; treat empty as 00:00
+            TimeSpan st = TimeSpan.Zero, et = TimeSpan.Zero;
+            if (!TimeSpan.TryParse(txtStartTime.Text, out st)) st = TimeSpan.Zero;
+            if (!TimeSpan.TryParse(txtEndTime.Text, out et)) et = TimeSpan.Zero;
 
-            string startText = (txtStartDate.Text + " " + txtStartTime.Text).Trim();
-            string endText = (txtEndDate.Text + " " + txtEndTime.Text).Trim();
-
-            if (!DateTime.TryParse(startText, out start) || !DateTime.TryParse(endText, out end))
-            {
-                lblMsg.Text = "Please select valid start/end date and time.";
-                return;
-            }
-
-            if (start < DateTime.Now)
-            {
-                lblMsg.Text = "Start cannot be in the past.";
-                return;
-            }
+            DateTime start = sd.Date.Add(st);
+            DateTime end = ed.Date.Add(et);
 
             if (end <= start)
             {
-                lblMsg.Text = "End must be after start.";
+                lblMsg.Text = "End datetime must be after start datetime.";
                 return;
             }
 
-            // total price: charged by hour (rounded up)
-            decimal pricePerHour = (decimal)ViewState["PricePerHour"];
-            double totalHours = (end - start).TotalHours;
-            int billHours = (int)Math.Ceiling(totalHours);
-            decimal totalPrice = pricePerHour * billHours;
+            // get price/hour
+            DataTable dtPrice = Db.Query("SELECT PricePerHour FROM Spaces WHERE SpaceId=@Id",
+                new SqlParameter("@Id", SpaceId));
+            if (dtPrice.Rows.Count == 0)
+            {
+                lblMsg.Text = "Space not found.";
+                return;
+            }
 
-            int guestId = Convert.ToInt32(Session["UserId"]);
+            decimal pricePerHour = Convert.ToDecimal(dtPrice.Rows[0]["PricePerHour"]);
+            double hours = (end - start).TotalHours;
+            if (hours < 1) hours = 1; // minimum charge 1 hour (optional)
 
-            Db.Execute(@"
-                INSERT INTO Bookings (SpaceId, GuestUserId, StartDateTime, EndDateTime, TotalPrice, Status)
-                VALUES (@SpaceId, @GuestUserId, @Start, @End, @TotalPrice, 'Confirmed')
+            decimal total = pricePerHour * (decimal)hours;
+
+            // check overlap (confirmed bookings)
+            DataTable overlap = Db.Query(@"
+                SELECT COUNT(*) AS Cnt
+                FROM Bookings
+                WHERE SpaceId=@SpaceId
+                  AND Status='Confirmed'
+                  AND NOT (EndDateTime <= @Start OR StartDateTime >= @End)
             ",
             new SqlParameter("@SpaceId", SpaceId),
-            new SqlParameter("@GuestUserId", guestId),
+            new SqlParameter("@Start", start),
+            new SqlParameter("@End", end));
+
+            int cnt = Convert.ToInt32(overlap.Rows[0]["Cnt"]);
+            if (cnt > 0)
+            {
+                lblMsg.Text = "Booking overlaps an existing confirmed booking.";
+                return;
+            }
+
+            // ✅ IMPORTANT: your schema uses GuestUserId
+            Db.Execute(@"
+                INSERT INTO Bookings (SpaceId, GuestUserId, StartDateTime, EndDateTime, TotalPrice, Status)
+                VALUES (@SpaceId, @GuestUserId, @Start, @End, @Total, 'Confirmed')
+            ",
+            new SqlParameter("@SpaceId", SpaceId),
+            new SqlParameter("@GuestUserId", guestUserId),
             new SqlParameter("@Start", start),
             new SqlParameter("@End", end),
-            new SqlParameter("@TotalPrice", totalPrice));
+            new SqlParameter("@Total", total));
 
             Response.Redirect("BookingSuccess.aspx");
         }
+
+        private void LoadApprovedReviews()
+        {
+            DataTable dt = Db.Query(@"
+                SELECT u.FullName AS GuestName, r.Rating, r.Comment, r.CreatedAt
+                FROM Reviews r
+                INNER JOIN Users u ON u.UserId = r.UserId
+                WHERE r.SpaceId=@Id AND r.IsApproved=1
+                ORDER BY r.CreatedAt DESC
+            ", new SqlParameter("@Id", SpaceId));
+
+            // Add a Stars column string (★★★★★)
+            dt.Columns.Add("Stars", typeof(string));
+            foreach (DataRow row in dt.Rows)
+            {
+                int rating = Convert.ToInt32(row["Rating"]);
+                if (rating < 1) rating = 1;
+                if (rating > 5) rating = 5;
+                row["Stars"] = new string('★', rating);
+            }
+
+            rptReviews.DataSource = dt;
+            rptReviews.DataBind();
+        }
+
+        private void LoadBookedSlots()
+        {
+            DataTable dt = Db.Query(@"
+        SELECT StartDateTime, EndDateTime
+        FROM Bookings
+        WHERE SpaceId=@SpaceId AND Status='Confirmed'
+        ORDER BY StartDateTime ASC
+        ", new SqlParameter("@SpaceId", SpaceId));
+
+            rptBooked.DataSource = dt;
+            rptBooked.DataBind();
+        }
+
     }
 }

@@ -60,6 +60,24 @@ namespace Respace
         protected global::System.Web.UI.WebControls.HyperLink lnkRewards;
 
         /// <summary>
+        /// phGuest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phGuest;
+
+        /// <summary>
+        /// lnkMyBookings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkMyBookings;
+
+        /// <summary>
         /// phHost control.
         /// </summary>
         /// <remarks>

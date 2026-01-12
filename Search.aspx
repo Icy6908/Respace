@@ -37,16 +37,21 @@
         .price { color:#ff5a5f; font-weight:700; margin-top:8px; }
         .desc { margin-top:10px; color:#333; }
 
-        .book-link {
+        .actions { margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+        .pill {
             display:inline-block;
-            margin-top:12px;
             padding:10px 14px;
             border-radius:12px;
-            background:#ffb6c1;
-            color:#000;
             text-decoration:none;
             font-weight:700;
+            border: none;
         }
+        .pill-primary { background:#ffb6c1; color:#000; }
+        .pill-secondary { background:#ffe2e8; color:#000; }
+
+        .rating-line { margin-top: 10px; display:flex; gap:8px; align-items:center; }
+        .stars { color:#ff385c; font-size:18px; letter-spacing:1px; }
+        .muted { color:#777; }
     </style>
 </asp:Content>
 
@@ -138,18 +143,33 @@
             <ItemTemplate>
                 <div class="venue-card">
                     <h3><%# Eval("Name") %></h3>
+
+                    <!-- ✅ use HTML bullet to avoid â€¢ -->
                     <div class="meta">
-                        <%# Eval("Location") %> • <%# Eval("Type") %> • Capacity: <%# Eval("Capacity") %>
+                        <%# Eval("Location") %> &#8226;
+                        <%# Eval("Type") %> &#8226;
+                        Capacity: <%# Eval("Capacity") %>
                     </div>
+
                     <div class="price">$<%# Eval("PricePerHour", "{0:0.00}") %> / hour</div>
                     <div class="desc"><%# Eval("Description") %></div>
 
-                    <a class="book-link" href='<%# "SpaceDetails.aspx?id=" + Eval("SpaceId") %>'>
-                        View / Book
-                    </a>
+                    <!-- ✅ rating + count -->
+                    <div class="rating-line">
+                        <span class="stars"><%# GetStars(Convert.ToInt32(Eval("AvgRating"))) %></span>
+                        <span class="muted">
+                            (<%# Eval("ReviewCount") %> review(s))
+                        </span>
+                    </div>
+
+                    <div class="actions">
+                        <a class="pill pill-primary" href='<%# "SpaceDetails.aspx?id=" + Eval("SpaceId") %>'>View / Book</a>
+                        <a class="pill pill-secondary" href='<%# "Review.aspx?id=" + Eval("SpaceId") %>'>Write Review</a>
+                    </div>
                 </div>
             </ItemTemplate>
         </asp:Repeater>
+
     </div>
 
 </asp:Content>

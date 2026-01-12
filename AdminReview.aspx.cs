@@ -11,7 +11,6 @@ namespace Respace
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // admin only
             if (Session["UserId"] == null || (Session["Role"]?.ToString() != "Admin"))
             {
                 Response.Redirect("Login.aspx");
@@ -52,24 +51,20 @@ namespace Respace
 
         protected void gvReviews_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            // ButtonField passes row index as CommandArgument
             int rowIndex = Convert.ToInt32(e.CommandArgument);
-
-            // safety check
-            if (rowIndex < 0 || rowIndex >= gvReviews.Rows.Count)
-                return;
+            if (rowIndex < 0 || rowIndex >= gvReviews.Rows.Count) return;
 
             int reviewId = Convert.ToInt32(gvReviews.DataKeys[rowIndex].Value);
 
             if (e.CommandName == "Approve")
             {
-                Db.Execute("UPDATE Reviews SET IsApproved = 1 WHERE ReviewId = @Id",
+                Db.Execute("UPDATE Reviews SET IsApproved=1 WHERE ReviewId=@Id",
                     new SqlParameter("@Id", reviewId));
                 lblMessage.Text = "Review approved.";
             }
             else if (e.CommandName == "DeleteReview")
             {
-                Db.Execute("DELETE FROM Reviews WHERE ReviewId = @Id",
+                Db.Execute("DELETE FROM Reviews WHERE ReviewId=@Id",
                     new SqlParameter("@Id", reviewId));
                 lblMessage.Text = "Review deleted.";
             }

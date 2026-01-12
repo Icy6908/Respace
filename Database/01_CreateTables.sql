@@ -52,3 +52,17 @@ CREATE TABLE [dbo].[Bookings] (
     FOREIGN KEY ([GuestUserId]) REFERENCES [dbo].[Users] ([UserId])
 );
 
+CREATE TABLE [dbo].[Reviews] (
+    [ReviewId]   INT             IDENTITY (1, 1) NOT NULL,
+    [SpaceId]    INT             NOT NULL,
+    [UserId]     INT             NOT NULL,
+    [Rating]     INT             NOT NULL,
+    [Comment]    NVARCHAR (1000) NULL,
+    [IsApproved] BIT             DEFAULT ((0)) NOT NULL,
+    [CreatedAt]  DATETIME        DEFAULT (getdate()) NOT NULL,
+    PRIMARY KEY CLUSTERED ([ReviewId] ASC),
+    FOREIGN KEY ([SpaceId]) REFERENCES [dbo].[Spaces] ([SpaceId]),
+    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId]),
+    CHECK ([Rating]>=(1) AND [Rating]<=(5))
+);
+

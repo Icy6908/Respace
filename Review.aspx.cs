@@ -1,12 +1,11 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web.UI;
 using Respace.App_Code;
 
 namespace Respace
 {
-    public partial class Review : Page
+    public partial class Review : System.Web.UI.Page
     {
         private int SpaceId
         {
@@ -26,8 +25,7 @@ namespace Respace
                 return;
             }
 
-            // Only Guest can review (optional rule)
-            string role = Session["Role"] == null ? "" : Session["Role"].ToString();
+            string role = (Session["Role"] ?? "").ToString();
             if (role != "Guest")
             {
                 lblMessage.Text = "Only Guest accounts can submit reviews.";
@@ -43,7 +41,7 @@ namespace Respace
         {
             if (SpaceId <= 0)
             {
-                lblMessage.Text = "Invalid space.";
+                lblMessage.Text = "Invalid space. Please go back and click Write Review again.";
                 btnSubmit.Enabled = false;
                 return;
             }
@@ -51,7 +49,7 @@ namespace Respace
             DataTable dt = Db.Query(@"
                 SELECT Name
                 FROM Spaces
-                WHERE SpaceId = @Id AND Status = 'Approved'
+                WHERE SpaceId=@Id AND Status='Approved'
             ", new SqlParameter("@Id", SpaceId));
 
             if (dt.Rows.Count == 0)
@@ -66,11 +64,9 @@ namespace Respace
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            int rating;
+            int rating = 0;
             if (!string.IsNullOrEmpty(Request.Form["rating"]))
                 int.TryParse(Request.Form["rating"], out rating);
-            else
-                rating = 0;
 
             if (rating < 1 || rating > 5)
             {
@@ -90,6 +86,10 @@ namespace Respace
             new SqlParameter("@Rating", rating),
             new SqlParameter("@Comment", comment));
 
+            lblMessage.ForeColor = System.Drawing.Color.Green;
+            lblMessage.Text = "Review submitted! Waiting for admin approval.";
+
+            // optional redirect
             Response.Redirect("SpaceDetails.aspx?id=" + SpaceId);
         }
     }

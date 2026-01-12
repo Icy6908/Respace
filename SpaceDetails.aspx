@@ -28,46 +28,78 @@
 
         <h3>Book this space</h3>
 
+        <asp:Panel ID="pnlUnavailable" runat="server" Visible="false">
+    <h4>Unavailable (confirmed bookings)</h4>
+
+    <asp:Repeater ID="Repeater1" runat="server">
+        <ItemTemplate>
+            <div>
+                <%# Eval("StartDateTime", "{0:dd MMM yyyy HH:mm}") %>
+                to
+                <%# Eval("EndDateTime", "{0:dd MMM yyyy HH:mm}") %>
+            </div>
+        </ItemTemplate>
+    </asp:Repeater>
+
+    <br />
+</asp:Panel>
+
+            <asp:Repeater ID="rptBooked" runat="server">
+                <ItemTemplate>
+                    <div>
+                        <%# Eval("StartDateTime", "{0:dd MMM yyyy HH:mm}") %>
+                        to
+                        <%# Eval("EndDateTime", "{0:dd MMM yyyy HH:mm}") %>
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+            <br />
+
+
         <table>
             <tr>
                 <td>Start Date</td>
-                <td>
-                    <asp:TextBox ID="txtStartDate" runat="server" />
-                </td>
+                <td><asp:TextBox ID="txtStartDate" runat="server" TextMode="Date" /></td>
             </tr>
             <tr>
                 <td>Start Time</td>
-                <td>
-                    <asp:TextBox ID="txtStartTime" runat="server" />
-                </td>
+                <td><asp:TextBox ID="txtStartTime" runat="server" TextMode="Time" /></td>
             </tr>
             <tr>
                 <td>End Date</td>
-                <td>
-                    <asp:TextBox ID="txtEndDate" runat="server" />
-                </td>
+                <td><asp:TextBox ID="txtEndDate" runat="server" TextMode="Date" /></td>
             </tr>
             <tr>
                 <td>End Time</td>
-                <td>
-                    <asp:TextBox ID="txtEndTime" runat="server" />
-                </td>
+                <td><asp:TextBox ID="txtEndTime" runat="server" TextMode="Time" /></td>
             </tr>
         </table>
 
         <br />
 
         <asp:Button ID="btnBook"
-                    runat="server"
-                    Text="Confirm Booking"
-                    OnClick="btnBook_Click" />
+            runat="server"
+            Text="Confirm Booking"
+            OnClick="btnBook_Click" />
 
         <br /><br />
 
-        <!-- ✅ Leave Review Button -->
-        <a runat="server" id="lnkReview" class="review-btn">
-            Leave a Review
-        </a>
+        <!-- Leave Review Button -->
+        <a runat="server" id="lnkReview" class="review-btn">Write Review</a>
+
+        <hr />
+
+        <h3>Reviews</h3>
+        <asp:Repeater ID="rptReviews" runat="server">
+            <ItemTemplate>
+                <div style="margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                    <strong><%# Eval("GuestName") %></strong><br />
+                    <span style="color:#ff385c;"><%# Eval("Stars") %></span><br />
+                    <%# Eval("Comment") %><br />
+                    <small style="color:#777;"><%# Eval("CreatedAt", "{0:dd MMM yyyy}") %></small>
+                </div>
+            </ItemTemplate>
+        </asp:Repeater>
 
     </asp:Panel>
 
@@ -82,9 +114,7 @@
             font-weight:bold;
             text-decoration:none;
         }
-        .review-btn:hover{
-            opacity:0.9;
-        }
+        .review-btn:hover{ opacity:0.9; }
     </style>
 
 </asp:Content>

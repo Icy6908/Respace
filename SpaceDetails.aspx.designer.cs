@@ -87,6 +87,33 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblDesc;
 
         /// <summary>
+        /// pnlUnavailable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlUnavailable;
+
+        /// <summary>
+        /// Repeater1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater Repeater1;
+
+        /// <summary>
+        /// rptBooked control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptBooked;
+
+        /// <summary>
         /// txtStartDate control.
         /// </summary>
         /// <remarks>
@@ -139,5 +166,14 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor lnkReview;
+
+        /// <summary>
+        /// rptReviews control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptReviews;
     }
 }

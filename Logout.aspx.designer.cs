@@ -9,8 +9,6 @@
 
 namespace Respace
 {
-
-
     public partial class Logout
     {
     }

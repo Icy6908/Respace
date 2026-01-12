@@ -30,6 +30,11 @@
                     <asp:HyperLink ID="lnkRewards" runat="server" NavigateUrl="~/Rewards.aspx" Text="Rewards" />
                 </asp:PlaceHolder>
 
+                <!-- Guest -->
+                <asp:PlaceHolder ID="phGuest" runat="server" Visible="false">
+                    <asp:HyperLink ID="lnkMyBookings" runat="server" NavigateUrl="~/GuestMyBookings.aspx" Text="My Bookings" />
+                </asp:PlaceHolder>
+
                 <!-- Host -->
                 <asp:PlaceHolder ID="phHost" runat="server" Visible="false">
                     <asp:HyperLink ID="lnkMySpaces" runat="server" NavigateUrl="~/HostMySpaces.aspx" Text="My Spaces" />

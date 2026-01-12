@@ -48,7 +48,7 @@
                     <asp:TemplateField HeaderText="Rating">
                         <ItemTemplate>
                             <span style="color:#ff385c">
-                                <%# new string('★', Convert.ToInt32(Eval("Rating"))) %>
+                                <%# new string("\u2605"[0], Convert.ToInt32(Eval("Rating"))) %>
                             </span>
                         </ItemTemplate>
                     </asp:TemplateField>
