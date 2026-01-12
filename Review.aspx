@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Review.aspx.cs"
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Review.aspx.cs"
     Inherits="Respace.Review" MasterPageFile="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">

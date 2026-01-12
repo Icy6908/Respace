@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using Respace.App_Code;
 
@@ -21,7 +22,7 @@ namespace Respace
         public DateTime CreatedAt { get; set; }
     }
 
-    public partial class Search : System.Web.UI.Page
+    public partial class Search : Page
     {
         private List<Space> Spaces
         {
@@ -34,16 +35,8 @@ namespace Respace
             set { ViewState["Spaces"] = value; }
         }
 
-        private bool IsFilterVisible
-        {
-            get => ViewState["FilterVisible"] != null && (bool)ViewState["FilterVisible"];
-            set => ViewState["FilterVisible"] = value;
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            pnlFilter.Visible = IsFilterVisible;
-
             if (!IsPostBack)
             {
                 Spaces = GetApprovedSpacesFromDb();
@@ -55,8 +48,7 @@ namespace Respace
 
         protected void btnToggleFilter_Click(object sender, EventArgs e)
         {
-            IsFilterVisible = !IsFilterVisible;
-            pnlFilter.Visible = IsFilterVisible;
+            pnlFilter.Visible = !pnlFilter.Visible;
         }
 
         protected void btnApplyFilter_Click(object sender, EventArgs e) => ApplyFilters();
@@ -114,16 +106,15 @@ namespace Respace
             if (DateTime.TryParse(txtFromDate.Text, out DateTime fromDate) &&
                 DateTime.TryParse(txtToDate.Text, out DateTime toDate))
             {
-                // treat as full-day range
                 DateTime from = fromDate.Date;
-                DateTime to = toDate.Date.AddDays(1); // exclusive end (next day 00:00)
+                DateTime to = toDate.Date.AddDays(1); // exclusive end
 
                 var blockedIds = GetOverlappingBookedSpaceIds(from, to);
                 if (blockedIds.Count > 0)
                     data = data.Where(s => !blockedIds.Contains(s.SpaceId));
             }
 
-            // sorting
+            // sorting (matches your dropdown labels in Search.aspx)
             switch (ddlSort.SelectedValue)
             {
                 case "price_asc":
@@ -132,11 +123,11 @@ namespace Respace
                 case "price_desc":
                     data = data.OrderByDescending(s => s.PricePerHour);
                     break;
-                case "date_asc":
-                    data = data.OrderByDescending(s => s.CreatedAt); // "Newest: Oldest"
+                case "date_asc":   // "Newest: Oldest"
+                    data = data.OrderByDescending(s => s.CreatedAt);
                     break;
-                case "date_desc":
-                    data = data.OrderBy(s => s.CreatedAt); // "Oldest: Newest"
+                case "date_desc":  // "Oldest: Newest"
+                    data = data.OrderBy(s => s.CreatedAt);
                     break;
             }
 

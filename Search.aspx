@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"
+<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="Search.aspx.cs"
     Inherits="Respace.Search"
     MasterPageFile="~/Site.Master" %>
@@ -138,7 +138,9 @@
             <ItemTemplate>
                 <div class="venue-card">
                     <h3><%# Eval("Name") %></h3>
-                    <div class="meta"><%# Eval("Location") %> • <%# Eval("Type") %> • Capacity: <%# Eval("Capacity") %></div>
+                    <div class="meta">
+                        <%# Eval("Location") %> • <%# Eval("Type") %> • Capacity: <%# Eval("Capacity") %>
+                    </div>
                     <div class="price">$<%# Eval("PricePerHour", "{0:0.00}") %> / hour</div>
                     <div class="desc"><%# Eval("Description") %></div>
 

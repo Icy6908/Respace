@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using Respace.App_Code;
 
 namespace Respace
 {
-    public partial class AdminReview : System.Web.UI.Page
+    public partial class AdminReview : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -40,7 +42,7 @@ namespace Respace
                 INNER JOIN Users u ON u.UserId = r.UserId
                 WHERE r.IsApproved = 0
                   AND (@K = '' OR LOWER(s.Name) LIKE '%' + @K + '%')
-                ORDER BY {orderBy}
+                ORDER BY {orderBy};
             ";
 
             DataTable dt = Db.Query(sql, new SqlParameter("@K", keyword));
@@ -48,21 +50,26 @@ namespace Respace
             gvReviews.DataBind();
         }
 
-        protected void gvReviews_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        protected void gvReviews_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            // row index
+            // ButtonField passes row index as CommandArgument
             int rowIndex = Convert.ToInt32(e.CommandArgument);
+
+            // safety check
+            if (rowIndex < 0 || rowIndex >= gvReviews.Rows.Count)
+                return;
+
             int reviewId = Convert.ToInt32(gvReviews.DataKeys[rowIndex].Value);
 
             if (e.CommandName == "Approve")
             {
-                Db.Execute("UPDATE Reviews SET IsApproved=1 WHERE ReviewId=@Id",
+                Db.Execute("UPDATE Reviews SET IsApproved = 1 WHERE ReviewId = @Id",
                     new SqlParameter("@Id", reviewId));
                 lblMessage.Text = "Review approved.";
             }
             else if (e.CommandName == "DeleteReview")
             {
-                Db.Execute("DELETE FROM Reviews WHERE ReviewId=@Id",
+                Db.Execute("DELETE FROM Reviews WHERE ReviewId = @Id",
                     new SqlParameter("@Id", reviewId));
                 lblMessage.Text = "Review deleted.";
             }

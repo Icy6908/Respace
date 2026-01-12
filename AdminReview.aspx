@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AdminReview.aspx.cs"
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AdminReview.aspx.cs"
     Inherits="Respace.AdminReview" MasterPageFile="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
@@ -7,7 +7,7 @@
         .wrap { max-width: 1000px; margin: 0 auto; }
         .panel { background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
         .msg { text-align:center; color:green; font-weight:bold; margin: 10px 0; }
-        .ctrl { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+        .ctrl { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; align-items:flex-end; }
         input, select { padding:10px; border-radius:10px; border:1px solid #ddd; }
         .btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; background:#ff385c; color:#fff; }
         .btn-secondary { background:#666; }

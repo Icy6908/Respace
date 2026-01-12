@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI;
 using Respace.App_Code;
 
 namespace Respace
 {
-    public partial class Review : System.Web.UI.Page
+    public partial class Review : Page
     {
         private int SpaceId
         {
@@ -50,7 +51,7 @@ namespace Respace
             DataTable dt = Db.Query(@"
                 SELECT Name
                 FROM Spaces
-                WHERE SpaceId=@Id AND Status='Approved'
+                WHERE SpaceId = @Id AND Status = 'Approved'
             ", new SqlParameter("@Id", SpaceId));
 
             if (dt.Rows.Count == 0)
@@ -65,9 +66,11 @@ namespace Respace
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            int rating = 0;
+            int rating;
             if (!string.IsNullOrEmpty(Request.Form["rating"]))
                 int.TryParse(Request.Form["rating"], out rating);
+            else
+                rating = 0;
 
             if (rating < 1 || rating > 5)
             {
@@ -87,7 +90,6 @@ namespace Respace
             new SqlParameter("@Rating", rating),
             new SqlParameter("@Comment", comment));
 
-            // back to space details or search
             Response.Redirect("SpaceDetails.aspx?id=" + SpaceId);
         }
     }
