@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Search.aspx.cs" Inherits="Respace.Search" %>
+﻿x<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Search.aspx.cs" Inherits="Respace.Search" %>
 
 <!DOCTYPE html>
 <html>
@@ -59,13 +59,18 @@
             color: #ff5a5f;
             font-weight: bold;
         }
+
+        .venue-card {
+            max-width: 720px;
+            margin: 0 auto 24px auto;
+        }
     </style>
 </head>
 
 <body>
     <form runat="server">
 
-     
+
         <div class="search-bar">
             <asp:TextBox ID="txtSearch" runat="server" Width="280"
                 Placeholder="Search by name, location, or month (e.g. March)" />
@@ -78,12 +83,12 @@
                 OnClick="btnToggleFilter_Click" />
         </div>
 
-    
+
         <asp:Panel ID="pnlFilter" runat="server" CssClass="filter-panel" Visible="false">
 
             <h3>Simple Search</h3>
 
-    
+
             <div class="filter-group">
                 <strong>Location</strong><br />
                 <asp:CheckBoxList ID="cblLocation" runat="server" RepeatDirection="Horizontal">
@@ -106,7 +111,7 @@
                 </asp:CheckBoxList>
             </div>
 
- 
+
             <div class="filter-group">
                 <strong>Price Range ($)</strong><br />
                 Min:
@@ -123,7 +128,7 @@
             <asp:TextBox ID="txtToDate" runat="server" TextMode="Date" />
             </div>
 
-   
+
             <div class="filter-group">
                 <strong>Sort By</strong><br />
                 <asp:DropDownList ID="ddlSort" runat="server">
@@ -147,43 +152,59 @@
         <asp:Repeater ID="rptSpaces" runat="server">
             <ItemTemplate>
                 <div class="venue-card">
+
                     <h3><%# Eval("Name") %></h3>
                     <div><%# Eval("Location") %> • <%# Eval("Type") %></div>
                     <div class="price">$<%# Eval("Price") %> / day</div>
                     <div>Available from <%# Eval("AvailableDate", "{0:dd MMM yyyy}") %></div>
                     <p><%# Eval("Description") %></p>
-                    <span class="stars">
-                        <%# new string('★', GetAverageRating(Convert.ToInt32(Eval("RoomId")))) %>
-                    </span>
 
-                    <asp:Repeater
+                    <div style="margin-top: 12px;">
+                        <asp:Button
+                            runat="server"
+                            Text="View Reviews"
+                            CssClass="secondary"
+                            CommandName="ToggleReviews"
+                            CommandArgument='<%# Eval("RoomId") %>'
+                            OnCommand="ToggleReviews_Click" />
+
+                        &nbsp;
+
+                <asp:HyperLink
+                    runat="server"
+                    NavigateUrl='<%# "review.aspx?roomId=" + Eval("RoomId") %>'
+                    Text="Review this venue" />
+                    </div>
+
+                    <asp:Panel
+                        ID="pnlReviews"
                         runat="server"
-                        DataSource='<%# GetApprovedReviews(Convert.ToInt32(Eval("RoomId"))) %>'>
-                        <ItemTemplate>
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                                <strong style="color: #ff5a5f">
-                                    <%# new string('★', Convert.ToInt32(Eval("Rating"))) %>
-                                </strong>
-                                <br />
-                                <%# Eval("Comment") %>
-                                <br />
-                                <small style="color: #777">
-                                    <%# Eval("ReviewDate", "{0:dd MMM yyyy}") %>
-                                </small>
-                            </div>
-                        </ItemTemplate>
-                    </asp:Repeater>
+                        Visible="false"
+                        Style="margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
 
+                        <asp:Repeater
+                            runat="server"
+                            DataSource='<%# GetApprovedReviews(Convert.ToInt32(Eval("RoomId"))) %>'>
+                            <ItemTemplate>
+                                <div style="margin-bottom: 10px;">
+                                    <strong style="color: #ff5a5f">
+                                        <%# new string('★', Convert.ToInt32(Eval("Rating"))) %>
+                                    </strong>
+                                    <br />
+                                    <%# Eval("Comment") %><br />
+                                    <small style="color: #777">
+                                        <%# Eval("ReviewDate", "{0:dd MMM yyyy}") %>
+                                    </small>
+                                </div>
+                            </ItemTemplate>
+                        </asp:Repeater>
 
+                    </asp:Panel>
 
-                    <asp:HyperLink
-                        runat="server"
-                        NavigateUrl='<%# "review.aspx?roomId=" + Eval("RoomId") %>'
-                        Text="Review this venue"
-                        CssClass="review-btn" />
                 </div>
             </ItemTemplate>
         </asp:Repeater>
+
 
     </form>
 </body>

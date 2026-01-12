@@ -173,25 +173,13 @@ namespace Respace
         new Space { RoomId=20, Name="South Meeting Lounge", Location="South", Type="Meeting Room", Price=85, Description="Relaxed meeting lounge", AvailableDate=new DateTime(2026,9,20)}
     };
         }
-        public class Review
-        {
-            public int ReviewId { get; set; }
-            public int RoomId { get; set; }
-            public string VenueName { get; set; }
-            public int Rating { get; set; }   // 1 - 5
-            public string Comment { get; set; }
-            public DateTime ReviewDate { get; set; }
-            public bool IsApproved { get; internal set; }
-        }
+
         protected int GetAverageRating(int roomId)
         {
             var reviews = Application["Reviews"] as List<Review>;
             if (reviews == null) return 0;
 
-            var approved = reviews
-                .Where(r => r.RoomId == roomId && r.IsApproved)
-                .ToList();
-
+            var approved = reviews.Where(r => r.RoomId == roomId && r.IsApproved).ToList();
             if (!approved.Any()) return 0;
 
             return (int)Math.Round(approved.Average(r => r.Rating));
@@ -207,9 +195,15 @@ namespace Respace
                 .OrderByDescending(r => r.ReviewDate)
                 .ToList();
         }
+        protected void ToggleReviews_Click(object sender, CommandEventArgs e)
+        {
+            Button btn = (Button)sender;
+            RepeaterItem item = (RepeaterItem)btn.NamingContainer;
+            Panel pnl = (Panel)item.FindControl("pnlReviews");
 
-
-
+            pnl.Visible = !pnl.Visible;
+            btn.Text = pnl.Visible ? "Hide Reviews" : "View Reviews";
+        }
 
 
 

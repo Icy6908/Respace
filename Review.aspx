@@ -23,6 +23,7 @@
         .stars {
             display: flex;
             flex-direction: row-reverse;
+            justify-content: start;
             gap: 6px;
         }
 
