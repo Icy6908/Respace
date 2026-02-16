@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 using Respace.App_Code;
 
 namespace Respace
@@ -11,10 +12,29 @@ namespace Respace
             var name = txtName.Text.Trim();
             var email = txtEmail.Text.Trim().ToLower();
             var pw = txtPassword.Text;
+            var confirm = txtConfirm.Text;
 
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pw))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pw) || string.IsNullOrWhiteSpace(confirm))
             {
                 lblMsg.Text = "Please fill in all fields.";
+                return;
+            }
+
+            if (!Regex.IsMatch(email, @"^[^\s@]+@[^\s@]+\.[^\s@]+$"))
+            {
+                lblMsg.Text = "Please enter a valid email address.";
+                return;
+            }
+
+            if (pw.Length < 8)
+            {
+                lblMsg.Text = "Password must be at least 8 characters.";
+                return;
+            }
+
+            if (!string.Equals(pw, confirm))
+            {
+                lblMsg.Text = "Passwords do not match.";
                 return;
             }
 

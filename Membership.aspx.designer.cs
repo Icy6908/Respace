@@ -11,7 +11,7 @@ namespace Respace
 {
 
 
-    public partial class GuestMyBookings
+    public partial class Membership
     {
 
         /// <summary>
@@ -24,12 +24,30 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblMsg;
 
         /// <summary>
-        /// gv control.
+        /// btnFree control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gv;
+        protected global::System.Web.UI.WebControls.Button btnFree;
+
+        /// <summary>
+        /// btnPlus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnPlus;
+
+        /// <summary>
+        /// btnPro control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnPro;
     }
 }

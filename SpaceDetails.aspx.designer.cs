@@ -24,6 +24,42 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblMsg;
 
         /// <summary>
+        /// hfBookedDates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfBookedDates;
+
+        /// <summary>
+        /// hfBlockedDates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfBlockedDates;
+
+        /// <summary>
+        /// hfStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfStart;
+
+        /// <summary>
+        /// hfEnd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfEnd;
+
+        /// <summary>
         /// pnlDetails control.
         /// </summary>
         /// <remarks>
@@ -69,13 +105,58 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblCap;
 
         /// <summary>
-        /// lblPrice control.
+        /// imgCover control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPrice;
+        protected global::System.Web.UI.WebControls.Image imgCover;
+
+        /// <summary>
+        /// pnlNoPhotos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlNoPhotos;
+
+        /// <summary>
+        /// img1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image img1;
+
+        /// <summary>
+        /// img2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image img2;
+
+        /// <summary>
+        /// img3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image img3;
+
+        /// <summary>
+        /// img4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image img4;
 
         /// <summary>
         /// lblDesc control.
@@ -87,76 +168,67 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblDesc;
 
         /// <summary>
-        /// pnlUnavailable control.
+        /// lblType2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlUnavailable;
+        protected global::System.Web.UI.WebControls.Label lblType2;
 
         /// <summary>
-        /// Repeater1 control.
+        /// lblCap2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater Repeater1;
+        protected global::System.Web.UI.WebControls.Label lblCap2;
 
         /// <summary>
-        /// rptBooked control.
+        /// lblPrice2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptBooked;
+        protected global::System.Web.UI.WebControls.Label lblPrice2;
 
         /// <summary>
-        /// txtStartDate control.
+        /// rptAmenities control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtStartDate;
+        protected global::System.Web.UI.WebControls.Repeater rptAmenities;
 
         /// <summary>
-        /// txtStartTime control.
+        /// pnlNoAmenities control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtStartTime;
+        protected global::System.Web.UI.WebControls.Panel pnlNoAmenities;
 
         /// <summary>
-        /// txtEndDate control.
+        /// lblAddress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEndDate;
+        protected global::System.Web.UI.WebControls.Label lblAddress;
 
         /// <summary>
-        /// txtEndTime control.
+        /// litMap control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEndTime;
-
-        /// <summary>
-        /// btnBook control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBook;
+        protected global::System.Web.UI.WebControls.Literal litMap;
 
         /// <summary>
         /// lnkReview control.
@@ -175,5 +247,59 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptReviews;
+
+        /// <summary>
+        /// lblPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPrice;
+
+        /// <summary>
+        /// ddlGuests control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlGuests;
+
+        /// <summary>
+        /// lblCap3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCap3;
+
+        /// <summary>
+        /// txtStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtStartDate;
+
+        /// <summary>
+        /// txtEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEndDate;
+
+        /// <summary>
+        /// btnBook control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBook;
     }
 }

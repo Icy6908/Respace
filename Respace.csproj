@@ -66,17 +66,20 @@
   </ItemGroup>
   <!-- Content pages -->
   <ItemGroup>
+    <Content Include="Account.aspx" />
     <Content Include="AdminApproveSpaces.aspx" />
     <Content Include="AdminReview.aspx" />
     <Content Include="BookingSuccess.aspx" />
+    <Content Include="ConfirmSpace.aspx" />
+    <Content Include="Content\site.css" />
     <Content Include="Database\01_CreateTables.sql" />
     <Content Include="Database\02_SeedData.sql" />
-    <Content Include="GuestMyBookings.aspx" />
+    <Content Include="HostBlockDates.aspx" />
     <Content Include="HostBookings.aspx" />
     <Content Include="HostCreateSpace.aspx" />
-    <Content Include="HostMySpaces.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
+    <Content Include="Membership.aspx" />
     <Content Include="Register.aspx" />
     <Content Include="Review.aspx" />
     <Content Include="Rewards.aspx" />
@@ -86,6 +89,13 @@
   </ItemGroup>
   <!-- Code-behind / designers -->
   <ItemGroup>
+    <Compile Include="Account.aspx.cs">
+      <DependentUpon>Account.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account.aspx.designer.cs">
+      <DependentUpon>Account.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AdminApproveSpaces.aspx.cs">
       <DependentUpon>AdminApproveSpaces.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -107,12 +117,19 @@
     <Compile Include="BookingSuccess.aspx.designer.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
     </Compile>
-    <Compile Include="GuestMyBookings.aspx.cs">
-      <DependentUpon>GuestMyBookings.aspx</DependentUpon>
+    <Compile Include="ConfirmSpace.aspx.cs">
+      <DependentUpon>ConfirmSpace.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="GuestMyBookings.aspx.designer.cs">
-      <DependentUpon>GuestMyBookings.aspx</DependentUpon>
+    <Compile Include="ConfirmSpace.aspx.designer.cs">
+      <DependentUpon>ConfirmSpace.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="HostBlockDates.aspx.cs">
+      <DependentUpon>HostBlockDates.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostBlockDates.aspx.designer.cs">
+      <DependentUpon>HostBlockDates.aspx</DependentUpon>
     </Compile>
     <Compile Include="HostBookings.aspx.cs">
       <DependentUpon>HostBookings.aspx</DependentUpon>
@@ -128,13 +145,6 @@
     <Compile Include="HostCreateSpace.aspx.designer.cs">
       <DependentUpon>HostCreateSpace.aspx</DependentUpon>
     </Compile>
-    <Compile Include="HostMySpaces.aspx.cs">
-      <DependentUpon>HostMySpaces.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="HostMySpaces.aspx.designer.cs">
-      <DependentUpon>HostMySpaces.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -149,6 +159,14 @@
     <Compile Include="Logout.aspx.designer.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Membership.aspx.cs">
+      <DependentUpon>Membership.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Membership.aspx.designer.cs">
+      <DependentUpon>Membership.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MembershipService.cs" />
     <Compile Include="Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -205,7 +223,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Image\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

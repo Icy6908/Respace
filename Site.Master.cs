@@ -16,9 +16,9 @@ namespace Respace
             phLogout.Visible = loggedIn;
             phLoggedIn.Visible = loggedIn;
 
-            phGuest.Visible = loggedIn && role == "Guest";
-            phHost.Visible = loggedIn && role == "Host";
             phAdmin.Visible = loggedIn && role == "Admin";
+            phHostNav.Visible = loggedIn && role == "Host";
+            phGuestNav.Visible = loggedIn && role == "Guest";
 
             lblUser.Text = loggedIn ? ("Hi, " + name + " (" + role + ")") : "";
         }

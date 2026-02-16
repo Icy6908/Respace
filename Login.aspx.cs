@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 using Respace.App_Code;
 
 namespace Respace
@@ -10,11 +11,20 @@ namespace Respace
         protected void btnLogin_Click(object sender, EventArgs e)
         {
             var email = txtEmail.Text.Trim().ToLower();
-            var hash = Security.Sha256(txtPassword.Text);
+            var pw = txtPassword.Text;
 
-            DataTable dt = Db.Query(@"SELECT UserId, FullName, Role, PointsBalance
-                                      FROM Users
-                                      WHERE Email=@Email AND PasswordHash=@Hash",
+            if (!Regex.IsMatch(email, @"^[^\s@]+@[^\s@]+\.[^\s@]+$") || string.IsNullOrWhiteSpace(pw) || pw.Length < 8)
+            {
+                lblMsg.Text = "Please enter a valid email and a password (8+ characters).";
+                return;
+            }
+
+            var hash = Security.Sha256(pw);
+
+            DataTable dt = Db.Query(@"
+                SELECT UserId, FullName, Role, PointsBalance
+                FROM Users
+                WHERE Email=@Email AND PasswordHash=@Hash",
                 new SqlParameter("@Email", email),
                 new SqlParameter("@Hash", hash));
 
@@ -30,9 +40,14 @@ namespace Respace
             Session["PointsBalance"] = dt.Rows[0]["PointsBalance"];
 
             var role = Session["Role"].ToString();
-            if (role == "Admin") Response.Redirect("AdminApproveSpaces.aspx");
-            else if (role == "Host") Response.Redirect("HostMySpaces.aspx");
-            else Response.Redirect("Search.aspx");
+
+            if (role == "Admin")
+            {
+                Response.Redirect("AdminApproveSpaces.aspx");
+                return;
+            }
+
+            Response.Redirect("Search.aspx");
         }
     }
 }

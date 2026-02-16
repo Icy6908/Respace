@@ -20,7 +20,9 @@ namespace Respace.App_Code
             using (var cmd = new SqlCommand(sql, con))
             using (var da = new SqlDataAdapter(cmd))
             {
-                if (p != null) cmd.Parameters.AddRange(p);
+                if (p != null && p.Length > 0)
+                    cmd.Parameters.AddRange(p);
+
                 var dt = new DataTable();
                 da.Fill(dt);
                 return dt;
@@ -32,7 +34,9 @@ namespace Respace.App_Code
             using (var con = new SqlConnection(ConnStr))
             using (var cmd = new SqlCommand(sql, con))
             {
-                if (p != null) cmd.Parameters.AddRange(p);
+                if (p != null && p.Length > 0)
+                    cmd.Parameters.AddRange(p);
+
                 con.Open();
                 return cmd.ExecuteNonQuery();
             }
@@ -43,7 +47,9 @@ namespace Respace.App_Code
             using (var con = new SqlConnection(ConnStr))
             using (var cmd = new SqlCommand(sql, con))
             {
-                if (p != null) cmd.Parameters.AddRange(p);
+                if (p != null && p.Length > 0)
+                    cmd.Parameters.AddRange(p);
+
                 con.Open();
                 return cmd.ExecuteScalar();
             }
