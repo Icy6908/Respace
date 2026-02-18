@@ -70,21 +70,25 @@
     <Content Include="AdminApproveSpaces.aspx" />
     <Content Include="AdminReview.aspx" />
     <Content Include="BookingSuccess.aspx" />
+    <Content Include="Checkout.aspx" />
     <Content Include="ConfirmSpace.aspx" />
     <Content Include="Content\site.css" />
     <Content Include="Database\01_CreateTables.sql" />
     <Content Include="Database\02_SeedData.sql" />
+    <Content Include="Global.asax" />
     <Content Include="HostBlockDates.aspx" />
     <Content Include="HostBookings.aspx" />
     <Content Include="HostCreateSpace.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="Membership.aspx" />
+    <Content Include="Payment.aspx" />
     <Content Include="Register.aspx" />
     <Content Include="Review.aspx" />
     <Content Include="Rewards.aspx" />
     <Content Include="Search.aspx" />
     <Content Include="SpaceDetails.aspx" />
+    <Content Include="sql\CreatePointsTransactions.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <!-- Code-behind / designers -->
@@ -117,12 +121,22 @@
     <Compile Include="BookingSuccess.aspx.designer.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Checkout.aspx.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Checkout.aspx.designer.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ConfirmSpace.aspx.cs">
       <DependentUpon>ConfirmSpace.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ConfirmSpace.aspx.designer.cs">
       <DependentUpon>ConfirmSpace.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="HostBlockDates.aspx.cs">
       <DependentUpon>HostBlockDates.aspx</DependentUpon>
@@ -167,6 +181,13 @@
       <DependentUpon>Membership.aspx</DependentUpon>
     </Compile>
     <Compile Include="MembershipService.cs" />
+    <Compile Include="Payment.aspx.cs">
+      <DependentUpon>Payment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Payment.aspx.designer.cs">
+      <DependentUpon>Payment.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

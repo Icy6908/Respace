@@ -320,8 +320,20 @@ namespace Respace
         // Keep your existing btnBook_Click as-is (or paste your booking method here)
         protected void btnBook_Click(object sender, EventArgs e)
         {
-            // Your booking code stays here (same as what youx had working).
-            // If you want, paste your current btnBook_Click and I'll merge it into this final file.
+            string spaceId = Request.QueryString["id"];
+            string start = hfStart.Value;
+            string end = hfEnd.Value;
+            string guests = ddlGuests.SelectedValue;
+
+            if (string.IsNullOrEmpty(start) || string.IsNullOrEmpty(end))
+            {
+                lblMsg.Text = "Please select a date range.";
+                lblMsg.CssClass = "alert error";
+                return;
+            }
+
+            // Redirect to Checkout with details in QueryString
+            Response.Redirect($"Checkout.aspx?id={spaceId}&start={start}&end={end}&guests={guests}");
         }
 
         private string JoinNonEmpty(params object[] parts)
@@ -336,6 +348,9 @@ namespace Respace
             return string.Join(", ", list);
         }
 
+        protected void hfEnd_ValueChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

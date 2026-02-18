@@ -278,103 +278,109 @@ namespace Respace
         protected void gvHostBookings_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (Role != "Host") { SetActiveTab(0); return; }
-
-            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int bookingId))
-                return;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int bookingId)) return;
 
             int affected = 0;
 
             if (e.CommandName == "HostConfirmBooking")
             {
-                affected = Db.Execute(@"
-                    UPDATE b
-                    SET b.Status='Confirmed'
-                    FROM Bookings b
-                    INNER JOIN Spaces s ON s.SpaceId=b.SpaceId
-                    WHERE b.BookingId=@B
-                      AND s.HostUserId=@U
-                      AND LTRIM(RTRIM(b.Status))='Pending'
-                ",
-                new SqlParameter("@B", bookingId),
-                new SqlParameter("@U", UserId));
-
-                lblActionMsg.Text = affected > 0
-                    ? "<div class='alert success'>Booking confirmed.</div>"
-                    : "<div class='alert error'>Confirm failed (not Pending anymore).</div>";
+                affected = Db.Execute(@"UPDATE b SET b.Status='Confirmed' FROM Bookings b 
+                                INNER JOIN Spaces s ON s.SpaceId=b.SpaceId 
+                                WHERE b.BookingId=@B AND s.HostUserId=@U AND b.Status='Pending'",
+                                        new SqlParameter("@B", bookingId), new SqlParameter("@U", UserId));
             }
-            else if (e.CommandName == "HostRejectBooking")
+            else if (e.CommandName == "HostRejectBooking" || e.CommandName == "HostCancelBooking")
             {
-                affected = Db.Execute(@"
-                    UPDATE b
-                    SET b.Status='Cancelled'
-                    FROM Bookings b
-                    INNER JOIN Spaces s ON s.SpaceId=b.SpaceId
-                    WHERE b.BookingId=@B
-                      AND s.HostUserId=@U
-                      AND LTRIM(RTRIM(b.Status))='Pending'
-                ",
-                new SqlParameter("@B", bookingId),
-                new SqlParameter("@U", UserId));
+                affected = Db.Execute(@"UPDATE b SET b.Status='Cancelled' FROM Bookings b 
+                                INNER JOIN Spaces s ON s.SpaceId=b.SpaceId 
+                                WHERE b.BookingId=@B AND s.HostUserId=@U",
+                                        new SqlParameter("@B", bookingId), new SqlParameter("@U", UserId));
 
-                lblActionMsg.Text = affected > 0
-                    ? "<div class='alert success'>Booking rejected.</div>"
-                    : "<div class='alert error'>Reject failed.</div>";
+                if (affected > 0) RefundPoints(bookingId);
             }
-            else if (e.CommandName == "HostCancelBooking")
+
+            if (affected > 0)
             {
-                affected = Db.Execute(@"
-                    UPDATE b
-                    SET b.Status='Cancelled'
-                    FROM Bookings b
-                    INNER JOIN Spaces s ON s.SpaceId=b.SpaceId
-                    WHERE b.BookingId=@B
-                      AND s.HostUserId=@U
-                      AND LTRIM(RTRIM(b.Status)) <> 'Cancelled'
-                      AND b.StartDateTime > GETDATE()
-                ",
-                new SqlParameter("@B", bookingId),
-                new SqlParameter("@U", UserId));
-
-                lblActionMsg.Text = affected > 0
-                    ? "<div class='alert success'>Booking cancelled.</div>"
-                    : "<div class='alert error'>Cancel failed (maybe already started).</div>";
+                lblActionMsg.Text = "<div class='alert success'>Action successful. Points updated if applicable.</div>";
+                LoadUserHeader(Role == "Guest");
+                LoadSummary(Role == "Guest", Role == "Host");
+                SetActiveTab(2);
             }
-
-            ApplyRoleUI();
-            LoadUserHeader(false);
-            LoadSummary(false, true);
-            SetActiveTab(2);
         }
 
         // GUEST: Cancel pending booking
         protected void gvBookings_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            // Security: Only guests can use this grid
             if (Role != "Guest") { SetActiveTab(0); return; }
-
             if (e.CommandName != "GuestCancel") return;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int bookingId)) return;
 
-            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int bookingId))
-                return;
+            int affected = Db.Execute(@"UPDATE Bookings SET Status='Cancelled' 
+                                WHERE BookingId=@B AND GuestUserId=@U AND Status='Pending'",
+                                        new SqlParameter("@B", bookingId), new SqlParameter("@U", UserId));
 
-            int affected = Db.Execute(@"
-                UPDATE Bookings
-                SET Status='Cancelled'
-                WHERE BookingId=@B
-                  AND GuestUserId=@U
-                  AND LTRIM(RTRIM(Status))='Pending'
-                  AND StartDateTime > GETDATE()
-            ",
-            new SqlParameter("@B", bookingId),
-            new SqlParameter("@U", UserId));
+            if (affected > 0)
+            {
+                RefundPoints(bookingId);
+                lblActionMsg.Text = "<div class='alert success'>Booking cancelled and points deducted.</div>";
 
-            lblActionMsg.Text = affected > 0
-                ? "<div class='alert success'>Booking cancelled.</div>"
-                : "<div class='alert error'>Cancel failed (maybe confirmed/started).</div>";
+                // Refresh UI
+                LoadUserHeader(true);
+                LoadSummary(true, false);
+                SetActiveTab(1);
+            }
+        }
+        protected void btnCancelMembership_Click(object sender, EventArgs e)
+        {
+            // 1. Get the current logged-in user
+            int userId = Convert.ToInt32(Session["UserId"]);
 
-            ApplyRoleUI();
-            LoadUserHeader(true);
-            LoadSummary(true, false);
-            SetActiveTab(1);
+            // 2. Use your service to force the user back to Plan 1 (Free)
+            // This deactivates the current Plus/Pro plan and sets them to Free.
+            MembershipService.ActivatePlan(userId, 1, false);
+
+            // 3. Redirect to refresh the UI and show the change
+            Response.Redirect("Account.aspx?msg=Your subscription has been cancelled.");
+        }
+
+        protected void gvHostBookings_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RefundPoints(int bookingId)
+        {
+            DataTable dt = Db.Query(@"
+        SELECT b.GuestUserId, b.TotalPrice, LTRIM(RTRIM(p.PlanName)) as PlanName
+        FROM Bookings b
+        LEFT JOIN UserMemberships um ON b.GuestUserId = um.UserId AND um.IsActive = 1
+        LEFT JOIN MembershipPlans p ON um.PlanId = p.PlanId
+        WHERE b.BookingId = @Bid", new SqlParameter("@Bid", bookingId));
+
+            if (dt.Rows.Count > 0)
+            {
+                DataRow row = dt.Rows[0];
+                int guestUserId = Convert.ToInt32(row["GuestUserId"]);
+                decimal total = Convert.ToDecimal(row["TotalPrice"]);
+                string plan = row["PlanName"].ToString();
+
+                // Determine multiplier to match what was given at checkout
+                double multiplier = 1.0;
+                if (plan == "Plus") multiplier = 1.5;
+                else if (plan == "Pro") multiplier = 2.0;
+
+                int pointsToDeduct = (int)Math.Floor((double)total * multiplier);
+
+                // Update database: Deduct points but stop at 0 (don't allow negative points)
+                Db.Execute(@"UPDATE Users 
+                     SET PointsBalance = CASE 
+                        WHEN ISNULL(PointsBalance, 0) >= @P THEN PointsBalance - @P 
+                        ELSE 0 END 
+                     WHERE UserId = @Uid",
+                             new SqlParameter("@P", pointsToDeduct),
+                             new SqlParameter("@Uid", guestUserId));
+            }
         }
     }
 }

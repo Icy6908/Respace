@@ -33,12 +33,21 @@
                 </asp:PlaceHolder>
 
                 <asp:PlaceHolder ID="phMembershipUI" runat="server" Visible="false">
-                    <div class="stat">
-                        <div class="stat__label">Membership</div>
-                        <div class="stat__value"><asp:Label ID="lblMembership" runat="server" /></div>
-                    </div>
-                    <a class="btn btn-primary" href="Membership.aspx">Manage Membership</a>
-                </asp:PlaceHolder>
+    <div class="stat">
+        <div class="stat__label">Membership</div>
+        <div class="stat__value">
+            <asp:Label ID="lblMembership" runat="server" />
+        </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:10px;">
+        <a class="btn btn-primary" href="Membership.aspx">Upgrade</a>
+        <asp:LinkButton ID="btnCancelMembership" runat="server" 
+            CssClass="btn btn-outline danger" 
+            OnClick="btnCancelMembership_Click" 
+            OnClientClick="return confirm('Are you sure you want to cancel your paid plan and return to Free?');"
+            Text="Cancel Plan" />
+    </div>
+</asp:PlaceHolder>
             </div>
         </div>
 
@@ -202,7 +211,7 @@
                         CssClass="table"
                         GridLines="None"
                         DataKeyNames="BookingId"
-                        OnRowCommand="gvHostBookings_RowCommand">
+                        OnRowCommand="gvHostBookings_RowCommand" OnSelectedIndexChanged="gvHostBookings_SelectedIndexChanged">
                         <Columns>
                             <asp:BoundField DataField="BookingId" HeaderText="Booking ID" />
                             <asp:BoundField DataField="SpaceName" HeaderText="Space" />

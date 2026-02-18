@@ -102,7 +102,7 @@
 
             <!-- Postback-safe selected dates -->
             <asp:HiddenField ID="hfStart" runat="server" />
-            <asp:HiddenField ID="hfEnd" runat="server" />
+            <asp:HiddenField ID="hfEnd" runat="server" OnValueChanged="hfEnd_ValueChanged" />
 
             <asp:Panel ID="pnlDetails" runat="server" Visible="false">
 
