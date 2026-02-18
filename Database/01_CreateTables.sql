@@ -163,3 +163,14 @@ CREATE TABLE [dbo].[Users] (
     UNIQUE NONCLUSTERED ([Email] ASC)
 );
 
+CREATE TABLE [dbo].[UserCoupons] (
+    [UserCouponId]   INT             IDENTITY (1, 1) NOT NULL,
+    [UserId]         INT             NULL,
+    [CouponCode]     VARCHAR (50)    NULL,
+    [DiscountAmount] DECIMAL (18, 2) NULL,
+    [IsUsed]         BIT             DEFAULT ((0)) NULL,
+    [RedeemedAt]     DATETIME        DEFAULT (getdate()) NULL,
+    PRIMARY KEY CLUSTERED ([UserCouponId] ASC),
+    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId])
+);
+

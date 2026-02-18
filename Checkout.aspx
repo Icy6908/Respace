@@ -15,16 +15,34 @@
                     </div>
 
                     <div class="card section">
-                        <h3 class="h3">Discount Code</h3>
-                        <div style="display:flex; gap:10px;">
-                            <asp:TextBox ID="txtCoupon" runat="server" CssClass="input" placeholder="Enter coupon code" />
-                            <asp:Button ID="btnApplyCoupon" runat="server" Text="Apply" CssClass="btn btn-outline" OnClick="btnApplyCoupon_Click" />
-                        </div>
-                        <asp:Label ID="lblCouponMsg" runat="server" CssClass="small" style="display:block; margin-top:5px;" />
-                    </div>
+    <h3 class="h3">Coupons & Rewards</h3>
+    
+    <div class="reward-group" style="margin-bottom: 20px;">
+        <label><strong>Redeem Coupon:</strong></label>
+        <asp:DropDownList ID="ddlUserCoupons" runat="server" CssClass="form-control" 
+            AutoPostBack="true" OnSelectedIndexChanged="ddlUserCoupons_SelectedIndexChanged">
+            <asp:ListItem Text="Apply coupon" Value="0" />
+        </asp:DropDownList>
+        <asp:Label ID="lblPointsReminder" runat="server" Visible="false" 
+            Text="💡 You have enough points to redeem a new coupon! Go to Rewards page." 
+            Style="font-size: 0.8em; color: #007bff; display:block; margin-top:5px;" />
+    </div>
+
+    <hr />
+
+    <div class="manual-coupon-group" style="margin-top: 15px;">
+        <label><strong>Have a promo code?</strong></label>
+        <div style="display:flex; gap: 10px;">
+            <asp:TextBox ID="txtCoupon" runat="server" placeholder="Enter code (e.g. SAVE5)" CssClass="form-control" style="flex:1;"></asp:TextBox>
+            <asp:Button ID="btnApplyCoupon" runat="server" Text="Apply" OnClick="btnApplyCoupon_Click" CssClass="btn btn-secondary" />
+        </div>
+        <asp:Label ID="lblCouponMsg" runat="server" Style="display:block; margin-top:5px; font-size:0.9rem;"></asp:Label>
+    </div>
+</div>
                 </div>
 
                 <aside class="listing__right">
+                    <asp:Label ID="lblMsg" runat="server" Text="" EnableViewState="false"></asp:Label>
                     <div class="card">
                         <h3 class="h3">Price Details</h3>
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px;">

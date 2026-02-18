@@ -3,6 +3,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace Respace
 {
@@ -45,6 +46,28 @@ namespace Respace
 
                 // Initial call to set the reason text
                 ScriptManager.RegisterStartupScript(this, GetType(), "initPoints", "updatePointsDisplay();", true);
+            }
+
+            if (!IsPostBack)
+            {
+                int userId = Convert.ToInt32(Session["UserId"]);
+
+                // Load coupons they OWN but haven't used
+                DataTable dt = Db.Query("SELECT UserCouponId, CouponCode, DiscountAmount FROM UserCoupons WHERE UserId=@U AND IsUsed=0",
+                    new SqlParameter("@U", userId));
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    string text = $"{row["CouponCode"]} (${row["DiscountAmount"]} Off)";
+                    ddlUserCoupons.Items.Add(new ListItem(text, row["DiscountAmount"].ToString()));
+                }
+
+                // Optional: Reminder if they have high points but no coupons
+                object points = Db.Scalar("SELECT PointsBalance FROM Users WHERE UserId=@U", new SqlParameter("@U", userId));
+                if (Convert.ToInt32(points) >= 500 && dt.Rows.Count == 0)
+                {
+                    lblPointsReminder.Visible = true;
+                }
             }
         }
 
@@ -113,56 +136,83 @@ namespace Respace
 
         protected void btnFinalize_Click(object sender, EventArgs e)
         {
-            int guestId = Convert.ToInt32(Session["UserId"]);
-            int spaceId = Convert.ToInt32(Request.QueryString["id"]);
-            DateTime start = DateTime.Parse(Request.QueryString["start"]);
-            DateTime end = DateTime.Parse(Request.QueryString["end"]);
-            decimal total = decimal.Parse(lblTotal.Text, System.Globalization.NumberStyles.Currency);
+            // 1. Get User and Space details
+            int userId = Convert.ToInt32(Session["UserId"]);
+            // Using "id" to match your previous logic, or "SpaceId" based on your preference
+            string spaceId = Request.QueryString["id"] ?? Request.QueryString["SpaceId"];
+            decimal finalTotal = decimal.Parse(lblTotal.Text);
 
-            // --- STEP 1: Determine Points Multiplier based on Membership ---
-            double multiplier = 1.0; // Default for "Free"
-
-            // Check for an active paid membership
-            object planNameObj = Db.Scalar(@"
-        SELECT TOP 1 p.PlanName
-        FROM UserMemberships um
-        INNER JOIN MembershipPlans p ON p.PlanId = um.PlanId
-        WHERE um.UserId = @Uid AND um.IsActive = 1
-        ORDER BY um.StartDate DESC", new SqlParameter("@Uid", guestId));
-
-            if (planNameObj != null)
+            // 2. Calculate points (using your hidden field multiplier)
+            decimal multiplier = 1.0m;
+            if (hfMultiplier != null && !string.IsNullOrEmpty(hfMultiplier.Value))
             {
-                string planName = planNameObj.ToString();
-                if (planName == "Plus") multiplier = 1.5;
-                else if (planName == "Pro") multiplier = 2.0;
+                decimal.TryParse(hfMultiplier.Value, out multiplier);
+            }
+            int pointsToEarn = (int)Math.Floor(finalTotal * multiplier);
+
+            try
+            {
+                // 3. Save the Booking with 'Unpaid' status
+                // We use SCOPE_IDENTITY to get the new ID for the payment page
+                object bookingIdObj = Db.Scalar(@"
+            INSERT INTO Bookings (GuestUserId, SpaceId, TotalPrice, Status, CreatedAt, StartDateTime, EndDateTime) 
+            VALUES (@U, @S, @Amt, 'Unpaid', GETDATE(), @Start, @End);
+            SELECT SCOPE_IDENTITY();",
+                    new SqlParameter("@U", userId),
+                    new SqlParameter("@S", spaceId),
+                    new SqlParameter("@Amt", finalTotal),
+                    new SqlParameter("@Start", Request.QueryString["start"]),
+                    new SqlParameter("@End", Request.QueryString["end"]));
+
+                // 4. Redirect to Payment Page
+                // Matches your Payment.aspx.cs which looks for "bid" and "amt"
+                Response.Redirect($"Payment.aspx?bid={bookingIdObj}&amt={finalTotal}");
+            }
+            catch (Exception)
+            {
+                // Warning fixed: removed the 'ex' variable name since it wasn't being used
+                lblMsg.Text = "There was an error processing your booking. Please try again.";
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+        protected void ddlUserCoupons_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 1. Always start with the original Base Price
+            decimal subtotal = decimal.Parse(lblSubtotal.Text);
+
+            // 2. Get the Membership Discount (if visible)
+            decimal memberDiscount = 0;
+            if (phMemberDiscount.Visible)
+            {
+                // Use TryParse to prevent crashing if the label is empty
+                decimal.TryParse(lblMemberDiscount.Text, out memberDiscount);
             }
 
-            // --- STEP 2: Calculate Points ---
-            int pointsEarned = (int)Math.Floor((double)total * multiplier);
+            // 3. Get the Reward Coupon Discount from the DropDown
+            decimal rewardDiscount = 0;
+            if (ddlUserCoupons.SelectedValue != "0")
+            {
+                rewardDiscount = decimal.Parse(ddlUserCoupons.SelectedValue);
 
-            // --- STEP 3: Insert Booking ---
-            string bookingSql = @"INSERT INTO Bookings 
-                         (SpaceId, GuestUserId, StartDateTime, EndDateTime, TotalPrice, Status, CreatedAt) 
-                         VALUES (@Sid, @Guid, @Start, @End, @Total, 'Pending', GETDATE())";
+                // Visual feedback: Show the coupon row in the Price Details sidebar
+                phCouponDiscount.Visible = true;
+                lblCouponAmt.Text = rewardDiscount.ToString("0.00");
+            }
+            else
+            {
+                // If they switch back to "Apply coupon", hide the discount row
+                phCouponDiscount.Visible = false;
+                lblCouponAmt.Text = "0.00";
+            }
 
-            Db.Execute(bookingSql,
-                new SqlParameter("@Sid", spaceId),
-                new SqlParameter("@Guid", guestId),
-                new SqlParameter("@Start", start),
-                new SqlParameter("@End", end),
-                new SqlParameter("@Total", total));
+            // 4. Final Calculation: Total = Base - Membership - Reward
+            decimal finalTotal = subtotal - memberDiscount - rewardDiscount;
 
-            // --- STEP 4: Update User Points Balance ---
-            string pointsSql = @"UPDATE Users 
-                         SET PointsBalance = ISNULL(PointsBalance, 0) + @Points 
-                         WHERE UserId = @Uid";
+            // 5. Update UI (Ensure it never goes below zero)
+            lblTotal.Text = (finalTotal > 0 ? finalTotal : 0).ToString("0.00");
 
-            Db.Execute(pointsSql,
-                new SqlParameter("@Points", pointsEarned),
-                new SqlParameter("@Uid", guestId));
-
-            // Redirect to success
-            Response.Redirect($"BookingSuccess.aspx?points={pointsEarned}&mult={multiplier}");
+            // 6. IMPORTANT: Tell JavaScript to update the "Points you'll earn" box
+            ScriptManager.RegisterStartupScript(this, GetType(), "updatePoints", "updatePointsDisplay();", true);
         }
     }
 }

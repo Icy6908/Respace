@@ -42,6 +42,24 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblGuests;
 
         /// <summary>
+        /// ddlUserCoupons control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlUserCoupons;
+
+        /// <summary>
+        /// lblPointsReminder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPointsReminder;
+
+        /// <summary>
         /// txtCoupon control.
         /// </summary>
         /// <remarks>
@@ -67,6 +85,15 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblCouponMsg;
+
+        /// <summary>
+        /// lblMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMsg;
 
         /// <summary>
         /// lblNights control.
