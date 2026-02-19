@@ -78,6 +78,15 @@ namespace Respace.Admin
         protected global::System.Web.UI.WebControls.Literal litCommission;
 
         /// <summary>
+        /// lblStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStatus;
+
+        /// <summary>
         /// gvFinancials control.
         /// </summary>
         /// <remarks>

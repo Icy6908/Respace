@@ -17,79 +17,189 @@ namespace Respace
                 return;
             }
 
-            if (!IsPostBack)
+            // --- INTEGRATED: Security Check for Manual URL Access ---
+            if (Session["Role"] != null && Session["Role"].ToString() == "Host")
             {
-                LoadCheckoutDetails();
-
-                int guestId = Convert.ToInt32(Session["UserId"]);
-                double multiplier = 1.0;
-                string planName = "Free";
-
-                // Fetch plan name and multiplier
-                object planNameObj = Db.Scalar(@"
-            SELECT TOP 1 p.PlanName
-            FROM UserMemberships um
-            INNER JOIN MembershipPlans p ON p.PlanId = um.PlanId
-            WHERE um.UserId = @Uid AND um.IsActive = 1
-            ORDER BY um.StartDate DESC", new SqlParameter("@Uid", guestId));
-
-                if (planNameObj != null)
-                {
-                    planName = planNameObj.ToString();
-                    if (planName == "Plus") multiplier = 1.5;
-                    else if (planName == "Pro") multiplier = 2.0;
-                }
-
-                // Send values to the HiddenFields
-                hfMultiplier.Value = multiplier.ToString();
-                hfPlanName.Value = planName;
-
-                // Initial call to set the reason text
-                ScriptManager.RegisterStartupScript(this, GetType(), "initPoints", "updatePointsDisplay();", true);
+                // Hosts are not allowed here. Redirect to Home (Search)
+                Response.Redirect("Default.aspx");
+                return;
             }
 
             if (!IsPostBack)
             {
-                int userId = Convert.ToInt32(Session["UserId"]);
+                LoadCheckoutDetails();
+                LoadUserMembershipInfo();
+                LoadAvailableCoupons();
+            }
+        }
 
-                // Load coupons they OWN but haven't used
-                DataTable dt = Db.Query("SELECT UserCouponId, CouponCode, DiscountAmount FROM UserCoupons WHERE UserId=@U AND IsUsed=0",
-                    new SqlParameter("@U", userId));
+        private void LoadUserMembershipInfo()
+        {
+            int guestId = Convert.ToInt32(Session["UserId"]);
+            double multiplier = 1.0;
+            string planName = "Free";
 
-                foreach (DataRow row in dt.Rows)
-                {
-                    string text = $"{row["CouponCode"]} (${row["DiscountAmount"]} Off)";
-                    ddlUserCoupons.Items.Add(new ListItem(text, row["DiscountAmount"].ToString()));
-                }
+            object planNameObj = Db.Scalar(@"
+                SELECT TOP 1 p.PlanName
+                FROM UserMemberships um
+                INNER JOIN MembershipPlans p ON p.PlanId = um.PlanId
+                WHERE um.UserId = @Uid AND um.IsActive = 1
+                ORDER BY um.StartDate DESC", new SqlParameter("@Uid", guestId));
 
-                // Optional: Reminder if they have high points but no coupons
-                object points = Db.Scalar("SELECT PointsBalance FROM Users WHERE UserId=@U", new SqlParameter("@U", userId));
-                if (Convert.ToInt32(points) >= 500 && dt.Rows.Count == 0)
-                {
-                    lblPointsReminder.Visible = true;
-                }
+            if (planNameObj != null)
+            {
+                planName = planNameObj.ToString();
+                if (planName == "Plus") multiplier = 1.5;
+                else if (planName == "Pro") multiplier = 2.0;
+            }
+
+            hfMultiplier.Value = multiplier.ToString();
+            hfPlanName.Value = planName;
+            ScriptManager.RegisterStartupScript(this, GetType(), "initPoints", "updatePointsDisplay();", true);
+        }
+
+        private void LoadAvailableCoupons()
+        {
+            int userId = Convert.ToInt32(Session["UserId"]);
+            DataTable dt = Db.Query("SELECT UserCouponId, CouponCode, DiscountAmount FROM UserCoupons WHERE UserId=@U AND IsUsed=0",
+                new SqlParameter("@U", userId));
+
+            ddlUserCoupons.Items.Clear();
+            ddlUserCoupons.Items.Add(new ListItem("Select a redeemed voucher", "0"));
+
+            foreach (DataRow row in dt.Rows)
+            {
+                string text = $"{row["CouponCode"]} (${row["DiscountAmount"]} Off)";
+                ddlUserCoupons.Items.Add(new ListItem(text, row["DiscountAmount"].ToString()));
+            }
+
+            object points = Db.Scalar("SELECT PointsBalance FROM Users WHERE UserId=@U", new SqlParameter("@U", userId));
+            if (Convert.ToInt32(points) >= 500 && dt.Rows.Count == 0)
+            {
+                lblPointsReminder.Visible = true;
             }
         }
 
         protected void btnApplyCoupon_Click(object sender, EventArgs e)
         {
-            if (txtCoupon.Text.Trim().ToUpper() == "SAVE5")
+            string inputCode = txtCoupon.Text.Trim().ToUpper();
+            decimal discount = 0;
+
+            if (inputCode == "SAVE5")
+            {
+                discount = 5.00m;
+            }
+            else
+            {
+                object dbDiscount = Db.Scalar("SELECT DiscountAmount FROM UserCoupons WHERE CouponCode = @Code AND UserId = @UId AND IsUsed = 0",
+                    new SqlParameter("@Code", inputCode),
+                    new SqlParameter("@UId", Session["UserId"]));
+
+                if (dbDiscount != null) discount = Convert.ToDecimal(dbDiscount);
+            }
+
+            if (discount > 0)
             {
                 phCouponDiscount.Visible = true;
-                lblCouponAmt.Text = "5.00";
-
-                decimal currentTotal = decimal.Parse(lblTotal.Text);
-                lblTotal.Text = (currentTotal - 5.00m).ToString("0.00");
-
+                lblCouponAmt.Text = discount.ToString("0.00");
+                decimal subtotal = decimal.Parse(lblSubtotal.Text);
+                decimal memberDiscount = phMemberDiscount.Visible ? decimal.Parse(lblMemberDiscount.Text) : 0;
+                lblTotal.Text = (subtotal - memberDiscount - discount).ToString("0.00");
                 lblCouponMsg.Text = "Coupon applied!";
                 lblCouponMsg.ForeColor = System.Drawing.Color.Green;
                 btnApplyCoupon.Enabled = false;
-
-                // IMPORTANT: Tell JavaScript to update points after the total changes
+                ViewState["AppliedCouponCode"] = inputCode;
                 ScriptManager.RegisterStartupScript(this, GetType(), "updatePoints", "updatePointsDisplay();", true);
             }
-            else { /* ... invalid logic ... */ }
+            else
+            {
+                lblCouponMsg.Text = "Invalid or used coupon code.";
+                lblCouponMsg.ForeColor = System.Drawing.Color.Red;
+            }
         }
+
+        protected void ddlUserCoupons_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            decimal subtotal = decimal.Parse(lblSubtotal.Text);
+            decimal memberDiscount = phMemberDiscount.Visible ? decimal.Parse(lblMemberDiscount.Text) : 0;
+            decimal rewardDiscount = 0;
+
+            if (ddlUserCoupons.SelectedValue != "0")
+            {
+                rewardDiscount = decimal.Parse(ddlUserCoupons.SelectedValue);
+                phCouponDiscount.Visible = true;
+                lblCouponAmt.Text = rewardDiscount.ToString("0.00");
+                ViewState["AppliedCouponCode"] = ddlUserCoupons.SelectedItem.Text.Split(' ')[0];
+            }
+            else
+            {
+                phCouponDiscount.Visible = false;
+                lblCouponAmt.Text = "0.00";
+                ViewState["AppliedCouponCode"] = null;
+            }
+
+            decimal finalTotal = subtotal - memberDiscount - rewardDiscount;
+            lblTotal.Text = (finalTotal > 0 ? finalTotal : 0).ToString("0.00");
+            ScriptManager.RegisterStartupScript(this, GetType(), "updatePoints", "updatePointsDisplay();", true);
+        }
+
+        protected void btnFinalize_Click(object sender, EventArgs e)
+        {
+            // Fail-safe role check
+            if (Session["Role"] != null && Session["Role"].ToString() == "Host") return;
+
+            int userId = Convert.ToInt32(Session["UserId"]);
+            string spaceId = Request.QueryString["id"] ?? Request.QueryString["SpaceId"];
+            decimal finalTotal = decimal.Parse(lblTotal.Text);
+
+            try
+            {
+                object bookingIdObj = Db.Scalar(@"
+                    INSERT INTO Bookings (GuestUserId, SpaceId, TotalPrice, Status, CreatedAt, StartDateTime, EndDateTime) 
+                    VALUES (@U, @S, @Amt, 'Unpaid', GETDATE(), @Start, @End);
+                    SELECT SCOPE_IDENTITY();",
+                    new SqlParameter("@U", userId),
+                    new SqlParameter("@S", spaceId),
+                    new SqlParameter("@Amt", finalTotal),
+                    new SqlParameter("@Start", Request.QueryString["start"]),
+                    new SqlParameter("@End", Request.QueryString["end"]));
+
+                if (bookingIdObj != null)
+                {
+                    if (ViewState["AppliedCouponCode"] != null)
+                    {
+                        string appliedCode = ViewState["AppliedCouponCode"].ToString();
+                        Db.Query("UPDATE UserCoupons SET IsUsed = 1 WHERE CouponCode = @Code AND UserId = @UId",
+                            new SqlParameter("@Code", appliedCode),
+                            new SqlParameter("@UId", userId));
+                    }
+
+                    InitializeGuestHostChat(bookingIdObj.ToString(), userId.ToString(), spaceId);
+                    Response.Redirect($"Payment.aspx?bid={bookingIdObj}&amt={finalTotal}");
+                }
+            }
+            catch (Exception)
+            {
+                lblMsg.Text = "There was an error processing your booking.";
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+
+        private void InitializeGuestHostChat(string bookingId, string guestId, string spaceId)
+        {
+            DataTable dtSpace = Db.Query("SELECT HostUserId FROM Spaces WHERE SpaceId = @sid", new SqlParameter("@sid", spaceId));
+            if (dtSpace.Rows.Count > 0)
+            {
+                string hostId = dtSpace.Rows[0]["HostUserId"].ToString();
+                string welcomeMsg = "System: Booking initiated. You can now coordinate your stay here!";
+                string msgSql = @"INSERT INTO Messages (SenderID, ReceiverID, BookingID, MessageText, Timestamp, IsRead) 
+                                  VALUES (@sender, @receiver, @bid, @txt, GETDATE(), 0)";
+
+                Db.Query(msgSql, new SqlParameter("@sender", guestId), new SqlParameter("@receiver", hostId),
+                                 new SqlParameter("@bid", bookingId), new SqlParameter("@txt", welcomeMsg));
+            }
+        }
+
         private void LoadCheckoutDetails()
         {
             int spaceId = Convert.ToInt32(Request.QueryString["id"]);
@@ -97,27 +207,23 @@ namespace Respace
             DateTime end = DateTime.Parse(Request.QueryString["end"]);
             int guests = Convert.ToInt32(Request.QueryString["guests"]);
 
-            // 1. Fetch Space Info
             DataTable dt = Db.Query("SELECT Name, PricePerHour FROM Spaces WHERE SpaceId=@Id", new SqlParameter("@Id", spaceId));
             if (dt.Rows.Count == 0) return;
 
             decimal dailyRate = Convert.ToDecimal(dt.Rows[0]["PricePerHour"]);
             int nights = (end - start).Days;
-            if (nights <= 0) nights = 1; // Safety for same-day bookings
+            if (nights <= 0) nights = 1;
             decimal subtotal = dailyRate * nights;
 
-            // 2. Fetch Membership Discount
             int userId = Convert.ToInt32(Session["UserId"]);
-            // Assuming you have a MembershipService or similar helper
             var membership = MembershipService.GetActiveMembership(userId);
             decimal discountPercent = 0;
 
-            if (membership.PlanName == "Plus") discountPercent = 0.10m; // 10%
-            else if (membership.PlanName == "Pro") discountPercent = 0.20m; // 20%
+            if (membership.PlanName == "Plus") discountPercent = 0.10m;
+            else if (membership.PlanName == "Pro") discountPercent = 0.20m;
 
             decimal memberDiscountAmt = subtotal * discountPercent;
 
-            // 3. Bind UI
             lblSpaceName.Text = dt.Rows[0]["Name"].ToString();
             lblDates.Text = $"{start:dd MMM yyyy} to {end:dd MMM yyyy}";
             lblGuests.Text = guests.ToString();
@@ -132,87 +238,6 @@ namespace Respace
             }
 
             lblTotal.Text = (subtotal - memberDiscountAmt).ToString("0.00");
-        }
-
-        protected void btnFinalize_Click(object sender, EventArgs e)
-        {
-            // 1. Get User and Space details
-            int userId = Convert.ToInt32(Session["UserId"]);
-            // Using "id" to match your previous logic, or "SpaceId" based on your preference
-            string spaceId = Request.QueryString["id"] ?? Request.QueryString["SpaceId"];
-            decimal finalTotal = decimal.Parse(lblTotal.Text);
-
-            // 2. Calculate points (using your hidden field multiplier)
-            decimal multiplier = 1.0m;
-            if (hfMultiplier != null && !string.IsNullOrEmpty(hfMultiplier.Value))
-            {
-                decimal.TryParse(hfMultiplier.Value, out multiplier);
-            }
-            int pointsToEarn = (int)Math.Floor(finalTotal * multiplier);
-
-            try
-            {
-                // 3. Save the Booking with 'Unpaid' status
-                // We use SCOPE_IDENTITY to get the new ID for the payment page
-                object bookingIdObj = Db.Scalar(@"
-            INSERT INTO Bookings (GuestUserId, SpaceId, TotalPrice, Status, CreatedAt, StartDateTime, EndDateTime) 
-            VALUES (@U, @S, @Amt, 'Unpaid', GETDATE(), @Start, @End);
-            SELECT SCOPE_IDENTITY();",
-                    new SqlParameter("@U", userId),
-                    new SqlParameter("@S", spaceId),
-                    new SqlParameter("@Amt", finalTotal),
-                    new SqlParameter("@Start", Request.QueryString["start"]),
-                    new SqlParameter("@End", Request.QueryString["end"]));
-
-                // 4. Redirect to Payment Page
-                // Matches your Payment.aspx.cs which looks for "bid" and "amt"
-                Response.Redirect($"Payment.aspx?bid={bookingIdObj}&amt={finalTotal}");
-            }
-            catch (Exception)
-            {
-                // Warning fixed: removed the 'ex' variable name since it wasn't being used
-                lblMsg.Text = "There was an error processing your booking. Please try again.";
-                lblMsg.ForeColor = System.Drawing.Color.Red;
-            }
-        }
-        protected void ddlUserCoupons_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // 1. Always start with the original Base Price
-            decimal subtotal = decimal.Parse(lblSubtotal.Text);
-
-            // 2. Get the Membership Discount (if visible)
-            decimal memberDiscount = 0;
-            if (phMemberDiscount.Visible)
-            {
-                // Use TryParse to prevent crashing if the label is empty
-                decimal.TryParse(lblMemberDiscount.Text, out memberDiscount);
-            }
-
-            // 3. Get the Reward Coupon Discount from the DropDown
-            decimal rewardDiscount = 0;
-            if (ddlUserCoupons.SelectedValue != "0")
-            {
-                rewardDiscount = decimal.Parse(ddlUserCoupons.SelectedValue);
-
-                // Visual feedback: Show the coupon row in the Price Details sidebar
-                phCouponDiscount.Visible = true;
-                lblCouponAmt.Text = rewardDiscount.ToString("0.00");
-            }
-            else
-            {
-                // If they switch back to "Apply coupon", hide the discount row
-                phCouponDiscount.Visible = false;
-                lblCouponAmt.Text = "0.00";
-            }
-
-            // 4. Final Calculation: Total = Base - Membership - Reward
-            decimal finalTotal = subtotal - memberDiscount - rewardDiscount;
-
-            // 5. Update UI (Ensure it never goes below zero)
-            lblTotal.Text = (finalTotal > 0 ? finalTotal : 0).ToString("0.00");
-
-            // 6. IMPORTANT: Tell JavaScript to update the "Points you'll earn" box
-            ScriptManager.RegisterStartupScript(this, GetType(), "updatePoints", "updatePointsDisplay();", true);
         }
     }
 }

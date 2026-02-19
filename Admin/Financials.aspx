@@ -44,7 +44,8 @@
                 <h6 class="m-0 font-weight-bold text-primary">Transaction History</h6>
             </div>
             <div class="table-responsive">
-                <asp:GridView ID="gvFinancials" runat="server" AutoGenerateColumns="False" CssClass="table table-hover align-middle mb-0" GridLines="None">
+                <asp:Label ID="lblStatus" runat="server" CssClass="ms-4 my-2 d-block"></asp:Label>
+                <asp:GridView ID="gvFinancials" runat="server" AutoGenerateColumns="False" CssClass="table table-hover align-middle mb-0" GridLines="None" OnRowCommand="gvFinancials_RowCommand">
                     <HeaderStyle CssClass="bg-light text-muted small fw-bold text-uppercase" />
                     <Columns>
                         <asp:BoundField DataField="PaymentID" HeaderText="Ref ID" ItemStyle-CssClass="ps-4" />
@@ -74,6 +75,17 @@
                                 <span class='badge <%# GetPaymentStatusClass(Eval("Status").ToString()) %>'>
                                     <%# Eval("Status") %>
                                 </span>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Action">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="btnRefund" runat="server" Text="Refund" 
+                                    CommandName="Refund" 
+                                    CommandArgument='<%# Eval("BookingId") + "|" + Eval("PaymentID") %>' 
+                                    CssClass="btn btn-sm btn-outline-danger"
+                                    OnClientClick="return confirm('Are you sure you want to refund this booking?');"
+                                    Visible='<%# Eval("Status").ToString() == "Completed" || Eval("Status").ToString() == "Success" %>'></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

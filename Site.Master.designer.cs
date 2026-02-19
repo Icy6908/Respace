@@ -96,6 +96,42 @@ namespace Respace
         protected global::System.Web.UI.WebControls.HyperLink lnkAccount;
 
         /// <summary>
+        /// lnkMessages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkMessages;
+
+        /// <summary>
+        /// lblUnreadCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUnreadCount;
+
+        /// <summary>
+        /// lnkSupport control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSupport;
+
+        /// <summary>
+        /// lblSupportBadge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblSupportBadge;
+
+        /// <summary>
         /// phGuestNav control.
         /// </summary>
         /// <remarks>
@@ -121,15 +157,6 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkMembership;
-
-        /// <summary>
-        /// lnkSupport control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkSupport;
 
         /// <summary>
         /// phHostNav control.

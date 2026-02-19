@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 using Respace.App_Code;
+using System.Text;
 
 namespace Respace.Admin
 {
@@ -13,19 +15,44 @@ namespace Respace.Admin
             if (!IsPostBack) { BindReviewGrid(); }
         }
 
+        protected void Filter_Changed(object sender, EventArgs e)
+        {
+            BindReviewGrid();
+        }
+
         private void BindReviewGrid()
         {
-            // Joining Reviews with Spaces and Users to get both Listing and Profile details
-            string query = @"
+            string selectedStar = ddlStarFilter.SelectedValue;
+            string searchText = txtSearchReview.Text.Trim();
+
+            // Core query for unapproved reviews
+            StringBuilder query = new StringBuilder(@"
                 SELECT r.*, s.Name as SpaceName, 
                        u.FullName as ReviewerName, u.Email, u.Role, u.CreatedAt as UserJoinedDate
                 FROM Reviews r
                 JOIN Spaces s ON r.SpaceId = s.SpaceId
                 JOIN Users u ON r.UserId = u.UserId
-                WHERE r.IsApproved = 0 OR r.IsApproved IS NULL
-                ORDER BY r.CreatedAt DESC";
+                WHERE (r.IsApproved = 0 OR r.IsApproved IS NULL)");
 
-            gvReviews.DataSource = Db.Query(query);
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            // 1. Star Rating Filter
+            if (selectedStar != "All")
+            {
+                query.Append(" AND r.Rating = @rating");
+                parameters.Add(new SqlParameter("@rating", selectedStar));
+            }
+
+            // 2. Text Search Filter (Space name or User email/name)
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                query.Append(" AND (s.Name LIKE @search OR u.FullName LIKE @search OR u.Email LIKE @search)");
+                parameters.Add(new SqlParameter("@search", "%" + searchText + "%"));
+            }
+
+            query.Append(" ORDER BY r.CreatedAt DESC");
+
+            gvReviews.DataSource = Db.Query(query.ToString(), parameters.ToArray());
             gvReviews.DataBind();
         }
 
@@ -42,6 +69,23 @@ namespace Respace.Admin
                 Db.Query("DELETE FROM Reviews WHERE ReviewId = @id", new SqlParameter("@id", reviewId));
             }
             BindReviewGrid();
+        }
+
+        public string DisplayBadges(object badgesObj)
+        {
+            if (badgesObj == null || badgesObj == DBNull.Value || string.IsNullOrEmpty(badgesObj.ToString()))
+                return "";
+
+            string[] badges = badgesObj.ToString().Split(',');
+            StringBuilder sb = new StringBuilder();
+            foreach (string b in badges)
+            {
+                if (!string.IsNullOrWhiteSpace(b))
+                {
+                    sb.Append($"<span class='badge-pill-respace'>{b.Trim()}</span>");
+                }
+            }
+            return sb.ToString();
         }
 
         public string GenerateStars(int rating)

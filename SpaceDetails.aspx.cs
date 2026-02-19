@@ -35,14 +35,21 @@ namespace Respace
                 return;
             }
 
-            // Always load main record so page stays consistent on postbacks
             if (!LoadSpace())
                 return;
 
-            // Always keep calendars + sections up to date
             LoadUnavailableDatesForCalendar();
             LoadPhotos();
             LoadAmenities();
+
+            // --- INTEGRATED: Host Restriction Logic ---
+            if (Session["Role"] != null && Session["Role"].ToString() == "Host")
+            {
+                btnBook.Enabled = false;
+                btnBook.Text = "Hosts Cannot Book";
+                btnBook.CssClass = "btn btn-secondary w-100 disabled"; // Visual feedback
+                lblMsg.Text = "<div class='alert info'>You are viewing this as a Host. Only Guests can book rooms.</div>";
+            }
 
             if (!IsPostBack)
             {
@@ -53,7 +60,6 @@ namespace Respace
             }
             else
             {
-                // Keep map visible on postback too
                 RenderMap();
             }
         }
@@ -143,30 +149,23 @@ namespace Respace
             SetImg(img4, urls.ElementAtOrDefault(4));
         }
 
-        // ✅ normalize "uploads/.." and "/uploads/.." into app-relative URL then ResolveUrl
         private void SetImg(System.Web.UI.WebControls.Image img, string url)
         {
             if (img == null) return;
-
             url = (url ?? "").Trim();
             if (string.IsNullOrWhiteSpace(url))
             {
                 img.Visible = false;
                 return;
             }
-
             if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
                 img.ImageUrl = url;
                 img.Visible = true;
                 return;
             }
-
-            // Stored as "uploads/..."
             if (!url.StartsWith("~") && !url.StartsWith("/"))
                 url = "~/" + url;
-
-            // Stored as "/uploads/..."
             if (url.StartsWith("/"))
                 url = "~" + url;
 
@@ -193,7 +192,6 @@ namespace Respace
             }
 
             pnlNoAmenities.Visible = false;
-
             if (!dt.Columns.Contains("IconText"))
                 dt.Columns.Add("IconText", typeof(string));
 
@@ -235,7 +233,6 @@ namespace Respace
             {
                 string q = lat.Value.ToString(CultureInfo.InvariantCulture) + "," +
                            lng.Value.ToString(CultureInfo.InvariantCulture);
-
                 string src = "https://www.google.com/maps?q=" + Uri.EscapeDataString(q) + "&output=embed";
                 litMap.Text = $"<iframe class='map-frame' loading='lazy' src='{src}'></iframe>";
                 return;
@@ -247,13 +244,11 @@ namespace Respace
                 litMap.Text = $"<iframe class='map-frame' loading='lazy' src='{src}'></iframe>";
                 return;
             }
-
             litMap.Text = "<div class='muted small'>Map not available.</div>";
         }
 
         private void LoadUnavailableDatesForCalendar()
         {
-            // bookings
             DataTable dtB = Db.Query(@"
                 SELECT StartDateTime, EndDateTime
                 FROM Bookings
@@ -271,7 +266,6 @@ namespace Respace
             }
             hfBookedDates.Value = string.Join(",", bookedDays);
 
-            // blocks
             DataTable dtBlk = Db.Query(@"
                 SELECT StartDate, EndDate
                 FROM SpaceBlocks
@@ -297,12 +291,12 @@ namespace Respace
         private void LoadApprovedReviews()
         {
             DataTable dt = Db.Query(@"
-        SELECT u.FullName AS GuestName, r.Rating, r.Comment, r.Badges, r.CreatedAt
-        FROM Reviews r
-        INNER JOIN Users u ON u.UserId = r.UserId
-        WHERE r.SpaceId=@Id AND r.IsApproved=1
-        ORDER BY r.CreatedAt DESC
-    ", new SqlParameter("@Id", SpaceId));
+                SELECT u.FullName AS GuestName, r.Rating, r.Comment, r.Badges, r.CreatedAt
+                FROM Reviews r
+                INNER JOIN Users u ON u.UserId = r.UserId
+                WHERE r.SpaceId=@Id AND r.IsApproved=1
+                ORDER BY r.CreatedAt DESC
+            ", new SqlParameter("@Id", SpaceId));
 
             dt.Columns.Add("Stars", typeof(string));
             foreach (DataRow row in dt.Rows)
@@ -317,10 +311,11 @@ namespace Respace
             rptReviews.DataBind();
         }
 
-
-        // Keep your existing btnBook_Click as-is (or paste your booking method here)
         protected void btnBook_Click(object sender, EventArgs e)
         {
+            // Fail-safe check in case button is re-enabled via Inspect Element
+            if (Session["Role"] != null && Session["Role"].ToString() == "Host") return;
+
             string spaceId = Request.QueryString["id"];
             string start = hfStart.Value;
             string end = hfEnd.Value;
@@ -332,8 +327,6 @@ namespace Respace
                 lblMsg.CssClass = "alert error";
                 return;
             }
-
-            // Redirect to Checkout with details in QueryString
             Response.Redirect($"Checkout.aspx?id={spaceId}&start={start}&end={end}&guests={guests}");
         }
 
@@ -348,39 +341,31 @@ namespace Respace
             }
             return string.Join(", ", list);
         }
+
         protected string[] GetBadgesWithEmoji(string badges)
         {
-            if (string.IsNullOrWhiteSpace(badges))
-                return new string[0];
-
+            if (string.IsNullOrWhiteSpace(badges)) return new string[0];
             var parts = badges.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
-                              .Select(x => x.Trim())
-                              .ToList();
+                              .Select(x => x.Trim()).ToList();
 
             for (int i = 0; i < parts.Count; i++)
             {
-                string b = parts[i];
-
-                switch (b)
+                switch (parts[i])
                 {
-                    case "Clean & Comfy": parts[i] = "🧼 " + b; break;
-                    case "Friendly Owner": parts[i] = "😊 " + b; break;
-                    case "Fairly Priced": parts[i] = "💸 " + b; break;
-                    case "Great Amenities": parts[i] = "✨ " + b; break;
-                    case "Good Location": parts[i] = "📍 " + b; break;
-                    case "Quiet Space": parts[i] = "🤫 " + b; break;
-                    case "Easy Check-in": parts[i] = "✅ " + b; break;
-                    case "Fast Response": parts[i] = "⚡ " + b; break;
-                    default: parts[i] = "🏷️ " + b; break;
+                    case "Clean & Comfy": parts[i] = "🧼 " + parts[i]; break;
+                    case "Friendly Owner": parts[i] = "😊 " + parts[i]; break;
+                    case "Fairly Priced": parts[i] = "💸 " + parts[i]; break;
+                    case "Great Amenities": parts[i] = "✨ " + parts[i]; break;
+                    case "Good Location": parts[i] = "📍 " + parts[i]; break;
+                    case "Quiet Space": parts[i] = "🤫 " + parts[i]; break;
+                    case "Easy Check-in": parts[i] = "✅ " + parts[i]; break;
+                    case "Fast Response": parts[i] = "⚡ " + parts[i]; break;
+                    default: parts[i] = "🏷️ " + parts[i]; break;
                 }
             }
-
             return parts.ToArray();
         }
 
-        protected void hfEnd_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
+        protected void hfEnd_ValueChanged(object sender, EventArgs e) { }
     }
 }

@@ -4,10 +4,20 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h3 mb-0 text-gray-800">User Management</h2>
-            <div class="w-25">
-                <asp:TextBox ID="txtSearchUsers" runat="server" CssClass="form-control" 
-                    Placeholder="Search users..." AutoPostBack="true" 
-                    OnTextChanged="txtSearchUsers_TextChanged"></asp:TextBox>
+            <div class="d-flex gap-2 align-items-center w-50 justify-content-end">
+                <asp:DropDownList ID="ddlRoleFilter" runat="server" CssClass="form-select form-select-sm" 
+                    AutoPostBack="true" OnSelectedIndexChanged="Filter_Changed" style="width:150px;">
+                    <asp:ListItem Text="All Roles" Value="All"></asp:ListItem>
+                    <asp:ListItem Text="Admin" Value="Admin"></asp:ListItem>
+                    <asp:ListItem Text="Host" Value="Host"></asp:ListItem>
+                    <asp:ListItem Text="Guest" Value="Guest"></asp:ListItem>
+                </asp:DropDownList>
+
+                <div style="width:250px;">
+                    <asp:TextBox ID="txtSearchUsers" runat="server" CssClass="form-control form-control-sm" 
+                        Placeholder="Search users..." AutoPostBack="true" 
+                        OnTextChanged="txtSearchUsers_TextChanged"></asp:TextBox>
+                </div>
             </div>
         </div>
 
@@ -35,7 +45,6 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Actions" ItemStyle-CssClass="text-end pe-4">
                             <ItemTemplate>
-                                <%-- UPDATED: Redirects to UserView.aspx with the ID --%>
                                 <asp:HyperLink ID="lnkView" runat="server" 
                                     NavigateUrl='<%# "UserView.aspx?id=" + Eval("UserId") %>' 
                                     CssClass="btn btn-sm btn-outline-primary me-1">

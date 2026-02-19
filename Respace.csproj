@@ -72,7 +72,9 @@
     <Content Include="Admin\AdminDashboard.aspx" />
     <Content Include="Admin\AdminViewSpace.aspx" />
     <Content Include="Admin\BookingManagement.aspx" />
+    <Content Include="Admin\CouponManager.aspx" />
     <Content Include="Admin\Financials.aspx" />
+    <Content Include="Admin\ManageCoupons.aspx" />
     <Content Include="Admin\ReviewManagement.aspx" />
     <Content Include="Admin\SpaceManagement.aspx" />
     <Content Include="Admin\SupportManagement.aspx" />
@@ -91,9 +93,11 @@
     <Content Include="HostBlockDates.aspx" />
     <Content Include="HostBookings.aspx" />
     <Content Include="HostCreateSpace.aspx" />
+    <Content Include="levin daddy please read.html" />
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="Membership.aspx" />
+    <Content Include="Message.aspx" />
     <Content Include="Payment.aspx" />
     <Content Include="Register.aspx" />
     <Content Include="ResetPassword.aspx" />
@@ -156,12 +160,26 @@
     <Compile Include="Admin\BookingManagement.aspx.designer.cs">
       <DependentUpon>BookingManagement.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\CouponManager.aspx.cs">
+      <DependentUpon>CouponManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\CouponManager.aspx.designer.cs">
+      <DependentUpon>CouponManager.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Financials.aspx.cs">
       <DependentUpon>Financials.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Admin\Financials.aspx.designer.cs">
       <DependentUpon>Financials.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageCoupons.aspx.cs">
+      <DependentUpon>ManageCoupons.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageCoupons.aspx.designer.cs">
+      <DependentUpon>ManageCoupons.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\ReviewManagement.aspx.cs">
       <DependentUpon>ReviewManagement.aspx</DependentUpon>
@@ -279,6 +297,13 @@
       <DependentUpon>Membership.aspx</DependentUpon>
     </Compile>
     <Compile Include="MembershipService.cs" />
+    <Compile Include="Message.aspx.cs">
+      <DependentUpon>Message.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Message.aspx.designer.cs">
+      <DependentUpon>Message.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Payment.aspx.cs">
       <DependentUpon>Payment.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -351,7 +376,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Site.Master" />
-    <Content Include="Admin\Admin - Copy.Master" />
     <Content Include="Admin\Admin.Master" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">

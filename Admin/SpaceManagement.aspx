@@ -1,14 +1,30 @@
 ﻿<%@ Page Title="Space Management" Language="C#" MasterPageFile="Admin.Master" AutoEventWireup="true" CodeBehind="SpaceManagement.aspx.cs" Inherits="Respace.Admin.SpaceManagement" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    
-
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h3 mb-0 text-gray-800">Space Management</h2>
-            <div class="d-flex">
+            <div class="d-flex gap-2">
+                <asp:DropDownList ID="ddlTypeFilter" runat="server" AutoPostBack="true" 
+                    OnSelectedIndexChanged="Filter_Changed" CssClass="form-select form-select-sm" style="width:160px;">
+                    <asp:ListItem Text="All Types" Value="All"></asp:ListItem>
+                    <asp:ListItem Text="Meeting Room" Value="Meeting Room"></asp:ListItem>
+                    <asp:ListItem Text="Conference Room" Value="Conference Room"></asp:ListItem>
+                    <asp:ListItem Text="Training Room" Value="Training Room"></asp:ListItem>
+                    <asp:ListItem Text="Event Hall" Value="Event Hall"></asp:ListItem>
+                    <asp:ListItem Text="Studio" Value="Studio"></asp:ListItem>
+                </asp:DropDownList>
+
+                <asp:DropDownList ID="ddlStatusFilter" runat="server" AutoPostBack="true" 
+                    OnSelectedIndexChanged="Filter_Changed" CssClass="form-select form-select-sm" style="width:130px;">
+                    <asp:ListItem Text="All Status" Value="All"></asp:ListItem>
+                    <asp:ListItem Text="Approved" Value="Approved"></asp:ListItem>
+                    <asp:ListItem Text="Pending" Value="Pending"></asp:ListItem>
+                    <asp:ListItem Text="Rejected" Value="Rejected"></asp:ListItem>
+                </asp:DropDownList>
+
                 <asp:TextBox ID="txtSearchSpace" runat="server" CssClass="form-control form-control-sm me-2" 
-                    Placeholder="Search by Space or Host..." AutoPostBack="true" OnTextChanged="txtSearchSpace_TextChanged"></asp:TextBox>
+                    Placeholder="Search by Space or Host..." AutoPostBack="true" OnTextChanged="txtSearchSpace_TextChanged" style="width:200px;"></asp:TextBox>
             </div>
         </div>
 
@@ -69,58 +85,7 @@
                         </asp:GridView>
                     </div>
                 </div>
-
-                <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content border-0 shadow">
-                            <div class="modal-header bg-light">
-                                <h5 class="modal-title fw-bold">Vetting Listing: <asp:Literal ID="litSpaceName" runat="server" /></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <h6 class="text-uppercase small fw-bold text-muted mb-3">Listing Description</h6>
-                                        <p class="text-dark"><asp:Literal ID="litDescription" runat="server" /></p>
-                                    
-                                        <h6 class="text-uppercase small fw-bold text-muted mt-4 mb-3">Property Details</h6>
-                                        <div class="bg-light p-3 rounded">
-                                            <div class="row g-2">
-                                                <div class="col-6 small"><strong>Type:</strong> <asp:Literal ID="litType" runat="server" /></div>
-                                                <div class="col-6 small"><strong>Category:</strong> <asp:Literal ID="litCategory" runat="server" /></div>
-                                                <div class="col-6 small"><strong>Capacity:</strong> <asp:Literal ID="litCapacity" runat="server" /> Guests</div>
-                                                <div class="col-6 small"><strong>Listed Price:</strong> <asp:Literal ID="litPrice" runat="server" /></div>
-                                                <div class="col-12 small mt-2"><strong>Location:</strong> <asp:Literal ID="litLocation" runat="server" /></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 border-start">
-                                        <h6 class="text-uppercase small fw-bold text-muted mb-3">Host Verification</h6>
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width:40px; height:40px;">
-                                                <i class="fas fa-user"></i>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold"><asp:Literal ID="litHostName" runat="server" /></div>
-                                                <div class="small text-muted">Verified Respace Host</div>
-                                            </div>
-                                        </div>
-                                        <div class="card bg-light border-0">
-                                            <div class="card-body p-3">
-                                                <div class="small text-muted mb-1">Total Community Reviews</div>
-                                                <div class="h4 mb-0 fw-bold text-primary"><asp:Literal ID="litReviewCount" runat="server" /></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer bg-light border-0">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Review</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ContentTemplate>
+                </ContentTemplate>
         </asp:UpdatePanel>
     </div>
 </asp:Content>

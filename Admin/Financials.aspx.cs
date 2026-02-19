@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace Respace.Admin
 {
@@ -14,7 +15,6 @@ namespace Respace.Admin
         {
             if (!IsPostBack)
             {
-                // Default to showing current month
                 txtStartDate.Text = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("yyyy-MM-dd");
                 txtEndDate.Text = DateTime.Now.ToString("yyyy-MM-dd");
                 BindFinancials();
@@ -29,8 +29,9 @@ namespace Respace.Admin
         private DataTable GetFinancialData()
         {
             List<SqlParameter> paramList = new List<SqlParameter>();
+            // Added b.BookingId to the selection for command argument usage
             string query = @"SELECT p.PaymentID, p.Amount, p.Status, p.PaymentDate, 
-                             s.Name as SpaceName, u.FullName as RenterName
+                             s.Name as SpaceName, u.FullName as RenterName, b.BookingId
                              FROM Payments p
                              JOIN Bookings b ON p.BookingId = b.BookingId
                              JOIN Spaces s ON b.SpaceId = s.SpaceId
@@ -64,7 +65,6 @@ namespace Respace.Admin
                 }
             }
 
-            // dashboard calculations
             decimal hostPayout = totalReceived * 0.90m;
             decimal commission = totalReceived * 0.10m;
 
@@ -73,12 +73,42 @@ namespace Respace.Admin
             litCommission.Text = commission.ToString("C");
         }
 
+        protected void gvFinancials_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Refund")
+            {
+                // Split the composite argument
+                string[] args = e.CommandArgument.ToString().Split('|');
+                string bookingId = args[0];
+                string paymentId = args[1];
+
+                try
+                {
+                    // Update Booking Status
+                    Db.Execute("UPDATE Bookings SET Status = 'Refunded' WHERE BookingId = @bid",
+                        new SqlParameter("@bid", bookingId));
+
+                    // Update Payment Status
+                    Db.Execute("UPDATE Payments SET Status = 'Refunded' WHERE PaymentID = @pid",
+                        new SqlParameter("@pid", paymentId));
+
+                    lblStatus.Text = "Successfully refunded Ref ID: " + paymentId;
+                    lblStatus.ForeColor = System.Drawing.Color.Green;
+
+                    BindFinancials();
+                }
+                catch (Exception ex)
+                {
+                    lblStatus.Text = "Error: " + ex.Message;
+                    lblStatus.ForeColor = System.Drawing.Color.Red;
+                }
+            }
+        }
+
         protected void btnExport_Click(object sender, EventArgs e)
         {
             DataTable dt = GetFinancialData();
             StringBuilder sb = new StringBuilder();
-
-            // CSV Header
             sb.AppendLine("Ref ID,Space,Paid By,Date,Total Paid,Host Payout (90%),Commission (10%),Status");
 
             foreach (DataRow row in dt.Rows)
@@ -114,6 +144,7 @@ namespace Respace.Admin
                 case "Success": return "bg-success";
                 case "Pending": return "bg-warning text-dark";
                 case "Failed": return "bg-danger";
+                case "Refunded": return "bg-danger text-white"; // Red for refunded
                 default: return "bg-secondary";
             }
         }

@@ -33,13 +33,13 @@ namespace Respace
         protected global::System.Web.UI.WebControls.Label lblMsg;
 
         /// <summary>
-        /// gvTransactions control.
+        /// rptVoucherShop control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvTransactions;
+        protected global::System.Web.UI.WebControls.Repeater rptVoucherShop;
 
         /// <summary>
         /// gvAvailableVouchers control.
@@ -51,21 +51,12 @@ namespace Respace
         protected global::System.Web.UI.WebControls.GridView gvAvailableVouchers;
 
         /// <summary>
-        /// gvUsedVouchers control.
+        /// gvTransactions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvUsedVouchers;
-
-        /// <summary>
-        /// rptVoucherShop control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptVoucherShop;
+        protected global::System.Web.UI.WebControls.GridView gvTransactions;
     }
 }
