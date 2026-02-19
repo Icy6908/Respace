@@ -31,6 +31,11 @@
                     <asp:TextBox ID="txtPassword" runat="server" CssClass="input" TextMode="Password" placeholder="••••••••" />
                 </div>
 
+                <!-- ✅ ADDED BACK: Forgot password link (doesn't remove anything) -->
+                <div style="text-align:right; margin-top:6px;">
+                    <a class="link" href="ForgotPassword.aspx" style="font-size:13px;">Forgot password?</a>
+                </div>
+
                 <asp:RequiredFieldValidator ID="rfvPw" runat="server" ControlToValidate="txtPassword" ErrorMessage="Password is required." CssClass="val" ValidationGroup="login" Display="Dynamic" />
                 <asp:CustomValidator ID="cvPw" runat="server" ControlToValidate="txtPassword" ErrorMessage="Password must be at least 8 characters." CssClass="val" ValidationGroup="login" Display="Dynamic"
                     ClientValidationFunction="validatePwLen" />
