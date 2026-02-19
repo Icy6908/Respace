@@ -15,6 +15,15 @@ namespace Respace
     {
 
         /// <summary>
+        /// vsRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary vsRegister;
+
+        /// <summary>
         /// txtName control.
         /// </summary>
         /// <remarks>
@@ -22,6 +31,24 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
+
+        /// <summary>
+        /// rfvName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvName;
+
+        /// <summary>
+        /// ddlRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlRole;
 
         /// <summary>
         /// txtEmail control.
@@ -33,6 +60,24 @@ namespace Respace
         protected global::System.Web.UI.WebControls.TextBox txtEmail;
 
         /// <summary>
+        /// rfvEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvEmail;
+
+        /// <summary>
+        /// revEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revEmail;
+
+        /// <summary>
         /// txtPassword control.
         /// </summary>
         /// <remarks>
@@ -42,13 +87,49 @@ namespace Respace
         protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
-        /// ddlRole control.
+        /// rfvPw control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlRole;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvPw;
+
+        /// <summary>
+        /// cvPw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvPw;
+
+        /// <summary>
+        /// txtConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtConfirm;
+
+        /// <summary>
+        /// rfvConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvConfirm;
+
+        /// <summary>
+        /// cmpPw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cmpPw;
 
         /// <summary>
         /// btnRegister control.

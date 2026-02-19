@@ -1,16 +1,72 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="Respace.Login" MasterPageFile="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>Login</h2>
+    <!-- Auth-only CSS (does not affect other pages) -->
+    <link href="Content/auth.css" rel="stylesheet" />
 
-    <p>Email</p>
-    <asp:TextBox ID="txtEmail" runat="server" />
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-title">Welcome back</div>
+                <div class="auth-subtitle">Sign in to manage bookings, rewards, and your listings.</div>
+            </div>
 
-    <p>Password</p>
-    <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" />
+            <asp:ValidationSummary ID="vsLogin" runat="server" CssClass="alert" ValidationGroup="login" />
 
-    <br /><br />
-    <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="btnLogin_Click" />
-    <br /><br />
-    <asp:Label ID="lblMsg" runat="server" ForeColor="Red" />
+            <div class="field">
+                <label class="label" for="<%= txtEmail.ClientID %>">Email</label>
+                <asp:TextBox ID="txtEmail" runat="server" CssClass="input" TextMode="Email" placeholder="name@example.com" />
+                <asp:RequiredFieldValidator ID="rfvEmail" runat="server" ControlToValidate="txtEmail" ErrorMessage="Email is required." CssClass="val" ValidationGroup="login" Display="Dynamic" />
+                <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail" ErrorMessage="Enter a valid email (must include @)." CssClass="val" ValidationGroup="login" Display="Dynamic"
+                    ValidationExpression="^[^\s@]+@[^\s@]+\.[^\s@]+$" />
+            </div>
+
+            <div class="field">
+                <label class="label" for="<%= txtPassword.ClientID %>">Password</label>
+
+                <!-- IMPORTANT:
+                     No custom "Show" button here.
+                     Only the browser’s built-in eye icon will appear (Edge/Chrome). -->
+                <div class="password-row">
+                    <asp:TextBox ID="txtPassword" runat="server" CssClass="input" TextMode="Password" placeholder="••••••••" />
+                </div>
+
+                <asp:RequiredFieldValidator ID="rfvPw" runat="server" ControlToValidate="txtPassword" ErrorMessage="Password is required." CssClass="val" ValidationGroup="login" Display="Dynamic" />
+                <asp:CustomValidator ID="cvPw" runat="server" ControlToValidate="txtPassword" ErrorMessage="Password must be at least 8 characters." CssClass="val" ValidationGroup="login" Display="Dynamic"
+                    ClientValidationFunction="validatePwLen" />
+            </div>
+
+            <div class="form-actions">
+                <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="btn btn-primary" ValidationGroup="login" OnClick="btnLogin_Click" />
+                <a class="link" href="Register.aspx">Create an account</a>
+            </div>
+
+            <asp:Label ID="lblMsg" runat="server" CssClass="alert" />
+        </div>
+    </div>
+
+    <script>
+        function validatePwLen(sender, args) {
+            args.IsValid = (args.Value || '').length >= 8;
+        }
+
+        (function () {
+            var email = document.getElementById('<%= txtEmail.ClientID %>');
+            var pw = document.getElementById('<%= txtPassword.ClientID %>');
+
+            function mark(el, ok) {
+                if (!el) return;
+                el.classList.remove('valid', 'invalid');
+                if (ok === true) el.classList.add('valid');
+                if (ok === false) el.classList.add('invalid');
+            }
+
+            function isEmailOk(v) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim());
+            }
+
+            email && email.addEventListener('input', function () { mark(email, isEmailOk(email.value)); });
+            pw && pw.addEventListener('input', function () { mark(pw, (pw.value || '').length >= 8); });
+        })();
+    </script>
 </asp:Content>

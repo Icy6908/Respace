@@ -1,0 +1,90 @@
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.UI;
+using Respace.App_Code;
+
+namespace Respace
+{
+    public partial class Payment : Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Session["UserId"] == null) Response.Redirect("Login.aspx");
+            if (!IsPostBack) LoadPurchaseDetails();
+        }
+
+        private void LoadPurchaseDetails()
+        {
+            if (Request.QueryString["planId"] != null)
+            {
+                phCurrentPlan.Visible = true;
+                int planId = Convert.ToInt32(Request.QueryString["planId"]);
+                DataTable dt = Db.Query("SELECT PlanName, MonthlyFee FROM MembershipPlans WHERE PlanId = @id", new SqlParameter("@id", planId));
+                if (dt.Rows.Count > 0)
+                {
+                    lblPlanName.Text = dt.Rows[0]["PlanName"].ToString();
+                    lblTotalAmount.Text = Convert.ToDecimal(dt.Rows[0]["MonthlyFee"]).ToString("0.00");
+                }
+            }
+            else if (Request.QueryString["bid"] != null)
+            {
+                phBookingInfo.Visible = true;
+                lblBookingId.Text = Request.QueryString["bid"];
+                lblTotalAmount.Text = Request.QueryString["amt"];
+            }
+        }
+
+        protected void btnConfirm_Click(object sender, EventArgs e)
+        {
+            if (Page.IsValid)
+            {
+                int userId = Convert.ToInt32(Session["UserId"]);
+
+                if (Request.QueryString["planId"] != null)
+                {
+                    int planId = Convert.ToInt32(Request.QueryString["planId"]);
+                    MembershipService.ActivatePlan(userId, planId, true);
+                    Response.Redirect("Account.aspx?msg=MembershipActivated");
+                }
+                else if (Request.QueryString["bid"] != null)
+                {
+                    int bookingId = Convert.ToInt32(Request.QueryString["bid"]);
+                    decimal amount = decimal.Parse(Request.QueryString["amt"]);
+
+                    ProcessBookingPayment(userId, bookingId, amount);
+
+                    // ✅ SEND EMAILS to guest + host after successful confirmation
+                    NotificationService.SendBookingConfirmed(bookingId);
+
+                    Response.Redirect("Account.aspx?msg=BookingConfirmed");
+                }
+            }
+        }
+
+        private void ProcessBookingPayment(int userId, int bookingId, decimal amount)
+        {
+            Db.Execute("UPDATE Bookings SET Status = 'Confirmed' WHERE BookingId = @bid",
+                new SqlParameter("@bid", bookingId));
+
+            double multiplier = GetUserMultiplier(userId);
+            int points = (int)Math.Floor((double)amount * multiplier);
+
+            Db.Execute("UPDATE Users SET PointsBalance = ISNULL(PointsBalance, 0) + @pts WHERE UserId = @uid",
+                new SqlParameter("@pts", points),
+                new SqlParameter("@uid", userId));
+        }
+
+        private double GetUserMultiplier(int userId)
+        {
+            object result = Db.Scalar(@"
+                SELECT p.PointsMultiplier 
+                FROM UserMemberships um 
+                JOIN MembershipPlans p ON p.PlanId = um.PlanId 
+                WHERE um.UserId = @uid AND um.IsActive = 1",
+                new SqlParameter("@uid", userId));
+
+            return result != null ? Convert.ToDouble(result) : 1.0;
+        }
+    }
+}

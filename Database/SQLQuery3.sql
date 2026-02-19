@@ -1,0 +1,1 @@
+﻿ALTER TABLE Reviews ADD Badges NVARCHAR(300) NULL;

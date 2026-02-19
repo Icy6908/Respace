@@ -33,6 +33,15 @@ namespace Respace
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// ScriptManager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
+
+        /// <summary>
         /// lnkSearch control.
         /// </summary>
         /// <remarks>
@@ -40,6 +49,33 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkSearch;
+
+        /// <summary>
+        /// phLoggedOut control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phLoggedOut;
+
+        /// <summary>
+        /// lnkLogin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkLogin;
+
+        /// <summary>
+        /// lnkRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkRegister;
 
         /// <summary>
         /// phLoggedIn control.
@@ -51,6 +87,24 @@ namespace Respace
         protected global::System.Web.UI.WebControls.PlaceHolder phLoggedIn;
 
         /// <summary>
+        /// lnkAccount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkAccount;
+
+        /// <summary>
+        /// phGuestNav control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phGuestNav;
+
+        /// <summary>
         /// lnkRewards control.
         /// </summary>
         /// <remarks>
@@ -60,22 +114,22 @@ namespace Respace
         protected global::System.Web.UI.WebControls.HyperLink lnkRewards;
 
         /// <summary>
-        /// phHost control.
+        /// lnkMembership control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phHost;
+        protected global::System.Web.UI.WebControls.HyperLink lnkMembership;
 
         /// <summary>
-        /// lnkMySpaces control.
+        /// phHostNav control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkMySpaces;
+        protected global::System.Web.UI.WebControls.PlaceHolder phHostNav;
 
         /// <summary>
         /// lnkCreateSpace control.
@@ -105,31 +159,13 @@ namespace Respace
         protected global::System.Web.UI.WebControls.HyperLink lnkApprovals;
 
         /// <summary>
-        /// phLoggedOut control.
+        /// lnkReviewAdmin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phLoggedOut;
-
-        /// <summary>
-        /// lnkLogin control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkLogin;
-
-        /// <summary>
-        /// lnkRegister control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkRegister;
+        protected global::System.Web.UI.WebControls.HyperLink lnkReviewAdmin;
 
         /// <summary>
         /// phLogout control.

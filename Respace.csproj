@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -64,26 +64,59 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
+  <!-- Content pages -->
   <ItemGroup>
+    <Content Include="Account.aspx" />
     <Content Include="AdminApproveSpaces.aspx" />
+    <Content Include="AdminReview.aspx" />
     <Content Include="BookingSuccess.aspx" />
+    <Content Include="ChangePassword.aspx" />
+    <Content Include="Checkout.aspx" />
+    <Content Include="ConfirmSpace.aspx" />
+    <Content Include="Content\auth.css" />
+    <Content Include="Content\site.css" />
+    <Content Include="Database\01_CreateTables.sql" />
+    <Content Include="Database\02_SeedData.sql" />
+    <Content Include="ForgotPassword.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="HostBlockDates.aspx" />
+    <Content Include="HostBookings.aspx" />
     <Content Include="HostCreateSpace.aspx" />
-    <Content Include="HostMySpaces.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
+    <Content Include="Membership.aspx" />
+    <Content Include="Payment.aspx" />
     <Content Include="Register.aspx" />
+    <Content Include="ResetPassword.aspx" />
+    <Content Include="Review.aspx" />
     <Content Include="Rewards.aspx" />
     <Content Include="Search.aspx" />
     <Content Include="SpaceDetails.aspx" />
+    <Content Include="sql\CreatePointsTransactions.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
+  <!-- Code-behind / designers -->
   <ItemGroup>
+    <Compile Include="Account.aspx.cs">
+      <DependentUpon>Account.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account.aspx.designer.cs">
+      <DependentUpon>Account.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AdminApproveSpaces.aspx.cs">
       <DependentUpon>AdminApproveSpaces.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="AdminApproveSpaces.aspx.designer.cs">
       <DependentUpon>AdminApproveSpaces.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminReview.aspx.cs">
+      <DependentUpon>AdminReview.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminReview.aspx.designer.cs">
+      <DependentUpon>AdminReview.aspx</DependentUpon>
     </Compile>
     <Compile Include="BookingSuccess.aspx.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
@@ -92,19 +125,57 @@
     <Compile Include="BookingSuccess.aspx.designer.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ChangePassword.aspx.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChangePassword.aspx.designer.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Checkout.aspx.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Checkout.aspx.designer.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ConfirmSpace.aspx.cs">
+      <DependentUpon>ConfirmSpace.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ConfirmSpace.aspx.designer.cs">
+      <DependentUpon>ConfirmSpace.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.designer.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="HostBlockDates.aspx.cs">
+      <DependentUpon>HostBlockDates.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostBlockDates.aspx.designer.cs">
+      <DependentUpon>HostBlockDates.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="HostBookings.aspx.cs">
+      <DependentUpon>HostBookings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostBookings.aspx.designer.cs">
+      <DependentUpon>HostBookings.aspx</DependentUpon>
+    </Compile>
     <Compile Include="HostCreateSpace.aspx.cs">
       <DependentUpon>HostCreateSpace.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="HostCreateSpace.aspx.designer.cs">
       <DependentUpon>HostCreateSpace.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="HostMySpaces.aspx.cs">
-      <DependentUpon>HostMySpaces.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="HostMySpaces.aspx.designer.cs">
-      <DependentUpon>HostMySpaces.aspx</DependentUpon>
     </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
@@ -120,6 +191,21 @@
     <Compile Include="Logout.aspx.designer.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Membership.aspx.cs">
+      <DependentUpon>Membership.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Membership.aspx.designer.cs">
+      <DependentUpon>Membership.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MembershipService.cs" />
+    <Compile Include="Payment.aspx.cs">
+      <DependentUpon>Payment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Payment.aspx.designer.cs">
+      <DependentUpon>Payment.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -127,12 +213,43 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Review.aspx.cs">
+      <DependentUpon>Review.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Review.aspx.designer.cs">
+      <DependentUpon>Review.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Rewards.aspx.cs">
       <DependentUpon>Rewards.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Rewards.aspx.designer.cs">
       <DependentUpon>Rewards.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\OtpService.cs" />
+    <Compile Include="SpaceDetails.aspx.cs">
+      <DependentUpon>SpaceDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SpaceDetails.aspx.designer.cs">
+      <DependentUpon>SpaceDetails.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
@@ -144,19 +261,6 @@
     <Compile Include="App_Code\Db.cs" />
     <Compile Include="App_Code\Security.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search.aspx.cs">
-      <DependentUpon>Search.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Search.aspx.designer.cs">
-      <DependentUpon>Search.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="SpaceDetails.aspx.cs">
-      <DependentUpon>SpaceDetails.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SpaceDetails.aspx.designer.cs">
-      <DependentUpon>SpaceDetails.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Site.Master" />
@@ -167,6 +271,9 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Image\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
