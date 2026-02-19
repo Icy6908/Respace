@@ -175,3 +175,21 @@ CREATE TABLE [dbo].[Users] (
     UNIQUE NONCLUSTERED ([Email] ASC)
 );
 
+CREATE TABLE [dbo].[PasswordOtps] (
+    [OtpId]     INT            IDENTITY (1, 1) NOT NULL,
+    [UserId]    INT            NOT NULL,
+    [Purpose]   NVARCHAR (40)  NOT NULL,
+    [OtpHash]   NVARCHAR (256) NOT NULL,
+    [ExpiresAt] DATETIME       NOT NULL,
+    [UsedAt]    DATETIME       NULL,
+    [Attempts]  INT            DEFAULT ((0)) NOT NULL,
+    [CreatedAt] DATETIME       DEFAULT (getdate()) NOT NULL,
+    PRIMARY KEY CLUSTERED ([OtpId] ASC),
+    CONSTRAINT [FK_PasswordOtps_Users] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_PasswordOtps_UserPurposeCreated]
+    ON [dbo].[PasswordOtps]([UserId] ASC, [Purpose] ASC, [CreatedAt] DESC);
+
