@@ -43,6 +43,7 @@
                         <asp:PlaceHolder ID="phGuestNav" runat="server" Visible="false">
                             <asp:HyperLink ID="lnkRewards" runat="server" NavigateUrl="~/Rewards.aspx" Text="Rewards" />
                             <asp:HyperLink ID="lnkMembership" runat="server" NavigateUrl="~/Membership.aspx" Text="Membership" />
+                            <asp:HyperLink ID="lnkSupport" runat="server" NavigateUrl="~/SupportTicket.aspx" Text="Support" />
                         </asp:PlaceHolder>
                     </asp:PlaceHolder>
 
