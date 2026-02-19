@@ -43,7 +43,8 @@ namespace Respace
 
             if (role == "Admin")
             {
-                Response.Redirect("AdminApproveSpaces.aspx");
+               
+                Response.Redirect("~/Admin/AdminDashboard.aspx");
                 return;
             }
 
