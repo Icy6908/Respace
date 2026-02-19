@@ -1,7 +1,9 @@
+﻿using Respace.App_Code;
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using Respace.App_Code;
+using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace Respace
 {
@@ -64,33 +66,48 @@ namespace Respace
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            int rating = 0;
-            if (!string.IsNullOrEmpty(Request.Form["rating"]))
-                int.TryParse(Request.Form["rating"], out rating);
-
-            if (rating < 1 || rating > 5)
+            if (Session["UserId"] == null)
             {
-                lblMessage.Text = "Please select a star rating.";
+                Response.Redirect("Login.aspx");
                 return;
             }
 
             int userId = Convert.ToInt32(Session["UserId"]);
+
+            int spaceId;
+            if (!int.TryParse(Request.QueryString["id"], out spaceId))
+            {
+                lblMessage.Text = "Invalid space.";
+                return;
+            }
+
+            // rating is from your HTML radio group named="rating"
+            int rating = 0;
+            int.TryParse(Request.Form["rating"], out rating);
+
             string comment = (txtComment.Text ?? "").Trim();
 
+            // ✅ Collect selected compliments
+            string badges = string.Join(", ",
+                cblBadges.Items.Cast<ListItem>()
+                    .Where(i => i.Selected)
+                    .Select(i => i.Value)
+            );
+
+            // ✅ Insert review WITH badges
             Db.Execute(@"
-                INSERT INTO Reviews (SpaceId, UserId, Rating, Comment, IsApproved)
-                VALUES (@SpaceId, @UserId, @Rating, @Comment, 0)
-            ",
-            new SqlParameter("@SpaceId", SpaceId),
+        INSERT INTO dbo.Reviews (SpaceId, UserId, Rating, Comment, Badges, IsApproved, CreatedAt)
+        VALUES (@SpaceId, @UserId, @Rating, @Comment, @Badges, 0, GETDATE())
+    ",
+            new SqlParameter("@SpaceId", spaceId),
             new SqlParameter("@UserId", userId),
             new SqlParameter("@Rating", rating),
-            new SqlParameter("@Comment", comment));
+            new SqlParameter("@Comment", comment),
+            new SqlParameter("@Badges", badges));
 
-            lblMessage.ForeColor = System.Drawing.Color.Green;
-            lblMessage.Text = "Review submitted! Waiting for admin approval.";
-
-            // optional redirect
-            Response.Redirect("SpaceDetails.aspx?id=" + SpaceId);
+            lblMessage.Text = "Review submitted! Pending approval.";
+            Response.Redirect("SpaceDetails.aspx?id=" + spaceId);
         }
+
     }
 }

@@ -5,47 +5,80 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
-        body { font-family: Arial, sans-serif; background:#fafafa; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+        }
 
-        .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
 
         /* ===== HERO ===== */
         .hero {
             padding: 34px 0 18px;
             border-bottom: 1px solid #eee;
-            background:
-                radial-gradient(900px 360px at 18% 10%, rgba(255,56,92,.18), transparent 60%),
-                radial-gradient(900px 360px at 82% 30%, rgba(0,140,255,.12), transparent 55%),
-                #fff;
+            background: radial-gradient(900px 360px at 18% 10%, rgba(255,56,92,.18), transparent 60%), radial-gradient(900px 360px at 82% 30%, rgba(0,140,255,.12), transparent 55%), #fff;
         }
+
         .hero__inner {
             display: grid;
             grid-template-columns: 1.2fr 0.8fr;
             gap: 18px;
             align-items: center;
         }
-        @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; } }
 
-        .hero__title { margin: 0; font-size: 40px; line-height: 1.05; }
-        .hero__subtitle { margin: 10px 0 0; color:#666; font-size: 15px; }
+        @media (max-width: 900px) {
+            .hero__inner {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero__title {
+            margin: 0;
+            font-size: 40px;
+            line-height: 1.05;
+        }
+
+        .hero__subtitle {
+            margin: 10px 0 0;
+            color: #666;
+            font-size: 15px;
+        }
 
         .card {
-            background:#fff;
+            background: #fff;
             border-radius: 18px;
             box-shadow: 0 10px 26px rgba(0,0,0,.08);
         }
 
         /* ===== SEARCH BAR ===== */
-        .searchCard { margin-top: 16px; padding: 14px; }
+        .searchCard {
+            margin-top: 16px;
+            padding: 14px;
+        }
+
         .searchRow {
             display: grid;
             grid-template-columns: 1fr auto auto;
             gap: 10px;
             align-items: end;
         }
-        @media (max-width: 760px) { .searchRow { grid-template-columns: 1fr; } }
 
-        .label { display:block; font-weight:800; margin-bottom:6px; }
+        @media (max-width: 760px) {
+            .searchRow {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .label {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
         .input {
             width: 100%;
             padding: 12px 14px;
@@ -53,28 +86,56 @@
             border: 1px solid #e3e3e3;
             outline: none;
             transition: box-shadow .12s, border-color .12s;
-            background:#fff;
-        }
-        .input:focus {
-            border-color: rgba(255,56,92,.45);
-            box-shadow: 0 0 0 4px rgba(255,56,92,.14);
+            background: #fff;
         }
 
-        .btn { padding: 12px 16px; border-radius: 14px; border:none; cursor:pointer; font-weight:800; }
-        .btn-primary { background:#ff385c; color:#fff; }
-        .btn-secondary { background:#111; color:#fff; opacity:.9; }
-        .btn-secondary:hover { opacity: 1; }
+            .input:focus {
+                border-color: rgba(255,56,92,.45);
+                box-shadow: 0 0 0 4px rgba(255,56,92,.14);
+            }
 
-        .chips { margin-top: 10px; display:flex; gap:8px; flex-wrap: wrap; }
+        .btn {
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .btn-primary {
+            background: #ff385c;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #111;
+            color: #fff;
+            opacity: .9;
+        }
+
+            .btn-secondary:hover {
+                opacity: 1;
+            }
+
+        .chips {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .chip {
             border: 1px solid #ececec;
-            background:#fff;
+            background: #fff;
             padding: 8px 12px;
             border-radius: 999px;
             cursor: pointer;
             font-weight: 800;
         }
-        .chip:hover { background:#f7f7f7; }
+
+            .chip:hover {
+                background: #f7f7f7;
+            }
 
         /* right preview */
         .preview {
@@ -84,82 +145,196 @@
             backdrop-filter: blur(6px);
             border: 1px solid rgba(0,0,0,.06);
         }
+
         .preview__badge {
-            display:inline-block;
+            display: inline-block;
             padding: 6px 10px;
             border-radius: 999px;
             background: rgba(255,56,92,.12);
-            color:#ff385c;
-            font-weight:900;
+            color: #ff385c;
+            font-weight: 900;
             font-size: 12px;
         }
-        .preview__title { margin: 10px 0 4px; font-weight: 900; font-size: 16px; }
-        .muted { color:#777; }
+
+        .preview__title {
+            margin: 10px 0 4px;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .muted {
+            color: #777;
+        }
 
         /* ===== FILTER PANEL ===== */
         .filter-panel {
-            background:#fff;
-            padding:16px;
-            border-radius:18px;
-            box-shadow:0 10px 26px rgba(0,0,0,0.08);
+            background: #fff;
+            padding: 16px;
+            border-radius: 18px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.08);
             margin: 18px 0;
         }
-        .filter-grid { display:flex; gap:18px; flex-wrap:wrap; }
-        .filter-block { min-width: 220px; }
-        .filter-title { font-weight:900; margin-bottom:8px; }
+
+        .filter-card{
+    background:#fff;
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.filter-row{
+    display:block;
+    margin-bottom:16px;
+}
+
+.filter-title{
+    font-weight:800;
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.filter-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.filter-grid-2{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px;
+}
+
+@media (max-width: 768px){
+    .filter-grid-2{ grid-template-columns: 1fr; }
+}
+
+.filter-actions{
+    display:flex;
+    gap:12px;
+    margin-top:8px;
+}
+
+
+
 
         /* ===== RESULTS ===== */
-        .resultsHead { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin: 18px 0 10px; }
-        .resultsTitle { margin:0; font-size: 18px; }
+        .resultsHead {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 12px;
+            margin: 18px 0 10px;
+        }
+
+        .resultsTitle {
+            margin: 0;
+            font-size: 18px;
+        }
 
         /* Airbnb-ish card grid */
-        .gridCards{
-            display:grid;
+        .gridCards {
+            display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap:16px;
+            gap: 16px;
             margin: 16px 0 40px;
         }
-        @media (max-width:1100px){ .gridCards{ grid-template-columns: repeat(3, 1fr);} }
-        @media (max-width:860px){ .gridCards{ grid-template-columns: repeat(2, 1fr);} }
-        @media (max-width:520px){ .gridCards{ grid-template-columns: 1fr;} }
 
-        .listingCard{
-            background:#fff;
-            border-radius:18px;
-            overflow:hidden;
-            box-shadow:0 10px 26px rgba(0,0,0,.08);
+        @media (max-width:1100px) {
+            .gridCards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width:860px) {
+            .gridCards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width:520px) {
+            .gridCards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .listingCard {
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 26px rgba(0,0,0,.08);
             transition: transform .12s ease, box-shadow .12s ease;
         }
-        .listingCard:hover{
-            transform: translateY(-2px);
-            box-shadow:0 14px 34px rgba(0,0,0,.12);
+
+            .listingCard:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 14px 34px rgba(0,0,0,.12);
+            }
+
+        .thumb {
+            position: relative;
+            width: 100%;
+            padding-top: 68%;
+            background: #f3f3f3;
         }
-        .thumb{
-            position:relative;
-            width:100%;
-            padding-top:68%;
-            background:#f3f3f3;
-        }
-        .thumb img{
-            position:absolute; inset:0;
-            width:100%; height:100%;
-            object-fit:cover;
-        }
-        .badgeType{
-            position:absolute; left:10px; top:10px;
+
+            .thumb img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .badgeType {
+            position: absolute;
+            left: 10px;
+            top: 10px;
             background: rgba(255,255,255,.92);
-            border-radius:999px;
-            padding:6px 10px;
-            font-weight:900;
-            font-size:12px;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-weight: 900;
+            font-size: 12px;
         }
-        .cardBody{ padding:12px 14px 14px; }
-        .cardTitle{ font-weight:900; font-size:15px; margin:0; }
-        .cardMeta{ color:#666; margin-top:4px; font-size:13px; }
-        .cardPriceRow{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:10px; }
-        .cardPrice{ font-weight:900; }
-        .stars{ color:#ff385c; letter-spacing:1px; }
-        .cardLink{ text-decoration:none; color:inherit; display:block; }
+
+        .cardBody {
+            padding: 12px 14px 14px;
+        }
+
+        .cardTitle {
+            font-weight: 900;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .cardMeta {
+            color: #666;
+            margin-top: 4px;
+            font-size: 13px;
+        }
+
+        .cardPriceRow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            gap: 10px;
+        }
+
+        .cardPrice {
+            font-weight: 900;
+        }
+
+        .stars {
+            color: #ff385c;
+            letter-spacing: 1px;
+        }
+
+        .cardLink {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
     </style>
 </asp:Content>
 
@@ -207,7 +382,7 @@
                     <span class="preview__badge">Popular this week</span>
                     <div class="preview__title">Creative Studio</div>
                     <div class="muted">Central &#8226; 10&ndash;15 pax &#8226; from $35/hr</div>
-                    <div style="height:10px"></div>
+                    <div style="height: 10px"></div>
                     <div class="muted">Tip: try &ldquo;studio&rdquo; or &ldquo;meeting room&rdquo; to see quick results.</div>
                 </div>
             </div>
@@ -256,7 +431,7 @@
                     <br />
                     To:
                     <asp:TextBox ID="txtToDate" runat="server" TextMode="Date" CssClass="input" />
-                    <div class="muted" style="font-size:0.9em; margin-top:6px;">
+                    <div class="muted" style="font-size: 0.9em; margin-top: 6px;">
                         (Shows spaces with no confirmed bookings overlapping this date range)
                     </div>
                 </div>
@@ -273,7 +448,7 @@
                 </div>
             </div>
 
-            <div style="height:12px"></div>
+            <div style="height: 12px"></div>
 
             <asp:Button ID="btnApplyFilter" runat="server" Text="Apply Filter"
                 CssClass="btn btn-primary"
@@ -309,7 +484,7 @@
                                 <div class="cardPriceRow">
                                     <div class="cardPrice">
                                         $<%# Eval("PricePerHour", "{0:0.00}") %>
-                                        <span style="font-weight:600;color:#666">/ hr</span>
+                                        <span style="font-weight: 600; color: #666">/ hr</span>
                                     </div>
 
                                     <div class="cardMeta">

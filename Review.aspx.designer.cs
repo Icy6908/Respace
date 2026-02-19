@@ -9,8 +9,11 @@
 
 namespace Respace
 {
+
+
     public partial class Review
     {
+
         /// <summary>
         /// lblSpaceName control.
         /// </summary>
@@ -19,6 +22,15 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSpaceName;
+
+        /// <summary>
+        /// cblBadges control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cblBadges;
 
         /// <summary>
         /// txtComment control.

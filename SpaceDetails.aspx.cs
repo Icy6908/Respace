@@ -297,12 +297,12 @@ namespace Respace
         private void LoadApprovedReviews()
         {
             DataTable dt = Db.Query(@"
-                SELECT u.FullName AS GuestName, r.Rating, r.Comment, r.CreatedAt
-                FROM Reviews r
-                INNER JOIN Users u ON u.UserId = r.UserId
-                WHERE r.SpaceId=@Id AND r.IsApproved=1
-                ORDER BY r.CreatedAt DESC
-            ", new SqlParameter("@Id", SpaceId));
+        SELECT u.FullName AS GuestName, r.Rating, r.Comment, r.Badges, r.CreatedAt
+        FROM Reviews r
+        INNER JOIN Users u ON u.UserId = r.UserId
+        WHERE r.SpaceId=@Id AND r.IsApproved=1
+        ORDER BY r.CreatedAt DESC
+    ", new SqlParameter("@Id", SpaceId));
 
             dt.Columns.Add("Stars", typeof(string));
             foreach (DataRow row in dt.Rows)
@@ -316,6 +316,7 @@ namespace Respace
             rptReviews.DataSource = dt;
             rptReviews.DataBind();
         }
+
 
         // Keep your existing btnBook_Click as-is (or paste your booking method here)
         protected void btnBook_Click(object sender, EventArgs e)
@@ -346,6 +347,35 @@ namespace Respace
                     list.Add(s);
             }
             return string.Join(", ", list);
+        }
+        protected string[] GetBadgesWithEmoji(string badges)
+        {
+            if (string.IsNullOrWhiteSpace(badges))
+                return new string[0];
+
+            var parts = badges.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                              .Select(x => x.Trim())
+                              .ToList();
+
+            for (int i = 0; i < parts.Count; i++)
+            {
+                string b = parts[i];
+
+                switch (b)
+                {
+                    case "Clean & Comfy": parts[i] = "🧼 " + b; break;
+                    case "Friendly Owner": parts[i] = "😊 " + b; break;
+                    case "Fairly Priced": parts[i] = "💸 " + b; break;
+                    case "Great Amenities": parts[i] = "✨ " + b; break;
+                    case "Good Location": parts[i] = "📍 " + b; break;
+                    case "Quiet Space": parts[i] = "🤫 " + b; break;
+                    case "Easy Check-in": parts[i] = "✅ " + b; break;
+                    case "Fast Response": parts[i] = "⚡ " + b; break;
+                    default: parts[i] = "🏷️ " + b; break;
+                }
+            }
+
+            return parts.ToArray();
         }
 
         protected void hfEnd_ValueChanged(object sender, EventArgs e)

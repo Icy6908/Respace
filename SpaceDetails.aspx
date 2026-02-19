@@ -6,86 +6,397 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <style>
-        .sd-page { padding: 12px 0; }
-        .sd-wrap { max-width: 1100px; margin: 0 auto; padding: 0 14px; }
+        .sd-page {
+            padding: 12px 0;
+        }
 
-        .alert { display:block; margin: 10px 0 14px; padding: 10px 12px; border-radius: 10px; }
-        .alert.error { background:#ffe9ea; color:#a30014; border:1px solid #ffc9cf; }
-        .alert.success { background:#e9fff1; color:#0b6b2a; border:1px solid #b9f2cd; }
+        .sd-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 14px;
+        }
 
-        .card { background:#fff; border-radius:16px; padding:16px; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
-        .muted { color:#777; }
-        .small { font-size: 0.92rem; }
-        .center { text-align:center; }
+        .alert {
+            display: block;
+            margin: 10px 0 14px;
+            padding: 10px 12px;
+            border-radius: 10px;
+        }
 
-        .listing__header { margin-bottom: 14px; }
-        .listing__title { margin: 0; font-size: 28px; font-weight: 800; }
-        .listing__sub { margin-top: 6px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-        .dot { color:#999; }
+            .alert.error {
+                background: #ffe9ea;
+                color: #a30014;
+                border: 1px solid #ffc9cf;
+            }
+
+            .alert.success {
+                background: #e9fff1;
+                color: #0b6b2a;
+                border: 1px solid #b9f2cd;
+            }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        .muted {
+            color: #777;
+        }
+
+        .small {
+            font-size: 0.92rem;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .listing__header {
+            margin-bottom: 14px;
+        }
+
+        .listing__title {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .listing__sub {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dot {
+            color: #999;
+        }
 
         /* Photo gallery */
-        .photo-grid { display:grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 160px 160px;
-                      gap:10px; margin: 10px 0 18px; position:relative; }
-        .photo-grid__big, .photo-grid__small { border-radius:16px; background:#eee; overflow:hidden; }
-        .photo-grid__big { grid-row: 1 / span 2; }
-        .photo-grid img { width:100%; height:100%; object-fit:cover; display:block; }
-        .photo-grid__action { position:absolute; right: 14px; bottom: 14px; background:#fff; padding:10px 12px;
-                              border-radius:12px; font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.12); }
-        .photo-empty { height: 100%; display:flex; align-items:center; justify-content:center; color:#777; font-weight:700; }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-rows: 160px 160px;
+            gap: 10px;
+            margin: 10px 0 18px;
+            position: relative;
+        }
 
-        .listing__body { display:grid; grid-template-columns: 2fr 1fr; gap: 18px; align-items:start; }
-        @media (max-width: 980px) { .listing__body { grid-template-columns: 1fr; } }
+        .photo-grid__big, .photo-grid__small {
+            border-radius: 16px;
+            background: #eee;
+            overflow: hidden;
+        }
 
-        .section { margin-bottom: 16px; }
-        .h3 { margin:0 0 10px; font-size: 20px; font-weight: 800; }
-        .text { margin: 0; line-height: 1.5; }
+        .photo-grid__big {
+            grid-row: 1 / span 2;
+        }
 
-        .section-tabs { display:flex; gap: 14px; margin: 0 0 12px; flex-wrap:wrap; }
-        .section-tabs__link { text-decoration:none; font-weight: 700; color:#222; padding: 8px 10px; border-radius: 10px; background:#f3f3f3; }
+        .photo-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-        .features { display:flex; gap:16px; flex-wrap:wrap; margin-top: 12px; }
-        .feature { min-width: 170px; }
-        .feature__title { font-weight: 800; margin-bottom: 4px; }
+        .photo-grid__action {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            background: #fff;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
 
-        .amenities { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
-        @media (max-width: 600px) { .amenities { grid-template-columns: 1fr; } }
-        .amenity { border:1px solid #eee; border-radius: 14px; padding: 10px 12px; display:flex; gap:10px; align-items:center; }
-        .amenity__icon { width:34px; height:34px; border-radius: 12px; background:#f3f3f3; display:flex; align-items:center; justify-content:center; font-weight:900; color:#444; }
-        .amenity__name { font-weight: 700; color:#222; }
+        .photo-empty {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-weight: 700;
+        }
 
-        .map-frame { width:100%; height:260px; border:0; border-radius: 14px; overflow:hidden; }
-        .map-box { margin-top: 10px; }
+        .listing__body {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 18px;
+            align-items: start;
+        }
 
-        .avail-cal { margin-top: 10px; }
-        .flatpickr-calendar.inline { box-shadow:none; border:1px solid #eee; border-radius: 14px; overflow:hidden; }
+        @media (max-width: 980px) {
+            .listing__body {
+                grid-template-columns: 1fr;
+            }
+        }
 
-        .reviews-header { display:flex; justify-content:space-between; align-items:center; gap: 10px; flex-wrap:wrap; }
-        .review { border-top: 1px solid #eee; padding-top: 12px; margin-top: 12px; }
-        .review__top { display:flex; justify-content:space-between; align-items:center; }
-        .review__name { font-weight: 800; }
-        .review__stars { color:#ff385c; letter-spacing: 1px; }
-        .review__comment { margin-top: 6px; }
+        .section {
+            margin-bottom: 16px;
+        }
 
-        .booking-card { position: sticky; top: 14px; }
-        .booking-card__price { display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 12px; }
-        .price__amt { font-weight: 900; font-size: 22px; }
+        .h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            font-weight: 800;
+        }
 
-        .booking-box { border:1px solid #eee; border-radius: 14px; overflow:hidden; margin-bottom: 12px; }
-        .booking-box__row { display:grid; grid-template-columns: 1fr 1fr; }
-        .booking-field { padding: 10px 12px; }
-        .booking-field + .booking-field { border-left: 1px solid #eee; }
-        .booking-field__label { font-size: 12px; font-weight: 900; letter-spacing: .5px; margin-bottom: 6px; color:#333; }
+        .text {
+            margin: 0;
+            line-height: 1.5;
+        }
 
-        .input { width: 100%; padding: 10px 10px; border-radius: 10px; border:1px solid #ddd; outline:none; background:#fff; }
-        .select { width: 100%; padding: 10px; border-radius: 10px; border:1px solid #ddd; background:#fff; }
-        .cal-wrap { border:1px solid #eee; border-radius: 14px; padding: 10px; }
-        .cal-actions { margin-top: 8px; }
-        .link { color:#111; text-decoration: underline; cursor:pointer; }
+        .section-tabs {
+            display: flex;
+            gap: 14px;
+            margin: 0 0 12px;
+            flex-wrap: wrap;
+        }
 
-        .btn { padding:10px 14px; border-radius: 12px; border:none; cursor:pointer; font-weight:800; }
-        .btn-primary { background:#ff5a5f; color:#fff; }
-        .btn-outline { background:#fff; color:#111; border:1px solid #ddd; }
-        .btn-block { width: 100%; }
+        .section-tabs__link {
+            text-decoration: none;
+            font-weight: 700;
+            color: #222;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #f3f3f3;
+        }
+
+        .features {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .feature {
+            min-width: 170px;
+        }
+
+        .feature__title {
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .amenities {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .amenities {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .amenity {
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .amenity__icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #444;
+        }
+
+        .amenity__name {
+            font-weight: 700;
+            color: #222;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 260px;
+            border: 0;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .map-box {
+            margin-top: 10px;
+        }
+
+        .avail-cal {
+            margin-top: 10px;
+        }
+
+        .flatpickr-calendar.inline {
+            box-shadow: none;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .review {
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .review__top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review__name {
+            font-weight: 800;
+        }
+
+        .review__stars {
+            color: #ff385c;
+            letter-spacing: 1px;
+        }
+
+        .review__comment {
+            margin-top: 6px;
+        }
+
+        .booking-card {
+            position: sticky;
+            top: 14px;
+        }
+
+        .booking-card__price {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+
+        .price__amt {
+            font-weight: 900;
+            font-size: 22px;
+        }
+
+        .booking-box {
+            border: 1px solid #eee;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .booking-box__row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .booking-field {
+            padding: 10px 12px;
+        }
+
+            .booking-field + .booking-field {
+                border-left: 1px solid #eee;
+            }
+
+        .booking-field__label {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .input {
+            width: 100%;
+            padding: 10px 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            outline: none;
+            background: #fff;
+        }
+
+        .select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+
+        .cal-wrap {
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 10px;
+        }
+
+        .cal-actions {
+            margin-top: 8px;
+        }
+
+        .link {
+            color: #111;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .btn-primary {
+            background: #ff5a5f;
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #111;
+            border: 1px solid #ddd;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .reviewMeta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .badgePill {
+            display: inline-block;
+            padding: 4px 10px;
+            border: 1px solid #e5e5e5;
+            border-radius: 999px;
+            background: #f8f8f8;
+            font-weight: 700;
+            font-size: 0.85em;
+            line-height: 1.2;
+        }
     </style>
 </asp:Content>
 
@@ -113,11 +424,14 @@
                     </h1>
 
                     <div class="listing__sub">
-                        <span class="muted"><asp:Label ID="lblLocation" runat="server" /></span>
+                        <span class="muted">
+                            <asp:Label ID="lblLocation" runat="server" /></span>
                         <span class="dot">•</span>
-                        <span class="muted"><asp:Label ID="lblType" runat="server" /></span>
+                        <span class="muted">
+                            <asp:Label ID="lblType" runat="server" /></span>
                         <span class="dot">•</span>
-                        <span class="muted">Capacity: <asp:Label ID="lblCap" runat="server" /></span>
+                        <span class="muted">Capacity:
+                            <asp:Label ID="lblCap" runat="server" /></span>
                     </div>
                 </div>
 
@@ -130,10 +444,18 @@
                         </asp:Panel>
                     </div>
 
-                    <div class="photo-grid__small"><asp:Image ID="img1" runat="server" Visible="false" /></div>
-                    <div class="photo-grid__small"><asp:Image ID="img2" runat="server" Visible="false" /></div>
-                    <div class="photo-grid__small"><asp:Image ID="img3" runat="server" Visible="false" /></div>
-                    <div class="photo-grid__small"><asp:Image ID="img4" runat="server" Visible="false" /></div>
+                    <div class="photo-grid__small">
+                        <asp:Image ID="img1" runat="server" Visible="false" />
+                    </div>
+                    <div class="photo-grid__small">
+                        <asp:Image ID="img2" runat="server" Visible="false" />
+                    </div>
+                    <div class="photo-grid__small">
+                        <asp:Image ID="img3" runat="server" Visible="false" />
+                    </div>
+                    <div class="photo-grid__small">
+                        <asp:Image ID="img4" runat="server" Visible="false" />
+                    </div>
 
                     <div class="photo-grid__action">Show all photos</div>
                 </div>
@@ -154,20 +476,30 @@
                         <!-- About -->
                         <section id="about" class="section card">
                             <h2 class="h3">About this space</h2>
-                            <p class="text"><asp:Label ID="lblDesc" runat="server" /></p>
+                            <p class="text">
+                                <asp:Label ID="lblDesc" runat="server" />
+                            </p>
 
                             <div class="features">
                                 <div class="feature">
                                     <div class="feature__title">Type</div>
-                                    <div class="muted"><asp:Label ID="lblType2" runat="server" /></div>
+                                    <div class="muted">
+                                        <asp:Label ID="lblType2" runat="server" />
+                                    </div>
                                 </div>
                                 <div class="feature">
                                     <div class="feature__title">Capacity</div>
-                                    <div class="muted"><asp:Label ID="lblCap2" runat="server" /> people</div>
+                                    <div class="muted">
+                                        <asp:Label ID="lblCap2" runat="server" />
+                                        people
+                                    </div>
                                 </div>
                                 <div class="feature">
                                     <div class="feature__title">Rate</div>
-                                    <div class="muted">$<asp:Label ID="lblPrice2" runat="server" /> / day</div>
+                                    <div class="muted">
+                                        $<asp:Label ID="lblPrice2" runat="server" />
+                                        / day
+                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -235,7 +567,17 @@
                                             <div class="review__stars"><%# Eval("Stars") %></div>
                                         </div>
                                         <div class="review__comment"><%# Eval("Comment") %></div>
-                                        <div class="review__date muted"><%# Convert.ToDateTime(Eval("CreatedAt")).ToString("dd MMM yyyy") %></div>
+                                        <div class="reviewMeta">
+                                            <span class="reviewDate muted"><%# Convert.ToDateTime(Eval("CreatedAt")).ToString("dd MMM yyyy") %></span>
+
+                                            <asp:Repeater runat="server"
+                                                DataSource='<%# GetBadgesWithEmoji((Eval("Badges") ?? "").ToString()) %>'>
+                                                <ItemTemplate>
+                                                    <span class="badgePill"><%# Container.DataItem %></span>
+                                                </ItemTemplate>
+                                            </asp:Repeater>
+                                        </div>
+
                                     </div>
                                 </ItemTemplate>
                             </asp:Repeater>
@@ -256,11 +598,12 @@
                             </div>
 
                             <!-- ✅ Guest count -->
-                            <div class="booking-field" style="padding:0 0 12px;">
+                            <div class="booking-field" style="padding: 0 0 12px;">
                                 <div class="booking-field__label">GUESTS</div>
                                 <asp:DropDownList ID="ddlGuests" runat="server" CssClass="select" />
-                                <div class="muted small" style="margin-top:6px;">
-                                    Max: <asp:Label ID="lblCap3" runat="server" />
+                                <div class="muted small" style="margin-top: 6px;">
+                                    Max:
+                                    <asp:Label ID="lblCap3" runat="server" />
                                 </div>
                             </div>
 
@@ -291,7 +634,7 @@
                                 </div>
                             </div>
 
-                            <div class="muted small" style="margin:10px 2px 14px">
+                            <div class="muted small" style="margin: 10px 2px 14px">
                                 <span id="jsNights">0</span> night(s) • Estimated total:
                                 <strong id="jsTotal">$0.00</strong>
                             </div>
@@ -299,7 +642,7 @@
                             <asp:Button ID="btnBook" runat="server" Text="Reserve"
                                 CssClass="btn btn-primary btn-block" OnClick="btnBook_Click" />
 
-                            <div class="muted small center" style="margin-top:10px">You won’t be charged yet</div>
+                            <div class="muted small center" style="margin-top: 10px">You won’t be charged yet</div>
 
                         </div>
                     </aside>
