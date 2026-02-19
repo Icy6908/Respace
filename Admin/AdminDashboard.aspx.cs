@@ -16,6 +16,7 @@ namespace Respace.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Security Check: Ensure only Admin can access
             if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
             {
                 Response.Redirect("../Login.aspx");
@@ -33,7 +34,7 @@ namespace Respace.Admin
         {
             try
             {
-                // USER METRICS
+                // 1. USER METRICS
                 DataTable dtUsers = Db.Query("SELECT COUNT(*) FROM Users WHERE Role != 'Admin'");
                 int totalUsers = Convert.ToInt32(dtUsers.Rows[0][0]);
                 lblTotalUsers.Text = totalUsers.ToString();
@@ -42,7 +43,7 @@ namespace Respace.Admin
                 DataTable dtGuests = Db.Query("SELECT COUNT(*) FROM Users WHERE Role = 'Guest'");
                 lblUserRatio.Text = dtHosts.Rows[0][0].ToString() + ":" + dtGuests.Rows[0][0].ToString();
 
-                // FINANCIALS & AOV
+                // 2. FINANCIALS & AOV
                 DataTable dtRev = Db.Query("SELECT SUM(Amount) FROM Payments WHERE Status = 'Completed'");
                 decimal revenueAmount = dtRev.Rows[0][0] != DBNull.Value ? Convert.ToDecimal(dtRev.Rows[0][0]) : 0;
                 lblTotalRevenue.Text = revenueAmount.ToString("N2");
@@ -55,32 +56,48 @@ namespace Respace.Admin
                 decimal aov = confirmedCount > 0 ? (revenueAmount / confirmedCount) : 0;
                 lblAOV.Text = aov.ToString("N2");
 
-                // SPACE UTILIZATION & CHURN
-                DataTable dtActiveSpaces = Db.Query("SELECT COUNT(*) FROM Spaces WHERE Status = 'Active'");
+                // 3. INTEGRATED: INVENTORY-BASED SPACE UTILIZATION
+                // Count how many UNIQUE spaces have at least one confirmed booking
+                DataTable dtBookedSpaces = Db.Query(@"
+                    SELECT COUNT(DISTINCT SpaceId) 
+                    FROM Bookings 
+                    WHERE Status = 'Confirmed'");
+
+                int uniqueBookedSpaces = Convert.ToInt32(dtBookedSpaces.Rows[0][0]);
+
+                // Count total active listings in the system
+                DataTable dtActiveSpaces = Db.Query("SELECT COUNT(*) FROM Spaces WHERE Status IN ('Approved', 'Active')");
                 int activeSpaceCount = Convert.ToInt32(dtActiveSpaces.Rows[0][0]);
-                double utilization = activeSpaceCount > 0 ? ((double)confirmedCount / activeSpaceCount) * 100 : 0;
+
+                // Formula: (Unique Spaces with Bookings / Total Active Spaces) * 100
+                double utilization = activeSpaceCount > 0 ? ((double)uniqueBookedSpaces / activeSpaceCount) * 100 : 0;
+
+                // Fail-safe cap at 100%
+                if (utilization > 100) utilization = 100;
+
                 lblUtilization.Text = string.Format("{0:0.0}%", utilization);
 
+                // 4. CHURN RATE
                 DataTable dtInactive = Db.Query("SELECT COUNT(*) FROM Users WHERE UserId NOT IN (SELECT GuestUserId FROM Bookings) AND Role != 'Admin'");
                 int inactiveCount = Convert.ToInt32(dtInactive.Rows[0][0]);
                 double churn = totalUsers > 0 ? ((double)inactiveCount / totalUsers) * 100 : 0;
                 lblChurnRate.Text = string.Format("{0:0.0}%", churn);
 
-                // APPROVALS & SUPPORT
+                // 5. APPROVALS & SUPPORT
                 DataTable dtPending = Db.Query("SELECT COUNT(*) FROM Spaces WHERE Status = 'Pending'");
                 lblPendingSpaces.Text = dtPending.Rows[0][0].ToString();
 
                 DataTable dtOpen = Db.Query("SELECT COUNT(*) FROM SupportQueries WHERE Status = 'Pending'");
                 lblOpenQueries.Text = dtOpen.Rows[0][0].ToString();
             }
-            catch { /* Quietly handle errors */ }
+            catch { /* Quietly handle errors or log them */ }
         }
 
         private void BindCharts()
         {
             try
             {
-                // 1. Space Mix by Category (Existing)
+                // 1. Space Mix by Category
                 DataTable dtCat = Db.Query("SELECT Category, COUNT(*) as Total FROM Spaces GROUP BY Category");
                 List<string> labels = new List<string>();
                 List<int> counts = new List<int>();
@@ -92,8 +109,7 @@ namespace Respace.Admin
                 CategoryLabels = "['" + string.Join("','", labels) + "']";
                 CategoryData = "[" + string.Join(",", counts) + "]";
 
-                // 2. NEW: Gross Revenue by Space Type
-                // Calculates total before commission
+                // 2. Gross Revenue by Space Type
                 DataTable dtRevType = Db.Query(@"
                     SELECT s.Type, SUM(b.TotalPrice) as GrossTotal 
                     FROM Bookings b 
@@ -111,7 +127,7 @@ namespace Respace.Admin
                 RevenueTypeLabels = "['" + string.Join("','", revLabels) + "']";
                 RevenueTypeData = "[" + string.Join(",", revTotals) + "]";
             }
-            catch { /* Quietly handle errors */ }
+            catch { /* Quietly handle errors or log them */ }
         }
     }
 }
