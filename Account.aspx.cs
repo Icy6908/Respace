@@ -284,19 +284,47 @@ namespace Respace
 
             if (e.CommandName == "HostConfirmBooking")
             {
-                affected = Db.Execute(@"UPDATE b SET b.Status='Confirmed' FROM Bookings b 
-                                INNER JOIN Spaces s ON s.SpaceId=b.SpaceId 
-                                WHERE b.BookingId=@B AND s.HostUserId=@U AND b.Status='Pending'",
-                                        new SqlParameter("@B", bookingId), new SqlParameter("@U", UserId));
+                affected = Db.Execute(@"
+                    UPDATE b SET b.Status='Confirmed'
+                    FROM Bookings b
+                    INNER JOIN Spaces s ON s.SpaceId=b.SpaceId
+                    WHERE b.BookingId=@B AND s.HostUserId=@U AND b.Status='Pending'",
+                    new SqlParameter("@B", bookingId),
+                    new SqlParameter("@U", UserId));
+
+                if (affected > 0)
+                {
+                    // ✅ Email guest + host: booking confirmed
+                    try
+                    {
+                        NotificationService.SendBookingConfirmed(bookingId);
+                    }
+                    catch { }
+                }
             }
             else if (e.CommandName == "HostRejectBooking" || e.CommandName == "HostCancelBooking")
             {
-                affected = Db.Execute(@"UPDATE b SET b.Status='Cancelled' FROM Bookings b 
-                                INNER JOIN Spaces s ON s.SpaceId=b.SpaceId 
-                                WHERE b.BookingId=@B AND s.HostUserId=@U",
-                                        new SqlParameter("@B", bookingId), new SqlParameter("@U", UserId));
+                affected = Db.Execute(@"
+                    UPDATE b SET b.Status='Cancelled'
+                    FROM Bookings b
+                    INNER JOIN Spaces s ON s.SpaceId=b.SpaceId
+                    WHERE b.BookingId=@B AND s.HostUserId=@U",
+                    new SqlParameter("@B", bookingId),
+                    new SqlParameter("@U", UserId));
 
-                if (affected > 0) RefundPoints(bookingId);
+                if (affected > 0)
+                {
+                    RefundPoints(bookingId);
+
+                    // ✅ Email guest + host: booking cancelled by host
+                    try
+                    {
+                        string cancelledBy = "Host";
+                        string reason = (e.CommandName == "HostRejectBooking") ? "Booking rejected by host." : "Booking cancelled by host.";
+                        NotificationService.SendBookingCancelled(bookingId, cancelledBy, reason);
+                    }
+                    catch { }
+                }
             }
 
             if (affected > 0)
@@ -316,14 +344,23 @@ namespace Respace
             if (e.CommandName != "GuestCancel") return;
             if (!int.TryParse(Convert.ToString(e.CommandArgument), out int bookingId)) return;
 
-            int affected = Db.Execute(@"UPDATE Bookings SET Status='Cancelled' 
-                                WHERE BookingId=@B AND GuestUserId=@U AND Status='Pending'",
-                                        new SqlParameter("@B", bookingId), new SqlParameter("@U", UserId));
+            int affected = Db.Execute(@"
+                UPDATE Bookings SET Status='Cancelled'
+                WHERE BookingId=@B AND GuestUserId=@U AND Status='Pending'",
+                new SqlParameter("@B", bookingId),
+                new SqlParameter("@U", UserId));
 
             if (affected > 0)
             {
                 RefundPoints(bookingId);
                 lblActionMsg.Text = "<div class='alert success'>Booking cancelled and points deducted.</div>";
+
+                // ✅ Email guest + host: booking cancelled by guest
+                try
+                {
+                    NotificationService.SendBookingCancelled(bookingId, "Guest", "Booking cancelled by guest.");
+                }
+                catch { }
 
                 // Refresh UI
                 LoadUserHeader(true);
@@ -331,6 +368,7 @@ namespace Respace
                 SetActiveTab(1);
             }
         }
+
         protected void btnCancelMembership_Click(object sender, EventArgs e)
         {
             // 1. Get the current logged-in user
@@ -352,11 +390,12 @@ namespace Respace
         private void RefundPoints(int bookingId)
         {
             DataTable dt = Db.Query(@"
-        SELECT b.GuestUserId, b.TotalPrice, LTRIM(RTRIM(p.PlanName)) as PlanName
-        FROM Bookings b
-        LEFT JOIN UserMemberships um ON b.GuestUserId = um.UserId AND um.IsActive = 1
-        LEFT JOIN MembershipPlans p ON um.PlanId = p.PlanId
-        WHERE b.BookingId = @Bid", new SqlParameter("@Bid", bookingId));
+                SELECT b.GuestUserId, b.TotalPrice, LTRIM(RTRIM(p.PlanName)) as PlanName
+                FROM Bookings b
+                LEFT JOIN UserMemberships um ON b.GuestUserId = um.UserId AND um.IsActive = 1
+                LEFT JOIN MembershipPlans p ON um.PlanId = p.PlanId
+                WHERE b.BookingId = @Bid",
+                new SqlParameter("@Bid", bookingId));
 
             if (dt.Rows.Count > 0)
             {
@@ -373,13 +412,14 @@ namespace Respace
                 int pointsToDeduct = (int)Math.Floor((double)total * multiplier);
 
                 // Update database: Deduct points but stop at 0 (don't allow negative points)
-                Db.Execute(@"UPDATE Users 
-                     SET PointsBalance = CASE 
-                        WHEN ISNULL(PointsBalance, 0) >= @P THEN PointsBalance - @P 
-                        ELSE 0 END 
-                     WHERE UserId = @Uid",
-                             new SqlParameter("@P", pointsToDeduct),
-                             new SqlParameter("@Uid", guestUserId));
+                Db.Execute(@"
+                    UPDATE Users
+                    SET PointsBalance = CASE
+                        WHEN ISNULL(PointsBalance, 0) >= @P THEN PointsBalance - @P
+                        ELSE 0 END
+                    WHERE UserId = @Uid",
+                    new SqlParameter("@P", pointsToDeduct),
+                    new SqlParameter("@Uid", guestUserId));
             }
         }
     }

@@ -48,6 +48,10 @@ namespace Respace
             }
 
             Response.Redirect("Search.aspx");
+
+            lblMsg.Text = "Registration successful!";
+            lblMsg.Visible = true;
+
         }
     }
 }

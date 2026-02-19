@@ -33,21 +33,21 @@
                 </asp:PlaceHolder>
 
                 <asp:PlaceHolder ID="phMembershipUI" runat="server" Visible="false">
-    <div class="stat">
-        <div class="stat__label">Membership</div>
-        <div class="stat__value">
-            <asp:Label ID="lblMembership" runat="server" />
-        </div>
-    </div>
-    <div style="display:flex; gap:10px; margin-top:10px;">
-        <a class="btn btn-primary" href="Membership.aspx">Upgrade</a>
-        <asp:LinkButton ID="btnCancelMembership" runat="server" 
-            CssClass="btn btn-outline danger" 
-            OnClick="btnCancelMembership_Click" 
-            OnClientClick="return confirm('Are you sure you want to cancel your paid plan and return to Free?');"
-            Text="Cancel Plan" />
-    </div>
-</asp:PlaceHolder>
+                    <div class="stat">
+                        <div class="stat__label">Membership</div>
+                        <div class="stat__value">
+                            <asp:Label ID="lblMembership" runat="server" />
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <a class="btn btn-primary" href="Membership.aspx">Upgrade</a>
+                        <asp:LinkButton ID="btnCancelMembership" runat="server"
+                            CssClass="btn btn-outline danger"
+                            OnClick="btnCancelMembership_Click"
+                            OnClientClick="return confirm('Are you sure you want to cancel your paid plan and return to Free?');"
+                            Text="Cancel Plan" />
+                    </div>
+                </asp:PlaceHolder>
             </div>
         </div>
 
@@ -114,6 +114,21 @@
                             </asp:PlaceHolder>
                         </ul>
                     </div>
+
+                    <!-- NEW: Security card -->
+                    <div class="card">
+                        <h3 class="h3">Security</h3>
+                        <div class="muted" style="margin-bottom:10px;">
+                            Update your password to keep your account secure.
+                        </div>
+
+                        <!-- If your change password page is named differently, change this URL -->
+                        <a class="btn btn-outline" href="ChangePassword.aspx">Change password</a>
+
+                        <div class="muted" style="margin-top:10px; font-size:13px;">
+                            Tip: If you forgot your password, use “Forgot password” on the login page.
+                        </div>
+                    </div>
                 </div>
             </asp:View>
 
@@ -175,7 +190,6 @@
                                         CommandArgument='<%# Eval("SpaceId") %>' />
                                     &nbsp;&nbsp;
 
-                                    <!-- ✅ NEW: Block dates -->
                                     <asp:LinkButton ID="btnBlockDates" runat="server"
                                         Text="Block dates"
                                         CssClass="link"
@@ -223,9 +237,7 @@
 
                             <asp:TemplateField HeaderText="Actions">
                                 <ItemTemplate>
-                                    <%# "" %>
                                     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-
                                         <asp:LinkButton ID="btnConfirm" runat="server"
                                             Text="Confirm"
                                             CssClass="btn btn-primary"

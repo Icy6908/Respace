@@ -37,7 +37,6 @@ namespace Respace
 
         protected void btnConfirm_Click(object sender, EventArgs e)
         {
-            // IMPORTANT: This prevents code from running if validation fails
             if (Page.IsValid)
             {
                 int userId = Convert.ToInt32(Session["UserId"]);
@@ -52,7 +51,12 @@ namespace Respace
                 {
                     int bookingId = Convert.ToInt32(Request.QueryString["bid"]);
                     decimal amount = decimal.Parse(Request.QueryString["amt"]);
+
                     ProcessBookingPayment(userId, bookingId, amount);
+
+                    // ✅ SEND EMAILS to guest + host after successful confirmation
+                    NotificationService.SendBookingConfirmed(bookingId);
+
                     Response.Redirect("Account.aspx?msg=BookingConfirmed");
                 }
             }
@@ -60,18 +64,26 @@ namespace Respace
 
         private void ProcessBookingPayment(int userId, int bookingId, decimal amount)
         {
-            Db.Execute("UPDATE Bookings SET Status = 'Confirmed' WHERE BookingId = @bid", new SqlParameter("@bid", bookingId));
+            Db.Execute("UPDATE Bookings SET Status = 'Confirmed' WHERE BookingId = @bid",
+                new SqlParameter("@bid", bookingId));
 
-            // Logic for points
             double multiplier = GetUserMultiplier(userId);
             int points = (int)Math.Floor((double)amount * multiplier);
+
             Db.Execute("UPDATE Users SET PointsBalance = ISNULL(PointsBalance, 0) + @pts WHERE UserId = @uid",
-                new SqlParameter("@pts", points), new SqlParameter("@uid", userId));
+                new SqlParameter("@pts", points),
+                new SqlParameter("@uid", userId));
         }
 
         private double GetUserMultiplier(int userId)
         {
-            object result = Db.Scalar("SELECT p.PointsMultiplier FROM UserMemberships um JOIN MembershipPlans p ON p.PlanId = um.PlanId WHERE um.UserId = @uid AND um.IsActive = 1", new SqlParameter("@uid", userId));
+            object result = Db.Scalar(@"
+                SELECT p.PointsMultiplier 
+                FROM UserMemberships um 
+                JOIN MembershipPlans p ON p.PlanId = um.PlanId 
+                WHERE um.UserId = @uid AND um.IsActive = 1",
+                new SqlParameter("@uid", userId));
+
             return result != null ? Convert.ToDouble(result) : 1.0;
         }
     }

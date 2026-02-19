@@ -58,6 +58,10 @@ namespace Respace
                 new SqlParameter("@Role", role));
 
             Response.Redirect("Login.aspx");
+            
+            lblMsg.Text = "Registration successful!";
+            lblMsg.Visible = true;
+
         }
     }
 }

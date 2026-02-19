@@ -70,11 +70,14 @@
     <Content Include="AdminApproveSpaces.aspx" />
     <Content Include="AdminReview.aspx" />
     <Content Include="BookingSuccess.aspx" />
+    <Content Include="ChangePassword.aspx" />
     <Content Include="Checkout.aspx" />
     <Content Include="ConfirmSpace.aspx" />
+    <Content Include="Content\auth.css" />
     <Content Include="Content\site.css" />
     <Content Include="Database\01_CreateTables.sql" />
     <Content Include="Database\02_SeedData.sql" />
+    <Content Include="ForgotPassword.aspx" />
     <Content Include="Global.asax" />
     <Content Include="HostBlockDates.aspx" />
     <Content Include="HostBookings.aspx" />
@@ -84,6 +87,7 @@
     <Content Include="Membership.aspx" />
     <Content Include="Payment.aspx" />
     <Content Include="Register.aspx" />
+    <Content Include="ResetPassword.aspx" />
     <Content Include="Review.aspx" />
     <Content Include="Rewards.aspx" />
     <Content Include="Search.aspx" />
@@ -121,6 +125,13 @@
     <Compile Include="BookingSuccess.aspx.designer.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ChangePassword.aspx.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChangePassword.aspx.designer.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Checkout.aspx.cs">
       <DependentUpon>Checkout.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -134,6 +145,13 @@
     </Compile>
     <Compile Include="ConfirmSpace.aspx.designer.cs">
       <DependentUpon>ConfirmSpace.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.designer.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -195,6 +213,13 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Review.aspx.cs">
       <DependentUpon>Review.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -216,6 +241,9 @@
     <Compile Include="Search.aspx.designer.cs">
       <DependentUpon>Search.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\OtpService.cs" />
     <Compile Include="SpaceDetails.aspx.cs">
       <DependentUpon>SpaceDetails.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

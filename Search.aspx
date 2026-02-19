@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true"
+﻿<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="Search.aspx.cs"
     Inherits="Respace.Search"
     MasterPageFile="~/Site.Master" %>
@@ -20,7 +20,9 @@
         .hero {
             padding: 34px 0 18px;
             border-bottom: 1px solid #eee;
-            background: radial-gradient(900px 360px at 18% 10%, rgba(255,56,92,.18), transparent 60%), radial-gradient(900px 360px at 82% 30%, rgba(0,140,255,.12), transparent 55%), #fff;
+            background: radial-gradient(900px 360px at 18% 10%, rgba(255,56,92,.18), transparent 60%),
+                        radial-gradient(900px 360px at 82% 30%, rgba(0,140,255,.12), transparent 55%),
+                        #fff;
         }
 
         .hero__inner {
@@ -31,9 +33,7 @@
         }
 
         @media (max-width: 900px) {
-            .hero__inner {
-                grid-template-columns: 1fr;
-            }
+            .hero__inner { grid-template-columns: 1fr; }
         }
 
         .hero__title {
@@ -68,9 +68,7 @@
         }
 
         @media (max-width: 760px) {
-            .searchRow {
-                grid-template-columns: 1fr;
-            }
+            .searchRow { grid-template-columns: 1fr; }
         }
 
         .label {
@@ -87,12 +85,13 @@
             outline: none;
             transition: box-shadow .12s, border-color .12s;
             background: #fff;
+            box-sizing: border-box;
         }
 
-            .input:focus {
-                border-color: rgba(255,56,92,.45);
-                box-shadow: 0 0 0 4px rgba(255,56,92,.14);
-            }
+        .input:focus {
+            border-color: rgba(255,56,92,.45);
+            box-shadow: 0 0 0 4px rgba(255,56,92,.14);
+        }
 
         .btn {
             padding: 12px 16px;
@@ -113,9 +112,7 @@
             opacity: .9;
         }
 
-            .btn-secondary:hover {
-                opacity: 1;
-            }
+        .btn-secondary:hover { opacity: 1; }
 
         .chips {
             margin-top: 10px;
@@ -133,9 +130,7 @@
             font-weight: 800;
         }
 
-            .chip:hover {
-                background: #f7f7f7;
-            }
+        .chip:hover { background: #f7f7f7; }
 
         /* right preview */
         .preview {
@@ -162,9 +157,7 @@
             font-size: 16px;
         }
 
-        .muted {
-            color: #777;
-        }
+        .muted { color: #777; }
 
         /* ===== FILTER PANEL ===== */
         .filter-panel {
@@ -174,49 +167,6 @@
             box-shadow: 0 10px 26px rgba(0,0,0,0.08);
             margin: 18px 0;
         }
-
-        .filter-card{
-    background:#fff;
-    border-radius:16px;
-    padding:18px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.08);
-}
-
-.filter-row{
-    display:block;
-    margin-bottom:16px;
-}
-
-.filter-title{
-    font-weight:800;
-    font-size:18px;
-    margin-bottom:8px;
-}
-
-.filter-options{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-}
-
-.filter-grid-2{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:16px;
-}
-
-@media (max-width: 768px){
-    .filter-grid-2{ grid-template-columns: 1fr; }
-}
-
-.filter-actions{
-    display:flex;
-    gap:12px;
-    margin-top:8px;
-}
-
-
-
 
         /* ===== RESULTS ===== */
         .resultsHead {
@@ -232,59 +182,61 @@
             font-size: 18px;
         }
 
-        /* Airbnb-ish card grid */
+        /* ==========================
+           CONSISTENT CARD GRID FIX
+           ========================== */
         .gridCards {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 16px;
             margin: 16px 0 40px;
+            align-items: stretch; /* important */
         }
 
-        @media (max-width:1100px) {
-            .gridCards {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        @media (max-width:1100px) { .gridCards { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width:860px)  { .gridCards { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width:520px)  { .gridCards { grid-template-columns: 1fr; } }
+
+        /* anchor fills grid cell */
+        .cardLink {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
         }
 
-        @media (max-width:860px) {
-            .gridCards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width:520px) {
-            .gridCards {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        /* card has fixed height -> every card consistent across ALL rows */
         .listingCard {
             background: #fff;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 10px 26px rgba(0,0,0,.08);
             transition: transform .12s ease, box-shadow .12s ease;
+
+            display: flex;
+            flex-direction: column;
+            /*height: 420px;*/ /* ✅ adjust if you want taller/shorter */
         }
 
-            .listingCard:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 14px 34px rgba(0,0,0,.12);
-            }
+        .listingCard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 34px rgba(0,0,0,.12);
+        }
 
+        /* image area always same height */
         .thumb {
             position: relative;
             width: 100%;
-            padding-top: 68%;
+            height: 220px; /* ✅ consistent image height */
             background: #f3f3f3;
         }
 
-            .thumb img {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
         .badgeType {
             position: absolute;
@@ -299,58 +251,60 @@
 
         .cardBody {
             padding: 12px 14px 14px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
+        /* Reserve exactly 2 lines height (cross-browser reliable) */
         .cardTitle {
             font-weight: 900;
             font-size: 15px;
             margin: 0;
+
+            line-height: 1.25;
+            height: 2.5em; /* ~2 lines */
+            overflow: hidden;
+
+            /* keep clamp for browsers that support it */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
+        /* reserve a stable line so layout doesn't shift */
         .cardMeta {
             color: #666;
             margin-top: 4px;
             font-size: 13px;
+            min-height: 1.2em;
         }
 
         .cardPriceRow {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 8px;
             gap: 10px;
+            margin-top: auto; /* ✅ stick to bottom */
         }
 
-        .cardPrice {
-            font-weight: 900;
-        }
-
-        .stars {
-            color: #ff385c;
-            letter-spacing: 1px;
-        }
-
-        .cardLink {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
+        .cardPrice { font-weight: 900; }
+        .stars { color: #ff385c; letter-spacing: 1px; }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- ===== HERO HOMEPAGE SECTION ===== -->
+    <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="wrap">
             <div class="hero__inner">
                 <div>
                     <h1 class="hero__title">Book spaces like a pro.</h1>
                     <p class="hero__subtitle">
-                        Search meeting rooms, studios, event halls and more &mdash; compare prices, capacity, and reviews.
+                        Search meeting rooms, studios, event halls and more — compare prices, capacity, and reviews.
                     </p>
 
-                    <!-- SAME IDs: txtSearch / btnSearch / btnToggleFilter -->
                     <div class="card searchCard">
                         <div class="searchRow">
                             <div>
@@ -381,9 +335,9 @@
                 <div class="preview">
                     <span class="preview__badge">Popular this week</span>
                     <div class="preview__title">Creative Studio</div>
-                    <div class="muted">Central &#8226; 10&ndash;15 pax &#8226; from $35/hr</div>
+                    <div class="muted">Central • 10–15 pax • from $35/hr</div>
                     <div style="height: 10px"></div>
-                    <div class="muted">Tip: try &ldquo;studio&rdquo; or &ldquo;meeting room&rdquo; to see quick results.</div>
+                    <div class="muted">Tip: try “studio” or “meeting room” to see quick results.</div>
                 </div>
             </div>
         </div>
@@ -391,11 +345,13 @@
 
     <div class="wrap">
 
-        <!-- ===== FILTER PANEL (same pnlFilter ID) ===== -->
+        <!-- ===== FILTER PANEL ===== -->
         <asp:Panel ID="pnlFilter" runat="server" CssClass="filter-panel" Visible="false">
-            <div class="filter-grid">
-                <div class="filter-block">
-                    <div class="filter-title">Location</div>
+            <div style="margin-bottom:10px;font-weight:800;">Filters</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div>
+                    <div style="font-weight:800;margin-bottom:6px;">Location</div>
                     <asp:CheckBoxList ID="cblLocation" runat="server" RepeatDirection="Horizontal">
                         <asp:ListItem>North</asp:ListItem>
                         <asp:ListItem>South</asp:ListItem>
@@ -405,8 +361,8 @@
                     </asp:CheckBoxList>
                 </div>
 
-                <div class="filter-block">
-                    <div class="filter-title">Type</div>
+                <div>
+                    <div style="font-weight:800;margin-bottom:6px;">Type</div>
                     <asp:CheckBoxList ID="cblType" runat="server" RepeatDirection="Horizontal">
                         <asp:ListItem>Meeting Room</asp:ListItem>
                         <asp:ListItem>Conference Room</asp:ListItem>
@@ -416,16 +372,16 @@
                     </asp:CheckBoxList>
                 </div>
 
-                <div class="filter-block">
-                    <div class="filter-title">Price Range ($/hour)</div>
+                <div>
+                    <div style="font-weight:800;margin-bottom:6px;">Price Range ($/hour)</div>
                     Min:
                     <asp:TextBox ID="txtMinPrice" runat="server" TextMode="Number" Width="90" CssClass="input" />
                     &nbsp; Max:
                     <asp:TextBox ID="txtMaxPrice" runat="server" TextMode="Number" Width="90" CssClass="input" />
                 </div>
 
-                <div class="filter-block">
-                    <div class="filter-title">Availability (optional)</div>
+                <div>
+                    <div style="font-weight:800;margin-bottom:6px;">Availability (optional)</div>
                     From:
                     <asp:TextBox ID="txtFromDate" runat="server" TextMode="Date" CssClass="input" />
                     <br />
@@ -436,8 +392,8 @@
                     </div>
                 </div>
 
-                <div class="filter-block">
-                    <div class="filter-title">Sort By</div>
+                <div>
+                    <div style="font-weight:800;margin-bottom:6px;">Sort By</div>
                     <asp:DropDownList ID="ddlSort" runat="server" CssClass="input">
                         <asp:ListItem Value="">-- Select --</asp:ListItem>
                         <asp:ListItem Value="price_asc">Price: Low to High</asp:ListItem>
@@ -462,7 +418,7 @@
         <!-- ===== RESULTS ===== -->
         <div class="resultsHead">
             <h2 class="resultsTitle">Available spaces</h2>
-            <div class="muted">Scroll to explore &#8226; Use filters to refine</div>
+            <div class="muted">Scroll to explore • Use filters to refine</div>
         </div>
 
         <div class="gridCards">
@@ -472,13 +428,19 @@
                         <div class="listingCard">
                             <div class="thumb">
                                 <div class="badgeType"><%# Eval("Type") %></div>
-                                <img alt="Space photo" src='<%# GetListingImage(Eval("CoverPhotoUrl")) %>' />
+
+                                <!-- Optional fallback for broken images:
+                                     Put a placeholder at /Images/placeholder.jpg -->
+                                <img alt="Space photo"
+                                     src='<%# GetListingImage(Eval("CoverPhotoUrl")) %>'
+                                     onerror="this.onerror=null;this.src='Images/placeholder.jpg';" />
                             </div>
 
                             <div class="cardBody">
-                                <p class="cardTitle"><%# Eval("Name") %></p>
+                                <p class="cardTitle" title='<%# Eval("Name") %>'><%# Eval("Name") %></p>
+
                                 <div class="cardMeta">
-                                    <%# Eval("Location") %> &#8226; <%# Eval("Capacity") %> pax
+                                    <%# Eval("Location") %> • <%# Eval("Capacity") %> pax
                                 </div>
 
                                 <div class="cardPriceRow">

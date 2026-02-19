@@ -58,6 +58,7 @@ CREATE TABLE [dbo].[Reviews] (
     [Comment]    NVARCHAR (1000) NULL,
     [IsApproved] BIT             DEFAULT ((0)) NOT NULL,
     [CreatedAt]  DATETIME        DEFAULT (getdate()) NOT NULL,
+    [Badges]     NVARCHAR (300)  NULL,
     PRIMARY KEY CLUSTERED ([ReviewId] ASC),
     FOREIGN KEY ([SpaceId]) REFERENCES [dbo].[Spaces] ([SpaceId]),
     FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId]),
@@ -137,6 +138,17 @@ CREATE TABLE [dbo].[Spaces] (
     FOREIGN KEY ([HostUserId]) REFERENCES [dbo].[Users] ([UserId])
 );
 
+CREATE TABLE [dbo].[UserCoupons] (
+    [UserCouponId]   INT             IDENTITY (1, 1) NOT NULL,
+    [UserId]         INT             NULL,
+    [CouponCode]     VARCHAR (50)    NULL,
+    [DiscountAmount] DECIMAL (18, 2) NULL,
+    [IsUsed]         BIT             DEFAULT ((0)) NULL,
+    [RedeemedAt]     DATETIME        DEFAULT (getdate()) NULL,
+    PRIMARY KEY CLUSTERED ([UserCouponId] ASC),
+    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId])
+);
+
 CREATE TABLE [dbo].[UserMemberships] (
     [UserMembershipId] INT      IDENTITY (1, 1) NOT NULL,
     [UserId]           INT      NOT NULL,
@@ -161,16 +173,5 @@ CREATE TABLE [dbo].[Users] (
     [MembershipTier] NVARCHAR (20)  CONSTRAINT [DF_Users_MembershipTier] DEFAULT ('Basic') NOT NULL,
     PRIMARY KEY CLUSTERED ([UserId] ASC),
     UNIQUE NONCLUSTERED ([Email] ASC)
-);
-
-CREATE TABLE [dbo].[UserCoupons] (
-    [UserCouponId]   INT             IDENTITY (1, 1) NOT NULL,
-    [UserId]         INT             NULL,
-    [CouponCode]     VARCHAR (50)    NULL,
-    [DiscountAmount] DECIMAL (18, 2) NULL,
-    [IsUsed]         BIT             DEFAULT ((0)) NULL,
-    [RedeemedAt]     DATETIME        DEFAULT (getdate()) NULL,
-    PRIMARY KEY CLUSTERED ([UserCouponId] ASC),
-    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId])
 );
 
