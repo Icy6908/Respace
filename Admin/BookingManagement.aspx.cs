@@ -13,16 +13,17 @@ namespace Respace.Admin
         {
             if (!IsPostBack)
             {
+                
                 BindBookingGrid();
             }
         }
 
         private void BindBookingGrid()
         {
+           
             string searchTerm = txtSearchBooking.Text.Trim();
             string selectedStatus = ddlStatusFilter.SelectedValue;
 
-        
             string query = @"SELECT b.BookingId, s.Name as SpaceName, u.FullName as RenterName, 
                              b.StartDateTime, b.TotalPrice, b.Status 
                              FROM Bookings b
@@ -32,23 +33,25 @@ namespace Respace.Admin
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-
+           
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query += " AND (s.Name LIKE @search OR u.FullName LIKE @search)";
                 parameters.Add(new SqlParameter("@search", "%" + searchTerm + "%"));
-
-                if (selectedStatus != "All")
-                {
-                    query += " AND b.Status = @status";
-                    parameters.Add(new SqlParameter("@status", selectedStatus));
-                }
-
-                query += " ORDER BY b.BookingId DESC";
-
-                gvBookings.DataSource = Db.Query(query, parameters.ToArray());
-                gvBookings.DataBind();
             }
+
+            if (selectedStatus != "All Status" && selectedStatus != "All" && !string.IsNullOrEmpty(selectedStatus))
+            {
+                query += " AND b.Status = @status";
+                parameters.Add(new SqlParameter("@status", selectedStatus));
+            }
+
+          
+            query += " ORDER BY b.BookingId DESC";
+
+          
+            gvBookings.DataSource = Db.Query(query, parameters.ToArray());
+            gvBookings.DataBind();
         }
 
         protected void txtSearchBooking_TextChanged(object sender, EventArgs e)
@@ -56,11 +59,13 @@ namespace Respace.Admin
             BindBookingGrid();
         }
 
+
         protected void Filter_Changed(object sender, EventArgs e)
         {
             BindBookingGrid();
         }
 
+      
         public string GetBookingStatusClass(string status)
         {
             switch (status?.Trim())
@@ -68,7 +73,8 @@ namespace Respace.Admin
                 case "Confirmed": return "bg-success";
                 case "Pending": return "bg-warning text-dark";
                 case "Cancelled": return "bg-danger";
-                case "Refunded": return "bg-secondary text-white"; 
+                case "Completed": return "bg-info text-white";
+                case "Refunded": return "bg-secondary text-white";
                 default: return "bg-secondary";
             }
         }
