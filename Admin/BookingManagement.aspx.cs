@@ -32,22 +32,23 @@ namespace Respace.Admin
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-          
+
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query += " AND (s.Name LIKE @search OR u.FullName LIKE @search)";
                 parameters.Add(new SqlParameter("@search", "%" + searchTerm + "%"));
-         
-            if (selectedStatus != "All")
-            {
-                query += " AND b.Status = @status";
-                parameters.Add(new SqlParameter("@status", selectedStatus));
+
+                if (selectedStatus != "All")
+                {
+                    query += " AND b.Status = @status";
+                    parameters.Add(new SqlParameter("@status", selectedStatus));
+                }
+
+                query += " ORDER BY b.BookingId DESC";
+
+                gvBookings.DataSource = Db.Query(query, parameters.ToArray());
+                gvBookings.DataBind();
             }
-
-            query += " ORDER BY b.BookingId DESC";
-
-            gvBookings.DataSource = Db.Query(query, parameters.ToArray());
-            gvBookings.DataBind();
         }
 
         protected void txtSearchBooking_TextChanged(object sender, EventArgs e)
