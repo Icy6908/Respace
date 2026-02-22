@@ -66,7 +66,7 @@ namespace Respace
                 }
                 else
                 {
-                    // ✅ Option A: create as Draft first, submit later via confirmation page
+                  
                     lblTitle.Text = "Create listing";
                     lblStatus.Text = "Draft";
                     lblStatusHint.Text = "(Draft is not visible in Search until submitted)";
@@ -152,7 +152,6 @@ namespace Respace
             txtLat.Text = r["Latitude"] == DBNull.Value ? "" : Convert.ToDecimal(r["Latitude"]).ToString(CultureInfo.InvariantCulture);
             txtLng.Text = r["Longitude"] == DBNull.Value ? "" : Convert.ToDecimal(r["Longitude"]).ToString(CultureInfo.InvariantCulture);
 
-            // Selected amenities
             DataTable dtA = Db.Query(@"
                 SELECT AmenityId
                 FROM SpaceAmenities
@@ -164,9 +163,7 @@ namespace Respace
                 li.Selected = set.Contains(li.Value);
         }
 
-        // =========================
-        // SAVE (stays on this page)
-        // =========================
+     
         protected void btnSave_Click(object sender, EventArgs e)
         {
             if (!TrySaveListing(out int spaceId))
@@ -175,25 +172,22 @@ namespace Respace
             lblMsg.Text = "<div class='alert success'>Listing saved.</div>";
             LoadPhotosGrid(spaceId);
 
-            // if it was a NEW listing, bring them into edit mode (so uploads work nicely)
+           
             if (EditingSpaceId <= 0)
                 Response.Redirect("HostCreateSpace.aspx?id=" + spaceId, false);
         }
 
-        // ==========================================
-        // COMPLETE (save + go to confirmation page)
-        // ==========================================
+       
         protected void btnComplete_Click(object sender, EventArgs e)
         {
             if (!TrySaveListing(out int spaceId))
                 return;
 
-            // ✅ Go to read-only confirmation page
-            // You will create ConfirmSpace.aspx (or reuse your existing one)
+            
             Response.Redirect("ConfirmSpace.aspx?id=" + spaceId, false);
         }
 
-        // Save logic shared by Save + Complete
+    
         private bool TrySaveListing(out int savedSpaceId)
         {
             savedSpaceId = 0;
@@ -226,7 +220,7 @@ namespace Respace
             }
             if (price < 0) price = 0;
 
-            // Address
+           
             string addrLine = NullIfEmpty(txtAddressLine.Text);
             string city = NullIfEmpty(txtCity.Text);
             string state = NullIfEmpty(txtState.Text);
@@ -236,7 +230,7 @@ namespace Respace
             decimal? lat = TryParseDecimal(txtLat.Text);
             decimal? lng = TryParseDecimal(txtLng.Text);
 
-            // UPDATE
+           
             if (EditingSpaceId > 0)
             {
                 int affected = Db.Execute(@"
@@ -287,7 +281,6 @@ namespace Respace
                 return true;
             }
 
-            // CREATE as Draft (Option A)
             object newIdObj = Db.Scalar(@"
                 INSERT INTO Spaces (HostUserId, Name, Location, Type, Description, PricePerHour, Capacity, Status, IsDeleted,
                                     AddressLine, City, State, Postcode, Country, Latitude, Longitude)
@@ -325,9 +318,7 @@ namespace Respace
             return true;
         }
 
-        // =========================
-        // PHOTOS
-        // =========================
+       
         protected void btnUpload_Click(object sender, EventArgs e)
         {
             lblMsg.Text = "";
@@ -351,7 +342,7 @@ namespace Respace
                 return;
             }
 
-            // Store under app-relative folder
+            
             string relFolder = "~/uploads/spaces/" + spaceId + "/";
             string absFolder = Server.MapPath(relFolder);
             Directory.CreateDirectory(absFolder);
@@ -458,7 +449,7 @@ namespace Respace
                         string abs = Server.MapPath(rel);
                         if (File.Exists(abs)) File.Delete(abs);
                     }
-                    catch { /* ignore */ }
+                    catch {}
 
                     object coverCount = Db.Scalar("SELECT COUNT(*) FROM SpacePhotos WHERE SpaceId=@S AND IsCover=1",
                         new SqlParameter("@S", spaceId));
@@ -484,9 +475,7 @@ namespace Respace
             LoadPhotosGrid(spaceId);
         }
 
-        // =========================
-        // AMENITIES
-        // =========================
+      
         private void SaveAmenities(int spaceId)
         {
             Db.Execute("DELETE FROM SpaceAmenities WHERE SpaceId=@S", new SqlParameter("@S", spaceId));
@@ -509,9 +498,7 @@ namespace Respace
             }
         }
 
-        // =========================
-        // HELPERS
-        // =========================
+    
         private string NullIfEmpty(string s)
         {
             s = (s ?? "").Trim();
@@ -532,7 +519,7 @@ namespace Respace
             return null;
         }
 
-        // turn "uploads/.." or "/uploads/.." into "~/" format, and keep "http..." untouched
+     
         private string NormalizeAppRelative(string url)
         {
             url = (url ?? "").Trim();
@@ -544,7 +531,7 @@ namespace Respace
             if (url.StartsWith("~/")) return url;
             if (url.StartsWith("/")) return "~" + url;
 
-            // "uploads/..."
+          
             return "~/" + url;
         }
     }

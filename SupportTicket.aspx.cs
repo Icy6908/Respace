@@ -26,14 +26,13 @@ namespace Respace
         {
             string userId = Session["UserId"].ToString();
 
-            // 1. Fetch History
+            
             string sql = "SELECT * FROM SupportQueries WHERE UserId = @uid ORDER BY SubmittedAt DESC";
             DataTable dt = Db.Query(sql, new SqlParameter("@uid", userId));
             rptHistory.DataSource = dt;
             rptHistory.DataBind();
 
-            // 2. Clear Notification Badge
-            // Marks admin replies as read so the pink dot in Site.Master disappears
+            
             string updateSql = "UPDATE SupportQueries SET IsRead = 1 WHERE UserId = @uid AND AdminReply IS NOT NULL";
             Db.Query(updateSql, new SqlParameter("@uid", userId));
         }
@@ -51,7 +50,7 @@ namespace Respace
                 fileAttachment.SaveAs(Server.MapPath(attachmentPath));
             }
 
-            // Updated: Added IsRead = 0 for the notification system
+           
             string query = @"INSERT INTO SupportQueries (UserId, Subject, Message, Status, SubmittedAt, AttachmentUrl, IsRead) 
                              VALUES (@uid, @sub, @msg, 'Pending', GETDATE(), @attach, 0)";
 
@@ -69,7 +68,7 @@ namespace Respace
 
             txtSubject.Text = "";
             txtMessage.Text = "";
-            LoadHistory(); // Refresh the list
+            LoadHistory(); 
         }
     }
 }

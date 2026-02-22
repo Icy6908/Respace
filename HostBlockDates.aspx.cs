@@ -42,7 +42,7 @@ namespace Respace
                 return;
             }
 
-            // ✅ Always keep the disabled date list up-to-date (important after blocking/unblocking)
+           
             if (!HostOwnsSpace())
             {
                 lblMsg.Text = "<div class='alert error'>Not found / not your listing.</div>";
@@ -55,7 +55,7 @@ namespace Respace
 
             if (!IsPostBack)
             {
-                // nothing else needed
+               
             }
         }
 
@@ -93,15 +93,12 @@ namespace Respace
             gvBlocks.DataBind();
         }
 
-        // ✅ NEW: build yyyy-MM-dd list of days that are NOT selectable for host calendar
-        // Includes:
-        // - Confirmed/Pending bookings
-        // - Active blocks (so host can't overlap existing blocks)
+
         private void LoadDisabledDatesForHostCalendar()
         {
             var days = new HashSet<string>();
 
-            // Bookings
+          
             DataTable dtB = Db.Query(@"
                 SELECT StartDateTime, EndDateTime
                 FROM Bookings
@@ -112,12 +109,12 @@ namespace Respace
             foreach (DataRow row in dtB.Rows)
             {
                 DateTime start = Convert.ToDateTime(row["StartDateTime"]).Date;
-                DateTime end = Convert.ToDateTime(row["EndDateTime"]).Date; // exclusive
+                DateTime end = Convert.ToDateTime(row["EndDateTime"]).Date; 
                 for (DateTime d = start; d < end; d = d.AddDays(1))
                     days.Add(d.ToString("yyyy-MM-dd"));
             }
 
-            // Existing active blocks
+
             DataTable dtBlk = Db.Query(@"
                 SELECT StartDate, EndDate
                 FROM SpaceBlocks
@@ -127,7 +124,7 @@ namespace Respace
             foreach (DataRow row in dtBlk.Rows)
             {
                 DateTime start = Convert.ToDateTime(row["StartDate"]).Date;
-                DateTime end = Convert.ToDateTime(row["EndDate"]).Date; // exclusive
+                DateTime end = Convert.ToDateTime(row["EndDate"]).Date; 
                 for (DateTime d = start; d < end; d = d.AddDays(1))
                     days.Add(d.ToString("yyyy-MM-dd"));
             }
@@ -159,7 +156,7 @@ namespace Respace
                 return;
             }
 
-            // Prevent overlapping bookings/blocks
+         
             object overlap = Db.Scalar(@"
                 SELECT
                   (SELECT COUNT(*)
@@ -199,7 +196,6 @@ namespace Respace
             new SqlParameter("@End", end),
             new SqlParameter("@R", string.IsNullOrWhiteSpace(reason) ? (object)DBNull.Value : reason));
 
-            // Clear inputs
             txtReason.Text = "";
             txtStart.Text = "";
             txtEnd.Text = "";

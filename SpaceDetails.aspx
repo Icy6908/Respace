@@ -76,7 +76,7 @@
             color: #999;
         }
 
-        /* Photo gallery */
+
         .photo-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -407,17 +407,16 @@
 
             <asp:Label ID="lblMsg" runat="server" CssClass="alert" />
 
-            <!-- Calendar disable lists -->
+           
             <asp:HiddenField ID="hfBookedDates" runat="server" />
             <asp:HiddenField ID="hfBlockedDates" runat="server" />
 
-            <!-- Postback-safe selected dates -->
             <asp:HiddenField ID="hfStart" runat="server" />
             <asp:HiddenField ID="hfEnd" runat="server" OnValueChanged="hfEnd_ValueChanged" />
 
             <asp:Panel ID="pnlDetails" runat="server" Visible="false">
 
-                <!-- Title -->
+                
                 <div class="listing__header">
                     <h1 class="listing__title">
                         <asp:Label ID="lblName" runat="server" />
@@ -435,7 +434,6 @@
                     </div>
                 </div>
 
-                <!-- ✅ Photo gallery (cover + 4 thumbnails) -->
                 <div class="photo-grid">
                     <div class="photo-grid__big">
                         <asp:Image ID="imgCover" runat="server" Visible="false" />
@@ -462,7 +460,7 @@
 
                 <div class="listing__body">
 
-                    <!-- LEFT -->
+               
                     <div class="listing__left">
 
                         <div class="section-tabs">
@@ -473,7 +471,7 @@
                             <a class="section-tabs__link" href="#reviews">Reviews</a>
                         </div>
 
-                        <!-- About -->
+                        
                         <section id="about" class="section card">
                             <h2 class="h3">About this space</h2>
                             <p class="text">
@@ -504,7 +502,7 @@
                             </div>
                         </section>
 
-                        <!-- ✅ Amenities -->
+                        
                         <section id="offers" class="section card">
                             <h2 class="h3">What this place offers</h2>
                             <asp:Repeater ID="rptAmenities" runat="server">
@@ -527,7 +525,7 @@
                             </asp:Panel>
                         </section>
 
-                        <!-- Availability -->
+                      
                         <section id="availability" class="section card">
                             <h2 class="h3">Availability</h2>
                             <div class="muted">
@@ -540,7 +538,7 @@
                             </div>
                         </section>
 
-                        <!-- ✅ Map / Address -->
+                       
                         <section id="location" class="section card">
                             <h2 class="h3">Location</h2>
                             <div class="muted">
@@ -552,11 +550,9 @@
                             </div>
                         </section>
 
-                        <!-- Reviews -->
                         <section id="reviews" class="section card">
                             <div class="reviews-header">
                                 <h2 class="h3">Reviews</h2>
-                                <a id="lnkReview" runat="server" class="btn btn-outline" href="#">Write a review</a>
                             </div>
 
                             <asp:Repeater ID="rptReviews" runat="server">
@@ -585,7 +581,7 @@
 
                     </div>
 
-                    <!-- RIGHT -->
+                    
                     <aside class="listing__right">
                         <div class="booking-card card">
 
@@ -597,7 +593,7 @@
                                 <div class="muted small">Prices include all fees</div>
                             </div>
 
-                            <!-- ✅ Guest count -->
+                            
                             <div class="booking-field" style="padding: 0 0 12px;">
                                 <div class="booking-field__label">GUESTS</div>
                                 <asp:DropDownList ID="ddlGuests" runat="server" CssClass="select" />
@@ -607,7 +603,7 @@
                                 </div>
                             </div>
 
-                            <!-- Selected dates -->
+                            
                             <div class="booking-box">
                                 <div class="booking-box__row">
                                     <div class="booking-field">

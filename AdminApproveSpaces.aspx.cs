@@ -11,7 +11,7 @@ namespace Respace
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Only Admin
+        
             if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
             {
                 Response.Redirect("Login.aspx");
@@ -62,7 +62,7 @@ namespace Respace
             if (!int.TryParse(e.CommandArgument.ToString(), out spaceId))
                 return;
 
-            // Find the row to read remarks textbox
+         
             GridViewRow row = ((Control)e.CommandSource).NamingContainer as GridViewRow;
             string remarks = "";
             if (row != null)

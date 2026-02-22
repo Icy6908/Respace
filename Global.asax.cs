@@ -9,7 +9,7 @@ namespace Respace
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            // Ensure database objects required by the app exist in the configured database.
+           
             try
             {
                 var connStr = System.Configuration.ConfigurationManager.ConnectionStrings["RespaceDb"].ConnectionString;
@@ -23,7 +23,7 @@ namespace Respace
             }
             catch (Exception ex)
             {
-                // Fail fast during development so missing DB objects are discovered early.
+  
                 System.Diagnostics.Trace.TraceError("Database initialization failed: " + ex.Message);
             }
         }

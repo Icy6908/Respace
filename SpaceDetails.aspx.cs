@@ -42,18 +42,17 @@ namespace Respace
             LoadPhotos();
             LoadAmenities();
 
-            // --- INTEGRATED: Host Restriction Logic ---
+            
             if (Session["Role"] != null && Session["Role"].ToString() == "Host")
             {
                 btnBook.Enabled = false;
                 btnBook.Text = "Hosts Cannot Book";
-                btnBook.CssClass = "btn btn-secondary w-100 disabled"; // Visual feedback
+                btnBook.CssClass = "btn btn-secondary w-100 disabled"; 
                 lblMsg.Text = "<div class='alert info'>You are viewing this as a Host. Only Guests can book rooms.</div>";
             }
 
             if (!IsPostBack)
             {
-                SetupReviewLink();
                 LoadApprovedReviews();
                 BindGuestDropdown(CapacityCached);
                 RenderMap();
@@ -283,10 +282,7 @@ namespace Respace
             hfBlockedDates.Value = string.Join(",", blockedDays);
         }
 
-        private void SetupReviewLink()
-        {
-            lnkReview.HRef = "Review.aspx?id=" + SpaceId;
-        }
+        
 
         private void LoadApprovedReviews()
         {
@@ -313,7 +309,7 @@ namespace Respace
 
         protected void btnBook_Click(object sender, EventArgs e)
         {
-            // Fail-safe check in case button is re-enabled via Inspect Element
+           
             if (Session["Role"] != null && Session["Role"].ToString() == "Host") return;
 
             string spaceId = Request.QueryString["id"];

@@ -93,7 +93,6 @@
     <Content Include="HostBlockDates.aspx" />
     <Content Include="HostBookings.aspx" />
     <Content Include="HostCreateSpace.aspx" />
-    <Content Include="levin daddy please read.html" />
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="Membership.aspx" />

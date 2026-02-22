@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="Respace.Login" MasterPageFile="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <!-- Auth-only CSS (does not affect other pages) -->
+    
     <link href="Content/auth.css" rel="stylesheet" />
 
     <div class="auth-shell">
@@ -24,14 +24,12 @@
             <div class="field">
                 <label class="label" for="<%= txtPassword.ClientID %>">Password</label>
 
-                <!-- IMPORTANT:
-                     No custom "Show" button here.
-                     Only the browser’s built-in eye icon will appear (Edge/Chrome). -->
+             
                 <div class="password-row">
                     <asp:TextBox ID="txtPassword" runat="server" CssClass="input" TextMode="Password" placeholder="••••••••" />
                 </div>
 
-                <!-- ✅ ADDED BACK: Forgot password link (doesn't remove anything) -->
+               
                 <div style="text-align:right; margin-top:6px;">
                     <a class="link" href="ForgotPassword.aspx" style="font-size:13px;">Forgot password?</a>
                 </div>

@@ -258,15 +258,6 @@ namespace Respace
         protected global::System.Web.UI.WebControls.View viewBookings;
 
         /// <summary>
-        /// lblBookingsMsg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBookingsMsg;
-
-        /// <summary>
         /// gvBookings control.
         /// </summary>
         /// <remarks>
@@ -285,15 +276,6 @@ namespace Respace
         protected global::System.Web.UI.WebControls.View viewSpaces;
 
         /// <summary>
-        /// lblSpacesMsg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSpacesMsg;
-
-        /// <summary>
         /// gvSpaces control.
         /// </summary>
         /// <remarks>
@@ -301,15 +283,6 @@ namespace Respace
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvSpaces;
-
-        /// <summary>
-        /// lblHostBookingsMsg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblHostBookingsMsg;
 
         /// <summary>
         /// gvHostBookings control.

@@ -41,7 +41,7 @@
                 <a href='<%= ResolveUrl("~/Admin/ReviewManagement.aspx") %>'><i class="fas fa-star me-2 text-warning"></i> Review Management</a>
                 
                 
-                <%-- NEW REWARDS SECTION --%>
+               
                 <div class="section-label">Rewards</div>
                 <a href='<%= ResolveUrl("~/Admin/CouponManager.aspx") %>'><i class="fas fa-ticket-alt me-2 text-warning"></i> Reward Store</a>
                 <a href='<%= ResolveUrl("~/Admin/ManageCoupons.aspx") %>'><i class="fas fa-database me-2 text-secondary"></i> Issued Coupons</a>

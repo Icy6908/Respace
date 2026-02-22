@@ -14,7 +14,7 @@ namespace Respace.Admin
                 string userId = Request.QueryString["id"];
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    // Calling methods defined below
+                   
                     LoadUserProfile(userId);
                     LoadUserBookings(userId);
                 }
@@ -23,7 +23,7 @@ namespace Respace.Admin
 
         private void LoadUserProfile(string userId)
         {
-            // Fetch user info from the Users table
+            
             string query = "SELECT FullName, Email, Role, PointsBalance, MembershipTier, CreatedAt, Status FROM Users WHERE UserId = @id";
             DataTable dt = Db.Query(query, new SqlParameter("@id", userId));
 
@@ -42,7 +42,7 @@ namespace Respace.Admin
 
         private void LoadUserBookings(string userId)
         {
-            // UPDATED: Using StartDateTime, EndDateTime, and TotalPrice
+            
             string query = @"SELECT b.BookingId, s.Name as SpaceName, b.StartDateTime, b.EndDateTime, b.TotalPrice, b.Status 
                      FROM Bookings b 
                      JOIN Spaces s ON b.SpaceId = s.SpaceId 

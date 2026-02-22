@@ -50,7 +50,7 @@
                             Messages <asp:Label ID="lblUnreadCount" runat="server" CssClass="badge-notify" Visible="false" />
                         </asp:HyperLink>
 
-                        <%-- Integrated Support for both Host and Guest --%>
+                      
                         <asp:HyperLink ID="lnkSupport" runat="server" NavigateUrl="~/SupportTicket.aspx" CssClass="nav-msg">
                             Support <asp:Label ID="lblSupportBadge" runat="server" CssClass="badge-notify" Visible="false" />
                         </asp:HyperLink>

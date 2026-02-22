@@ -60,11 +60,11 @@
             padding: 8px;
             border: 1px solid #ddd;
         }
-        /* ===== Badges as 2-column grid (inside card) ===== */
+        
         .badgesGrid {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 10px 10px; /* gap between items */
+            border-spacing: 10px 10px; 
         }
 
             .badgesGrid td {
@@ -72,12 +72,11 @@
                 vertical-align: top;
             }
 
-            /* hide checkbox */
             .badgesGrid input[type=checkbox] {
                 display: none;
             }
 
-            /* pill style */
+      
             .badgesGrid label {
                 display: flex;
                 align-items: center;
@@ -101,7 +100,7 @@
                 color: #ff385c;
             }
 
-        /* small screens -> 1 column */
+    
         @media (max-width: 520px) {
             .badgesGrid td {
                 width: 100%;

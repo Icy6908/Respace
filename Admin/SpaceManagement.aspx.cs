@@ -24,7 +24,7 @@ namespace Respace.Admin
             string selectedType = ddlTypeFilter.SelectedValue;
             string selectedStatus = ddlStatusFilter.SelectedValue;
 
-            // Base query joining Spaces and Users
+       
             string query = @"SELECT s.SpaceId, s.Name, s.Type, s.PricePerHour, s.Status, s.HostUserId, u.FullName as HostName 
                              FROM Spaces s 
                              JOIN Users u ON s.HostUserId = u.UserId 
@@ -32,21 +32,21 @@ namespace Respace.Admin
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            // 1. Search Filter
+         
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query += " AND (s.Name LIKE @search OR u.FullName LIKE @search OR s.Type LIKE @search)";
                 parameters.Add(new SqlParameter("@search", "%" + searchTerm + "%"));
             }
 
-            // 2. Space Type Filter
+           
             if (selectedType != "All")
             {
                 query += " AND s.Type = @type";
                 parameters.Add(new SqlParameter("@type", selectedType));
             }
 
-            // 3. Status Filter
+           
             if (selectedStatus != "All")
             {
                 query += " AND s.Status = @status";
@@ -89,7 +89,7 @@ namespace Respace.Admin
                 Db.Query("DELETE FROM Spaces WHERE SpaceId = @id", new SqlParameter("@id", spaceId));
                 BindSpaceGrid();
             }
-            // ViewDetails logic remains unchanged...
+           
         }
 
         public string GetStatusClass(string status)

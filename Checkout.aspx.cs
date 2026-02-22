@@ -17,10 +17,10 @@ namespace Respace
                 return;
             }
 
-            // --- INTEGRATED: Security Check for Manual URL Access ---
+          
             if (Session["Role"] != null && Session["Role"].ToString() == "Host")
             {
-                // Hosts are not allowed here. Redirect to Home (Search)
+              
                 Response.Redirect("Default.aspx");
                 return;
             }
@@ -145,7 +145,7 @@ namespace Respace
 
         protected void btnFinalize_Click(object sender, EventArgs e)
         {
-            // Fail-safe role check
+            
             if (Session["Role"] != null && Session["Role"].ToString() == "Host") return;
 
             int userId = Convert.ToInt32(Session["UserId"]);
@@ -202,10 +202,23 @@ namespace Respace
 
         private void LoadCheckoutDetails()
         {
-            int spaceId = Convert.ToInt32(Request.QueryString["id"]);
-            DateTime start = DateTime.Parse(Request.QueryString["start"]);
-            DateTime end = DateTime.Parse(Request.QueryString["end"]);
-            int guests = Convert.ToInt32(Request.QueryString["guests"]);
+            
+            string rawId = Request.QueryString["id"] ?? Request.QueryString["SpaceId"];
+            if (string.IsNullOrEmpty(rawId))
+            {
+                lblMsg.Text = "Invalid Space selection.";
+                return;
+            }
+
+            int spaceId = Convert.ToInt32(rawId);
+
+           
+            DateTime start, end;
+            if (!DateTime.TryParse(Request.QueryString["start"], out start)) start = DateTime.Now;
+            if (!DateTime.TryParse(Request.QueryString["end"], out end)) end = DateTime.Now.AddDays(1);
+
+            int guests = 1;
+            int.TryParse(Request.QueryString["guests"], out guests);
 
             DataTable dt = Db.Query("SELECT Name, PricePerHour FROM Spaces WHERE SpaceId=@Id", new SqlParameter("@Id", spaceId));
             if (dt.Rows.Count == 0) return;
@@ -216,11 +229,16 @@ namespace Respace
             decimal subtotal = dailyRate * nights;
 
             int userId = Convert.ToInt32(Session["UserId"]);
+
+        
             var membership = MembershipService.GetActiveMembership(userId);
             decimal discountPercent = 0;
 
-            if (membership.PlanName == "Plus") discountPercent = 0.10m;
-            else if (membership.PlanName == "Pro") discountPercent = 0.20m;
+            if (membership != null)
+            {
+                if (membership.PlanName == "Plus") discountPercent = 0.10m;
+                else if (membership.PlanName == "Pro") discountPercent = 0.20m;
+            }
 
             decimal memberDiscountAmt = subtotal * discountPercent;
 

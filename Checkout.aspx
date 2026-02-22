@@ -108,7 +108,7 @@
                 var earned = Math.floor(totalValue * multiplier);
                 pointsSpan.innerText = earned.toLocaleString();
 
-                // Build the reason string
+               
                 var reasonHtml = "";
                 if (plan !== "Free") {
                     reasonHtml = "<strong>" + plan + " Member Reward:</strong> You're earning " +
@@ -121,7 +121,7 @@
             }
         }
 
-        // Ensure it runs even if the page partially reloads
+        
         window.onload = updatePointsDisplay;
     </script>
 </asp:Content>

@@ -28,7 +28,7 @@ namespace Respace
                 return;
             }
 
-            // Verify current password
+      
             string hash = Security.Sha256(current);
             object ok = Db.Scalar("SELECT COUNT(1) FROM Users WHERE UserId=@U AND PasswordHash=@H",
                 new SqlParameter("@U", userId),
@@ -40,7 +40,7 @@ namespace Respace
                 return;
             }
 
-            // Get email + name
+         
             DataTable dt = Db.Query("SELECT FullName, Email FROM Users WHERE UserId=@U",
                 new SqlParameter("@U", userId));
             if (dt.Rows.Count == 0) return;
@@ -103,7 +103,7 @@ namespace Respace
                 return;
             }
 
-            // Verify current password again
+       
             string curHash = Security.Sha256(current);
             object ok = Db.Scalar("SELECT COUNT(1) FROM Users WHERE UserId=@U AND PasswordHash=@H",
                 new SqlParameter("@U", userId),

@@ -25,7 +25,7 @@ namespace Respace.Admin
             string selectedStar = ddlStarFilter.SelectedValue;
             string searchText = txtSearchReview.Text.Trim();
 
-            // Core query for unapproved reviews
+           
             StringBuilder query = new StringBuilder(@"
                 SELECT r.*, s.Name as SpaceName, 
                        u.FullName as ReviewerName, u.Email, u.Role, u.CreatedAt as UserJoinedDate
@@ -36,14 +36,13 @@ namespace Respace.Admin
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            // 1. Star Rating Filter
+           
             if (selectedStar != "All")
             {
                 query.Append(" AND r.Rating = @rating");
                 parameters.Add(new SqlParameter("@rating", selectedStar));
             }
 
-            // 2. Text Search Filter (Space name or User email/name)
             if (!string.IsNullOrEmpty(searchText))
             {
                 query.Append(" AND (s.Name LIKE @search OR u.FullName LIKE @search OR u.Email LIKE @search)");

@@ -171,13 +171,12 @@
                 <asp:Button ID="btnSave" runat="server" Text="Save listing" CssClass="btn btn-outline" OnClick="btnSave_Click" />
                 <asp:Button ID="btnUpload" runat="server" Text="Upload photos" CssClass="btn btn-outline" OnClick="btnUpload_Click" />
 
-                <!-- ✅ This is the button you want -->
+                
                 <asp:Button ID="btnComplete" runat="server" Text="Complete listing creation" CssClass="btn btn-primary" OnClick="btnComplete_Click" />
 
                 <a class="btn btn-outline" href="Account.aspx">Back</a>
             </div>
 
-            <!-- Existing photos -->
             <asp:Panel ID="pnlExistingPhotos" runat="server" Visible="false" style="margin-top:14px;">
                 <h3 class="h3">Current photos</h3>
 

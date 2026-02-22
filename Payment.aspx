@@ -26,7 +26,7 @@
         </div>
 
         <div class="summary-box">
-            <%-- ID matched to phCurrentPlan --%>
+           
             <asp:PlaceHolder ID="phCurrentPlan" runat="server" Visible="false">
                 <div style="font-size: 0.7rem; color: #b2bec3; text-transform: uppercase;">Membership</div>
                 <div style="font-weight: 600; margin-bottom: 10px;"><asp:Label ID="lblPlanName" runat="server" /> Plan</div>

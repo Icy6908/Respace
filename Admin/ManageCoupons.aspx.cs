@@ -14,7 +14,7 @@ namespace Respace.Admin
         {
             if (!IsPostBack)
             {
-                // Pulling directly from the UserCoupons table shown in your schema
+               
                 gvUserCoupons.DataSource = Db.Query("SELECT * FROM UserCoupons ORDER BY RedeemedAt DESC");
                 gvUserCoupons.DataBind();
             }

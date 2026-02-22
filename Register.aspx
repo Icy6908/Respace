@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="Respace.Register" MasterPageFile="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <!-- Auth-only CSS (does not affect other pages) -->
+
     <link href="Content/auth.css" rel="stylesheet" />
 
     <div class="auth-shell">
@@ -41,7 +41,7 @@
                 <div class="field">
                     <label class="label" for="<%= txtPassword.ClientID %>">Password</label>
 
-                    <!-- IMPORTANT: no custom "Show" button. -->
+                
                     <div class="password-row">
                         <asp:TextBox ID="txtPassword" runat="server" CssClass="input" TextMode="Password" placeholder="At least 8 characters" />
                     </div>
@@ -57,7 +57,6 @@
                 <div class="field">
                     <label class="label" for="<%= txtConfirm.ClientID %>">Confirm password</label>
 
-                    <!-- IMPORTANT: no custom "Show" button. -->
                     <div class="password-row">
                         <asp:TextBox ID="txtConfirm" runat="server" CssClass="input" TextMode="Password" placeholder="Repeat password" />
                     </div>
@@ -106,7 +105,7 @@
                 if (/[A-Z]/.test(v)) score++;
                 if (/[0-9]/.test(v)) score++;
                 if (/[^A-Za-z0-9]/.test(v)) score++;
-                return score; // 0..4
+                return score; 
             }
 
             function updateStrength() {

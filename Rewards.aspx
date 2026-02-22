@@ -13,7 +13,7 @@
         .table th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #888; font-size: 13px; }
         .table td { padding: 12px; border-bottom: 1px solid #f9f9f9; }
         
-        /* Voucher Shop Styling */
+       
         .voucher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
         .voucher-card { display: flex; border: 2px dashed #ccc; border-radius: 12px; overflow: hidden; background: #fff; transition: transform 0.2s; }
         .voucher-card:hover { transform: translateY(-3px); }
@@ -26,7 +26,7 @@
         .btn-redeem { margin-top: 12px; background: #ff4d6d; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; align-self: flex-start; }
         .btn-redeem:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Gold Theme for Premium Rewards */
+   
         .voucher-card.gold { border-color: #ffd700; background: #fffdf2; }
         .voucher-card.gold .voucher-left { background: #fff9db; border-right-color: #ffd700; }
         .voucher-card.gold .v-amount { color: #b8860b; }

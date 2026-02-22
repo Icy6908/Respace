@@ -18,7 +18,6 @@ namespace Respace.Admin
             }
         }
 
-        // Combined filtering logic
         private void BindUserGrid()
         {
             string searchTerm = txtSearchUsers.Text.Trim();
@@ -27,14 +26,13 @@ namespace Respace.Admin
             string query = "SELECT UserId, FullName, Email, Role, Status FROM Users WHERE 1=1";
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            // 1. Role Filter Logic
+         
             if (selectedRole != "All")
             {
                 query += " AND Role = @role";
                 parameters.Add(new SqlParameter("@role", selectedRole));
             }
 
-            // 2. Search Term Logic
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query += " AND (FullName LIKE @search OR Email LIKE @search)";

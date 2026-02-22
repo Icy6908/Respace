@@ -82,12 +82,11 @@ namespace Respace
             if (string.IsNullOrWhiteSpace(badges))
                 return new string[0];
 
-            // split "Clean & Comfy, Fast Response" -> ["Clean & Comfy", "Fast Response"]
+           
             var parts = badges.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                               .Select(x => x.Trim())
                               .ToList();
 
-            // map badge text -> emoji
             for (int i = 0; i < parts.Count; i++)
             {
                 string b = parts[i];
@@ -102,7 +101,7 @@ namespace Respace
                     case "Quiet Space": parts[i] = "🤫 " + b; break;
                     case "Easy Check-in": parts[i] = "✅ " + b; break;
                     case "Fast Response": parts[i] = "⚡ " + b; break;
-                    default: parts[i] = "🏷️ " + b; break; // fallback
+                    default: parts[i] = "🏷️ " + b; break;
                 }
             }
 

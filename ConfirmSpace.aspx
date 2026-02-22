@@ -41,7 +41,7 @@
 
         <div class="grid">
 
-            <!-- LEFT -->
+      
             <div>
 
                 <div class="card">
@@ -112,7 +112,7 @@
 
             </div>
 
-            <!-- RIGHT -->
+      
             <div>
                 <div class="card">
                     <div class="section-title">Submit</div>

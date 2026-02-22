@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Respace.App_Code; // Ensure this namespace matches your Db class location
+using Respace.App_Code; 
 
 namespace Respace
 {
@@ -11,14 +11,14 @@ namespace Respace
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // 1. Authentication Check
+            
             if (Session["UserId"] == null)
             {
                 Response.Redirect("Login.aspx");
                 return;
             }
 
-            // 2. Role Authorization
+            
             var role = Session["Role"]?.ToString() ?? "";
             if (role != "Guest")
             {
@@ -38,7 +38,6 @@ namespace Respace
             {
                 int userId = Convert.ToInt32(Session["UserId"]);
 
-                // Pulling active plan details
                 DataTable dt = Db.Query(@"
                     SELECT p.PlanName 
                     FROM UserMemberships um 
@@ -48,20 +47,18 @@ namespace Respace
 
                 if (dt != null && dt.Rows.Count > 0)
                 {
-                    // Ensure phCurrentPlan exists in your .aspx with ID="phCurrentPlan"
+                    
                     phCurrentPlan.Visible = true;
 
                     string planName = dt.Rows[0]["PlanName"].ToString();
                     lblCurrentPlanName.Text = planName;
 
-                    // Disable the button for the current active plan
+                    
                     UpdatePlanButtons(planName);
                 }
             }
             catch (Exception ex)
             {
-                // This will show the error on screen if you have a label named lblMsg
-                // lblMsg.Text = "Error loading membership: " + ex.Message;
             }
         }
 
@@ -76,7 +73,7 @@ namespace Respace
             {
                 btnPlus.Enabled = false;
                 btnPlus.Text = "Current Plan";
-                btnPlus.CssClass = "btn-plan"; // Remove primary color if disabled
+                btnPlus.CssClass = "btn-plan";
             }
             else if (activePlan.Equals("Pro", StringComparison.OrdinalIgnoreCase))
             {
@@ -88,7 +85,7 @@ namespace Respace
         protected void btnFree_Click(object sender, EventArgs e)
         {
             int userId = Convert.ToInt32(Session["UserId"]);
-            // Activate Free plan directly (no payment needed)
+     
             MembershipService.ActivatePlan(userId, 1, false);
             Response.Redirect("Account.aspx?msg=PlanUpdated");
         }

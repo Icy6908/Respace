@@ -36,7 +36,7 @@
         <asp:HiddenField ID="hfStart" runat="server" />
         <asp:HiddenField ID="hfEnd" runat="server" />
 
-        <!-- ✅ NEW: dates to disable in host calendar (booked + existing blocks) -->
+
         <asp:HiddenField ID="hfDisabledDates" runat="server" />
 
         <div class="card">
@@ -113,7 +113,7 @@
             var hfStart = document.getElementById("<%= hfStart.ClientID %>");
             var hfEnd = document.getElementById("<%= hfEnd.ClientID %>");
 
-            // ✅ NEW: disable booked + already blocked
+         
             var rawDisabled = document.getElementById("<%= hfDisabledDates.ClientID %>").value || "";
             var disabledDays = rawDisabled.split(",").map(x => x.trim()).filter(Boolean);
 
@@ -138,7 +138,7 @@
                         endBox.value = e;
                         hfEnd.value = e;
                     } else if (selectedDates.length === 1) {
-                        // single-day block => end = start + 1 day (exclusive)
+                    
                         var d = new Date(selectedDates[0].getTime());
                         d.setDate(d.getDate() + 1);
                         var yyyy = d.getFullYear();

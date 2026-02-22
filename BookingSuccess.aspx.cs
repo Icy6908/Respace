@@ -42,7 +42,7 @@ namespace Respace
 
         private void LoadBooking()
         {
-            // Only allow guest who owns the booking to view it
+          
             DataTable dt = Db.Query(@"
                 SELECT 
                     b.BookingId,

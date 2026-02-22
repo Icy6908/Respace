@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <style type="text/css">
-        /* Your existing styles remain... */
+        
         .support-wrapper { padding: 60px 0; background: linear-gradient(135deg, #f8f9ff 0%, #e2e8f0 100%); min-height: 90vh; }
         .premium-card { background: #ffffff; border-radius: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); overflow: hidden; margin: 0 auto; max-width: 900px; }
         .card-inner { padding: 60px; }
@@ -14,7 +14,7 @@
         .label-text { font-weight: 600; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-premium { background: linear-gradient(90deg, #ff4d6d, #ff758c); color: white; border-radius: 16px; padding: 22px; font-weight: 700; width: 100%; cursor: pointer; border:none; }
 
-        /* NEW: History Styles */
+        
         .history-section { margin-top: 50px; border-top: 2px solid #f1f5f9; padding-top: 40px; }
         .ticket-card { background: #f8fafc; border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .status-badge { padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }

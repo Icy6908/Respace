@@ -29,7 +29,6 @@ namespace Respace.Admin
         private DataTable GetFinancialData()
         {
             List<SqlParameter> paramList = new List<SqlParameter>();
-            // Added b.BookingId to the selection for command argument usage
             string query = @"SELECT p.PaymentID, p.Amount, p.Status, p.PaymentDate, 
                              s.Name as SpaceName, u.FullName as RenterName, b.BookingId
                              FROM Payments p
@@ -77,18 +76,18 @@ namespace Respace.Admin
         {
             if (e.CommandName == "Refund")
             {
-                // Split the composite argument
+               
                 string[] args = e.CommandArgument.ToString().Split('|');
                 string bookingId = args[0];
                 string paymentId = args[1];
 
                 try
                 {
-                    // Update Booking Status
+                  
                     Db.Execute("UPDATE Bookings SET Status = 'Refunded' WHERE BookingId = @bid",
                         new SqlParameter("@bid", bookingId));
 
-                    // Update Payment Status
+                 
                     Db.Execute("UPDATE Payments SET Status = 'Refunded' WHERE PaymentID = @pid",
                         new SqlParameter("@pid", paymentId));
 
@@ -144,7 +143,7 @@ namespace Respace.Admin
                 case "Success": return "bg-success";
                 case "Pending": return "bg-warning text-dark";
                 case "Failed": return "bg-danger";
-                case "Refunded": return "bg-danger text-white"; // Red for refunded
+                case "Refunded": return "bg-danger text-white"; 
                 default: return "bg-secondary";
             }
         }

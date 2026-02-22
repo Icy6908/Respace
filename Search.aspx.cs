@@ -21,12 +21,10 @@ namespace Respace
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        // ✅ cover photo from SpacePhotos (top 1)
         public string CoverPhotoUrl { get; set; }
 
-        // review summary
-        public int AvgRating { get; set; }       // rounded 0-5
-        public int ReviewCount { get; set; }     // approved review count
+        public int AvgRating { get; set; }       
+        public int ReviewCount { get; set; }     
     }
 
     public partial class Search : Page
@@ -46,13 +44,12 @@ namespace Respace
         {
             if (!IsPostBack)
             {
-                // ✅ allow Search.aspx?q=studio deep link (optional)
                 var q = (Request.QueryString["q"] ?? "").Trim();
                 if (!string.IsNullOrWhiteSpace(q))
                     txtSearch.Text = q;
 
                 Spaces = GetApprovedSpacesFromDb();
-                ApplyFilters(); // binds
+                ApplyFilters(); 
             }
         }
 
@@ -84,7 +81,7 @@ namespace Respace
         {
             var data = Spaces.AsQueryable();
 
-            // keyword search
+            
             if (!string.IsNullOrWhiteSpace(txtSearch.Text))
             {
                 string keyword = txtSearch.Text.Trim().ToLower();
@@ -95,7 +92,7 @@ namespace Respace
                     (s.Description ?? "").ToLower().Contains(keyword));
             }
 
-            // location filter
+       
             var locations = cblLocation.Items.Cast<ListItem>()
                 .Where(i => i.Selected)
                 .Select(i => i.Text)
@@ -104,7 +101,7 @@ namespace Respace
             if (locations.Any())
                 data = data.Where(s => locations.Contains(s.Location));
 
-            // type filter
+            
             var types = cblType.Items.Cast<ListItem>()
                 .Where(i => i.Selected)
                 .Select(i => i.Text)
@@ -113,19 +110,17 @@ namespace Respace
             if (types.Any())
                 data = data.Where(s => types.Contains(s.Type));
 
-            // price filter
             if (decimal.TryParse(txtMinPrice.Text, out decimal min))
                 data = data.Where(s => s.PricePerHour >= min);
 
             if (decimal.TryParse(txtMaxPrice.Text, out decimal max))
                 data = data.Where(s => s.PricePerHour <= max);
 
-            // availability filter (Bookings + SpaceBlocks)
             if (DateTime.TryParse(txtFromDate.Text, out DateTime fromDate) &&
                 DateTime.TryParse(txtToDate.Text, out DateTime toDate))
             {
                 DateTime from = fromDate.Date;
-                DateTime to = toDate.Date.AddDays(1); // inclusive
+                DateTime to = toDate.Date.AddDays(1);
 
                 if (to > from)
                 {
@@ -135,7 +130,7 @@ namespace Respace
                 }
             }
 
-            // sorting
+
             switch (ddlSort.SelectedValue)
             {
                 case "price_asc":
@@ -146,11 +141,11 @@ namespace Respace
                     data = data.OrderByDescending(s => s.PricePerHour);
                     break;
 
-                case "date_asc":   // label says "Newest: Oldest"
+                case "date_asc":   
                     data = data.OrderByDescending(s => s.CreatedAt);
                     break;
 
-                case "date_desc":  // label says "Oldest: Newest"
+                case "date_desc":  
                     data = data.OrderBy(s => s.CreatedAt);
                     break;
             }
@@ -166,7 +161,7 @@ namespace Respace
 
         private List<Space> GetApprovedSpacesFromDb()
         {
-            // ✅ approved + not deleted + review summary + top 1 cover photo
+      
             DataTable dt = Db.Query(@"
                 SELECT
                     s.SpaceId, s.Name, s.Location, s.Type, s.Description,
@@ -215,7 +210,6 @@ namespace Respace
             return list;
         }
 
-        // ✅ includes Bookings (Confirmed + Pending) AND SpaceBlocks (IsActive=1)
         private HashSet<int> GetOverlappingUnavailableSpaceIds(DateTime from, DateTime to)
         {
             DataTable dt = Db.Query(@"
@@ -241,7 +235,7 @@ namespace Respace
             return ids;
         }
 
-        // ✅ used by Search.aspx to render stars
+
         protected string GetStars(int rating)
         {
             if (rating < 0) rating = 0;
@@ -249,25 +243,23 @@ namespace Respace
             return new string('★', rating) + new string('☆', 5 - rating);
         }
 
-        // ✅ used by Search.aspx to render cover image nicely (supports http, /uploads, uploads/)
+ 
         protected string GetListingImage(object urlObj)
         {
             string url = (urlObj == null) ? "" : urlObj.ToString().Trim();
 
             if (string.IsNullOrWhiteSpace(url))
             {
-                // placeholder (you can replace with your own /Images/placeholder.jpg)
                 return "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=60";
             }
 
             if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 return url;
 
-            // Stored as "uploads/.."
+
             if (!url.StartsWith("~") && !url.StartsWith("/"))
                 url = "~/" + url;
 
-            // Stored as "/uploads/.."
             if (url.StartsWith("/"))
                 url = "~" + url;
 

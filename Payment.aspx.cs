@@ -35,29 +35,54 @@ namespace Respace
             }
         }
 
+
         protected void btnConfirm_Click(object sender, EventArgs e)
         {
             if (Page.IsValid)
             {
-                int userId = Convert.ToInt32(Session["UserId"]);
-
-                if (Request.QueryString["planId"] != null)
+                try
                 {
-                    int planId = Convert.ToInt32(Request.QueryString["planId"]);
-                    MembershipService.ActivatePlan(userId, planId, true);
-                    Response.Redirect("Account.aspx?msg=MembershipActivated");
+                    int userId = Convert.ToInt32(Session["UserId"]);
+
+                    
+                    if (Request.QueryString["planId"] != null)
+                    {
+                        int planId = Convert.ToInt32(Request.QueryString["planId"]);
+
+                      
+                        Db.Execute("UPDATE UserMemberships SET IsActive = 0 WHERE UserId = @uid",
+                            new SqlParameter("@uid", userId));
+
+                       
+                        string sql = @"INSERT INTO UserMemberships (UserId, PlanId, StartDate, EndDate, IsActive, AutoRenew) 
+                               VALUES (@uid, @pid, GETDATE(), DATEADD(day, 30, GETDATE()), 1, 1)";
+
+                        Db.Execute(sql,
+                            new SqlParameter("@uid", userId),
+                            new SqlParameter("@pid", planId));
+
+                        Response.Redirect("Account.aspx?msg=MembershipActivated");
+                    }
+                
+                    else if (Request.QueryString["bid"] != null)
+                    {
+                        int bookingId = Convert.ToInt32(Request.QueryString["bid"]);
+                        decimal amount = decimal.Parse(Request.QueryString["amt"]);
+
+                        ProcessBookingPayment(userId, bookingId, amount);
+
+                        try
+                        {
+                            NotificationService.SendBookingConfirmed(bookingId);
+                        }
+                        catch {}
+
+                        Response.Redirect("Account.aspx?msg=BookingConfirmed");
+                    }
                 }
-                else if (Request.QueryString["bid"] != null)
+                catch (Exception ex)
                 {
-                    int bookingId = Convert.ToInt32(Request.QueryString["bid"]);
-                    decimal amount = decimal.Parse(Request.QueryString["amt"]);
-
-                    ProcessBookingPayment(userId, bookingId, amount);
-
-                    // ✅ SEND EMAILS to guest + host after successful confirmation
-                    NotificationService.SendBookingConfirmed(bookingId);
-
-                    Response.Redirect("Account.aspx?msg=BookingConfirmed");
+                    
                 }
             }
         }

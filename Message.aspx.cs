@@ -33,7 +33,7 @@ namespace Respace
             LinkButton btn = (LinkButton)sender;
             string filter = btn.CommandArgument;
 
-            // Toggle Active Class
+          
             btnShowActive.CssClass = filter == "Active" ? "btn btn-sm btn-outline-secondary active" : "btn btn-sm btn-outline-secondary";
             btnShowPast.CssClass = filter == "Past" ? "btn btn-sm btn-outline-secondary active" : "btn btn-sm btn-outline-secondary";
 
@@ -43,7 +43,7 @@ namespace Respace
         private void LoadChatList(string status)
         {
             string uid = Session["UserId"].ToString();
-            // Using StartDateTime and EndDateTime per database schema
+           
             string dateCondition = status == "Active" ? "b.EndDateTime >= GETDATE()" : "b.EndDateTime < GETDATE()";
 
             string sql = $@"

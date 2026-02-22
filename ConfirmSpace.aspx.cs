@@ -37,7 +37,7 @@ namespace Respace
 
         private void LoadAll()
         {
-            // ✅ Load space (must belong to host, not deleted)
+            
             DataTable dt = Db.Query(@"
                 SELECT SpaceId, HostUserId, Name, Location, Type, Capacity, PricePerHour, Description,
                        AddressLine, City, State, Postcode, Country, Latitude, Longitude, Status, IsDeleted
@@ -64,7 +64,7 @@ namespace Respace
             decimal? lng = (r["Longitude"] == DBNull.Value) ? (decimal?)null : Convert.ToDecimal(r["Longitude"]);
             RenderMap(lat, lng, addr);
 
-            // Back to edit
+           
             lnkBackToEdit.HRef = "HostCreateSpace.aspx?id=" + SpaceId;
 
             LoadPhotos();
@@ -95,7 +95,7 @@ namespace Respace
 
             pnlNoPhotos.Visible = false;
 
-            // resolve urls for display
+         
             var list = urls.Take(5).Select(u => new
             {
                 ResolvedUrl = ResolveImg(u)
@@ -113,11 +113,10 @@ namespace Respace
             if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 return url;
 
-            // "Image/xx.jpg" -> "~/Image/xx.jpg"
             if (!url.StartsWith("~") && !url.StartsWith("/"))
                 url = "~/" + url;
 
-            // "/Image/xx.jpg" -> "~/Image/xx.jpg"
+      
             if (url.StartsWith("/"))
                 url = "~" + url;
 
@@ -198,7 +197,7 @@ namespace Respace
 
         protected void btnConfirmSubmit_Click(object sender, EventArgs e)
         {
-            // ✅ when confirm: set status to Pending
+     
             int affected = Db.Execute(@"
                 UPDATE Spaces
                 SET Status='Pending'

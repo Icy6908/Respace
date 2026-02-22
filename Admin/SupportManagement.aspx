@@ -2,7 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <style>
-        /* Modern Evidence Thumbnails */
+        
         .support-thumb {
             width: 60px;
             height: 60px;
@@ -18,7 +18,7 @@
             z-index: 100;
             position: relative;
         }
-        /* Delete Button Styling */
+      
         .btn-delete {
             color: #e74a3b;
             background: none;
@@ -57,7 +57,7 @@
                     CssClass="table table-hover align-middle mb-0" GridLines="None" OnRowCommand="gvSupport_RowCommand">
                     <HeaderStyle CssClass="bg-light text-muted small fw-bold text-uppercase" />
                     <Columns>
-                        <%-- ID Column with Delete --%>
+                      
                         <asp:TemplateField HeaderText="ID" ItemStyle-CssClass="ps-4">
                             <ItemTemplate>
                                 <div class="d-flex align-items-center">
@@ -71,7 +71,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         
-                        <%-- User & Message --%>
+                       
                         <asp:TemplateField HeaderText="Inquiry Details">
                             <ItemTemplate>
                                 <div class="fw-bold text-dark"><%# Eval("FullName") %></div>
@@ -82,7 +82,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <%-- Evidence --%>
+                      
                         <asp:TemplateField HeaderText="Evidence">
                             <ItemTemplate>
                                 <asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrEmpty(Eval("AttachmentUrl")?.ToString()) %>'>
@@ -95,7 +95,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <%-- Actions --%>
+                       
                         <asp:TemplateField HeaderText="Resolution" ItemStyle-Width="320px">
                             <ItemTemplate>
                                 <div class="p-2">
@@ -116,7 +116,6 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <%-- Status Badge --%>
                         <asp:TemplateField HeaderText="Status">
                             <ItemTemplate>
                                 <span class='badge rounded-pill <%# GetSupportStatusClass(Eval("Status").ToString()) %>'>

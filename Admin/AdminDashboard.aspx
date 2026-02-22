@@ -120,7 +120,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // 1. Original Growth Trend
+            
             const revCtx = document.getElementById('revenueChart').getContext('2d');
             new Chart(revCtx, {
                 type: 'line',
@@ -144,7 +144,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
 
-            // 2. Original Space Mix (Doughnut)
+     
             const catCtx = document.getElementById('categoryChart').getContext('2d');
             new Chart(catCtx, {
                 type: 'doughnut',
@@ -159,7 +159,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
 
-            // 3. NEW: Revenue by Space Type (Bar Chart)
+            
             const revTypeCtx = document.getElementById('revenueByTypeChart').getContext('2d');
             new Chart(revTypeCtx, {
                 type: 'bar',
@@ -179,7 +179,7 @@
                 }
             });
 
-            // 4. NEW: Success Rate (Crucial Decision Metric)
+       
             const successCtx = document.getElementById('successRateChart').getContext('2d');
             new Chart(successCtx, {
                 type: 'line',

@@ -27,7 +27,7 @@ namespace Respace.Admin
             string selectedStatus = ddlStatusFilter.SelectedValue;
             string search = txtSearchSupport.Text.Trim();
 
-            // Unified SQL Query pulling all necessary fields
+      
             string query = @"SELECT q.*, u.FullName 
                              FROM SupportQueries q 
                              JOIN Users u ON q.UserId = u.UserId 

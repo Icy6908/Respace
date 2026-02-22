@@ -16,7 +16,6 @@
             padding: 0 16px;
         }
 
-        /* ===== HERO ===== */
         .hero {
             padding: 34px 0 18px;
             border-bottom: 1px solid #eee;
@@ -54,7 +53,7 @@
             box-shadow: 0 10px 26px rgba(0,0,0,.08);
         }
 
-        /* ===== SEARCH BAR ===== */
+     
         .searchCard {
             margin-top: 16px;
             padding: 14px;
@@ -106,13 +105,23 @@
             color: #fff;
         }
 
+     
+        .btn-primary:hover {
+            background: #ff385c !important;
+            opacity: 1;
+        }
+
         .btn-secondary {
             background: #111;
             color: #fff;
             opacity: .9;
         }
 
-        .btn-secondary:hover { opacity: 1; }
+     
+        .btn-secondary:hover { 
+            background: #111 !important;
+            opacity: .9 !important; 
+        }
 
         .chips {
             margin-top: 10px;
@@ -128,11 +137,14 @@
             border-radius: 999px;
             cursor: pointer;
             font-weight: 800;
+            transition: none; 
         }
 
-        .chip:hover { background: #f7f7f7; }
+        .chip:hover { 
+            background: #fff !important; 
+            border-color: #ececec !important;
+        }
 
-        /* right preview */
         .preview {
             padding: 16px;
             border-radius: 18px;
@@ -159,7 +171,7 @@
 
         .muted { color: #777; }
 
-        /* ===== FILTER PANEL ===== */
+        
         .filter-panel {
             background: #fff;
             padding: 16px;
@@ -168,7 +180,7 @@
             margin: 18px 0;
         }
 
-        /* ===== RESULTS ===== */
+        
         .resultsHead {
             display: flex;
             justify-content: space-between;
@@ -182,22 +194,18 @@
             font-size: 18px;
         }
 
-        /* ==========================
-           CONSISTENT CARD GRID FIX
-           ========================== */
         .gridCards {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 16px;
             margin: 16px 0 40px;
-            align-items: stretch; /* important */
+            align-items: stretch;
         }
 
         @media (max-width:1100px) { .gridCards { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width:860px)  { .gridCards { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width:520px)  { .gridCards { grid-template-columns: 1fr; } }
 
-        /* anchor fills grid cell */
         .cardLink {
             text-decoration: none;
             color: inherit;
@@ -205,17 +213,14 @@
             height: 100%;
         }
 
-        /* card has fixed height -> every card consistent across ALL rows */
         .listingCard {
             background: #fff;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 10px 26px rgba(0,0,0,.08);
             transition: transform .12s ease, box-shadow .12s ease;
-
             display: flex;
             flex-direction: column;
-            /*height: 420px;*/ /* ✅ adjust if you want taller/shorter */
         }
 
         .listingCard:hover {
@@ -223,11 +228,10 @@
             box-shadow: 0 14px 34px rgba(0,0,0,.12);
         }
 
-        /* image area always same height */
         .thumb {
             position: relative;
             width: 100%;
-            height: 220px; /* ✅ consistent image height */
+            height: 220px;
             background: #f3f3f3;
         }
 
@@ -256,23 +260,18 @@
             flex: 1;
         }
 
-        /* Reserve exactly 2 lines height (cross-browser reliable) */
         .cardTitle {
             font-weight: 900;
             font-size: 15px;
             margin: 0;
-
             line-height: 1.25;
-            height: 2.5em; /* ~2 lines */
+            height: 2.5em;
             overflow: hidden;
-
-            /* keep clamp for browsers that support it */
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
         }
 
-        /* reserve a stable line so layout doesn't shift */
         .cardMeta {
             color: #666;
             margin-top: 4px;
@@ -285,7 +284,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-            margin-top: auto; /* ✅ stick to bottom */
+            margin-top: auto;
         }
 
         .cardPrice { font-weight: 900; }
@@ -295,7 +294,6 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="wrap">
             <div class="hero__inner">
@@ -335,7 +333,7 @@
                 <div class="preview">
                     <span class="preview__badge">Popular this week</span>
                     <div class="preview__title">Creative Studio</div>
-                    <div class="muted">Central • 10–15 pax • from $35/hr</div>
+                    <div class="muted">Central • 10–15 pax •  $800/Day</div>
                     <div style="height: 10px"></div>
                     <div class="muted">Tip: try “studio” or “meeting room” to see quick results.</div>
                 </div>
@@ -345,7 +343,6 @@
 
     <div class="wrap">
 
-        <!-- ===== FILTER PANEL ===== -->
         <asp:Panel ID="pnlFilter" runat="server" CssClass="filter-panel" Visible="false">
             <div style="margin-bottom:10px;font-weight:800;">Filters</div>
 
@@ -373,7 +370,7 @@
                 </div>
 
                 <div>
-                    <div style="font-weight:800;margin-bottom:6px;">Price Range ($/hour)</div>
+                    <div style="font-weight:800;margin-bottom:6px;">Price Range ($/Day)</div>
                     Min:
                     <asp:TextBox ID="txtMinPrice" runat="server" TextMode="Number" Width="90" CssClass="input" />
                     &nbsp; Max:
@@ -415,7 +412,6 @@
                 OnClick="btnClearFilter_Click" />
         </asp:Panel>
 
-        <!-- ===== RESULTS ===== -->
         <div class="resultsHead">
             <h2 class="resultsTitle">Available spaces</h2>
             <div class="muted">Scroll to explore • Use filters to refine</div>
@@ -428,9 +424,6 @@
                         <div class="listingCard">
                             <div class="thumb">
                                 <div class="badgeType"><%# Eval("Type") %></div>
-
-                                <!-- Optional fallback for broken images:
-                                     Put a placeholder at /Images/placeholder.jpg -->
                                 <img alt="Space photo"
                                      src='<%# GetListingImage(Eval("CoverPhotoUrl")) %>'
                                      onerror="this.onerror=null;this.src='Images/placeholder.jpg';" />
@@ -446,7 +439,7 @@
                                 <div class="cardPriceRow">
                                     <div class="cardPrice">
                                         $<%# Eval("PricePerHour", "{0:0.00}") %>
-                                        <span style="font-weight: 600; color: #666">/ hr</span>
+                                        <span style="font-weight: 600; color: #666">/ Day</span>
                                     </div>
 
                                     <div class="cardMeta">
@@ -463,7 +456,6 @@
     </div>
 
     <script>
-        // Chips fill the search box
         (function () {
             var input = document.getElementById('<%= txtSearch.ClientID %>');
             if (!input) return;

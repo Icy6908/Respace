@@ -2,7 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 <style>
-    /* Main Layout */
+
     .membership-page { 
         padding: 60px 20px; 
         max-width: 1200px; 
@@ -14,7 +14,7 @@
     .membership-header h2 { font-size: 2.5rem; color: #111827; margin-bottom: 10px; }
     .muted { color: #6b7280; font-size: 1.1rem; }
 
-    /* Current Plan Banner */
+    
     .current-plan-banner { 
         background: #f0fdf4; 
         border: 1px solid #bbf7d0; 
@@ -27,20 +27,20 @@
     }
     .badge-active { background: #22c55e; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; }
 
-    /* THE GRID: This makes them side-by-side */
+    
     .grid-3 { 
         display: grid; 
-        grid-template-columns: repeat(3, 1fr); /* Forces 3 columns on desktop */
+        grid-template-columns: repeat(3, 1fr); 
         gap: 30px; 
         align-items: stretch;
     }
 
-    /* Responsive: Stack only on small tablets/phones */
+
     @media (max-width: 992px) {
         .grid-3 { grid-template-columns: 1fr; }
     }
 
-    /* Card Styling */
+   
     .card-plan { 
         background: white; 
         border-radius: 20px; 
@@ -60,7 +60,7 @@
     
     .card-plan.featured { 
         border: 2px solid #ff385c; 
-        scale: 1.05; /* Makes the middle one pop slightly */
+        scale: 1.05; 
         z-index: 1;
     }
     
@@ -84,7 +84,7 @@
     .price { font-size: 2.25rem; font-weight: 800; color: #111827; margin: 15px 0; }
     .price span { font-size: 1.1rem; color: #6b7280; font-weight: 400; }
 
-    /* Buttons */
+   
     .btn-plan { 
         width: 100%; 
         padding: 14px; 
@@ -149,7 +149,7 @@
     </asp:PlaceHolder>
 
     <div class="grid-3">
-        <%-- Free Plan --%>
+       
         <div class="card-plan">
             <h3 class="h3">Free</h3>
             <div class="price">$0<span>/mo</span></div>
@@ -160,7 +160,7 @@
             <asp:Button ID="btnFree" runat="server" Text="Stay Free" CssClass="btn-plan" OnClick="btnFree_Click" />
         </div>
 
-        <%-- Plus Plan --%>
+     
         <div class="card-plan featured">
             <div class="popular-tag">MOST POPULAR</div>
             <h3 class="h3">Plus</h3>
@@ -172,7 +172,7 @@
             <asp:Button ID="btnPlus" runat="server" Text="Choose Plus" CssClass="btn-plan btn-plan-primary" OnClick="btnPlus_Click" />
         </div>
 
-        <%-- Pro Plan --%>
+        
         <div class="card-plan">
             <h3 class="h3">Pro</h3>
             <div class="price">$19.90<span>/mo</span></div>

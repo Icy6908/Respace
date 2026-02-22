@@ -50,7 +50,7 @@
                 <h6 class="m-0 font-weight-bold text-primary text-uppercase">Booking History</h6>
             </div>
             <div class="table-responsive">
-                <%-- FIXED ID: Matches the C# variable name --%>
+           
                 <asp:GridView ID="gvUserBookings" runat="server" AutoGenerateColumns="False" 
                     CssClass="table table-hover align-middle mb-0" GridLines="None">
                     <HeaderStyle CssClass="bg-light text-muted small fw-bold text-uppercase" />
@@ -60,7 +60,7 @@
                         <asp:BoundField DataField="StartDateTime" HeaderText="Check In" DataFormatString="{0:MMM dd, yyyy}" />
                         <asp:BoundField DataField="EndDateTime" HeaderText="Check Out" DataFormatString="{0:MMM dd, yyyy}" />
                         <asp:BoundField DataField="TotalPrice" HeaderText="Paid" DataFormatString="{0:C}" />
-                        <%-- FIXED PARSER ERROR: Wrapped in asp:TemplateField --%>
+                  
                         <asp:TemplateField HeaderText="Status">
                             <ItemTemplate>
                                 <span class="badge bg-info"><%# Eval("Status") %></span>

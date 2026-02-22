@@ -9,15 +9,8 @@ namespace Respace
 {
     public partial class Review : System.Web.UI.Page
     {
-        private int SpaceId
-        {
-            get
-            {
-                int id;
-                int.TryParse(Request.QueryString["id"], out id);
-                return id;
-            }
-        }
+       
+        private int BookingId => int.TryParse(Request.QueryString["bid"], out int id) ? id : 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -27,87 +20,83 @@ namespace Respace
                 return;
             }
 
-            string role = (Session["Role"] ?? "").ToString();
-            if (role != "Guest")
-            {
-                lblMessage.Text = "Only Guest accounts can submit reviews.";
-                btnSubmit.Enabled = false;
-                return;
-            }
-
             if (!IsPostBack)
-                LoadSpaceName();
+                LoadBookingAndSpaceDetails();
         }
 
-        private void LoadSpaceName()
+        private void LoadBookingAndSpaceDetails()
         {
-            if (SpaceId <= 0)
+            if (BookingId <= 0)
             {
-                lblMessage.Text = "Invalid space. Please go back and click Write Review again.";
+                lblMessage.Text = "No booking reference found.";
                 btnSubmit.Enabled = false;
                 return;
             }
 
+          
             DataTable dt = Db.Query(@"
-                SELECT Name
-                FROM Spaces
-                WHERE SpaceId=@Id AND Status='Approved'
-            ", new SqlParameter("@Id", SpaceId));
+                SELECT s.Name, s.SpaceId 
+                FROM Bookings b
+                INNER JOIN Spaces s ON b.SpaceId = s.SpaceId
+                WHERE b.BookingId = @Bid AND b.GuestUserId = @Uid
+            ",
+            new SqlParameter("@Bid", BookingId),
+            new SqlParameter("@Uid", Session["UserId"]));
 
             if (dt.Rows.Count == 0)
             {
-                lblMessage.Text = "Space not found or not approved.";
+                lblMessage.Text = "Booking not found or you do not have permission to review it.";
                 btnSubmit.Enabled = false;
                 return;
             }
 
             lblSpaceName.Text = dt.Rows[0]["Name"].ToString();
+            
+            ViewState["SpaceId"] = dt.Rows[0]["SpaceId"];
         }
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            if (Session["UserId"] == null)
-            {
-                Response.Redirect("Login.aspx");
-                return;
-            }
-
             int userId = Convert.ToInt32(Session["UserId"]);
+            int spaceId = ViewState["SpaceId"] != null ? (int)ViewState["SpaceId"] : 0;
 
-            int spaceId;
-            if (!int.TryParse(Request.QueryString["id"], out spaceId))
+            if (spaceId == 0)
             {
-                lblMessage.Text = "Invalid space.";
+                lblMessage.Text = "Error identifying space.";
                 return;
             }
 
-            // rating is from your HTML radio group named="rating"
             int rating = 0;
             int.TryParse(Request.Form["rating"], out rating);
 
-            string comment = (txtComment.Text ?? "").Trim();
+            if (rating == 0)
+            {
+                lblMessage.Text = "Please select a star rating.";
+                return;
+            }
 
-            // ✅ Collect selected compliments
+            string comment = (txtComment.Text ?? "").Trim();
             string badges = string.Join(", ",
                 cblBadges.Items.Cast<ListItem>()
                     .Where(i => i.Selected)
                     .Select(i => i.Value)
             );
 
-            // ✅ Insert review WITH badges
             Db.Execute(@"
-        INSERT INTO dbo.Reviews (SpaceId, UserId, Rating, Comment, Badges, IsApproved, CreatedAt)
-        VALUES (@SpaceId, @UserId, @Rating, @Comment, @Badges, 0, GETDATE())
-    ",
+                INSERT INTO dbo.Reviews (SpaceId, UserId, Rating, Comment, Badges, IsApproved, CreatedAt)
+                VALUES (@SpaceId, @UserId, @Rating, @Comment, @Badges, 0, GETDATE())
+            ",
             new SqlParameter("@SpaceId", spaceId),
             new SqlParameter("@UserId", userId),
             new SqlParameter("@Rating", rating),
             new SqlParameter("@Comment", comment),
             new SqlParameter("@Badges", badges));
 
-            lblMessage.Text = "Review submitted! Pending approval.";
-            Response.Redirect("SpaceDetails.aspx?id=" + spaceId);
-        }
+          
+            Db.Execute("UPDATE Bookings SET Status = 'Reviewed' WHERE BookingId = @Bid",
+                new SqlParameter("@Bid", BookingId));
 
+            Response.Redirect("Account.aspx?msg=ReviewSubmitted");
+        }
     }
 }

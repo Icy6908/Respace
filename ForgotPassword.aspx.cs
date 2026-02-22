@@ -18,7 +18,6 @@ namespace Respace
                 return;
             }
 
-            // Always show generic message (security)
             string generic = "If an account exists, an OTP has been sent to your email.";
 
             DataTable dt = Db.Query("SELECT UserId, FullName, Email FROM Users WHERE Email=@E",
@@ -55,7 +54,7 @@ namespace Respace
 
             EmailService.Send(realEmail, subject, body);
 
-            // Store for next page
+ 
             Session["ResetUserId"] = userId;
 
             Response.Redirect("ResetPassword.aspx");

@@ -38,13 +38,13 @@ namespace Respace
             }
             catch
             {
-                return info; // fallback to Free on error
+                return info; 
             }
         }
 
         public static void ActivatePlan(int userId, int planId, bool autoRenew)
         {
-            // 1. Verify the requested plan exists
+            
             var existsObj = Db.Scalar("SELECT TOP 1 1 FROM MembershipPlans WHERE PlanId = @P",
                 new SqlParameter("@P", planId));
 
@@ -53,8 +53,7 @@ namespace Respace
                 throw new InvalidOperationException($"Membership plan {planId} does not exist.");
             }
 
-            // 2. Wrap deactivation and activation in a single execution
-            // We use a transaction (BEGIN TRAN/COMMIT) to ensure data integrity
+            
             string sql = @"
                 BEGIN TRANSACTION;
                 BEGIN TRY
@@ -79,7 +78,7 @@ namespace Respace
         }
         public static void DowngradeToFree(int userId)
         {
-            // Simply call ActivatePlan with ID 1 (Free) and AutoRenew false
+          
             ActivatePlan(userId, 1, false);
         }
     }
